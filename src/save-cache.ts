@@ -72,7 +72,7 @@ async function saveCache(): Promise<void> {
     process.env.UV_CACHE_DIR !== cacheLocalPath.path
   ) {
     core.warning(
-      `The environment variable UV_CACHE_DIR has been changed to "${process.env.UV_CACHE_DIR}", by an action or step running after astral-sh/setup-uv. This can lead to unexpected behavior. If you expected this to happen set the cache-local-path input to "${process.env.UV_CACHE_DIR}" instead of "${cacheLocalPath.path}".`,
+      `The environment variable UV_CACHE_DIR has been changed to "${process.env.UV_CACHE_DIR}", by an action or step running after step-security/setup-uv. This can lead to unexpected behavior. If you expected this to happen set the cache-local-path input to "${process.env.UV_CACHE_DIR}" instead of "${cacheLocalPath.path}".`,
     );
     actualCachePath = process.env.UV_CACHE_DIR;
   }

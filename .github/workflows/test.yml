@@ -8,9 +8,9 @@ on:
     branches:
       - main
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+# concurrency:
+#   group: ${{ github.workflow }}-${{ github.ref }}
+#   cancel-in-progress: true
 
 permissions:
   contents: read
@@ -290,7 +290,7 @@ jobs:
       - run: ruff --version
 
   test-tilde-expansion-tool-dirs:
-    runs-on: selfhosted-ubuntu-arm64
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
@@ -302,12 +302,12 @@ jobs:
           tool-dir: "~/tool-dir"
       - name: "Check if tool dirs are expanded"
         run: |
-          if ! echo "$PATH" | grep -q "/home/ubuntu/tool-bin-dir"; then
-              echo "PATH does not contain /home/ubuntu/tool-bin-dir: $PATH"
+          if ! echo "$PATH" | grep -q "$UV_TOOL_BIN_DIR"; then
+              echo "PATH does not contain $UV_TOOL_BIN_DIR: $PATH"
               exit 1
           fi
-          if [ "$UV_TOOL_DIR" != "/home/ubuntu/tool-dir" ]; then
-              echo "UV_TOOL_DIR does not contain /home/ubuntu/tool-dir: $UV_TOOL_DIR"
+          if [ "$UV_TOOL_DIR" != "$HOME/tool-dir" ]; then
+              echo "UV_TOOL_DIR does not match $HOME/tool-dir: $UV_TOOL_DIR"
               exit 1
           fi
 
@@ -440,7 +440,7 @@ jobs:
     strategy:
       matrix:
         enable-cache: ["true", "false", "auto"]
-        os: ["ubuntu-latest", "selfhosted-ubuntu-arm64", "windows-latest"]
+        os: ["ubuntu-latest", "windows-latest"]
     steps:
       - uses: actions/checkout@v6
         with:
@@ -458,7 +458,7 @@ jobs:
     strategy:
       matrix:
         enable-cache: ["true", "false", "auto"]
-        os: ["ubuntu-latest", "selfhosted-ubuntu-arm64", "windows-latest"]
+        os: ["ubuntu-latest", "windows-latest"]
     needs: test-setup-cache
     steps:
       - uses: actions/checkout@v6
@@ -480,7 +480,7 @@ jobs:
           CACHE_HIT: ${{ steps.restore.outputs.cache-hit }}
         shell: bash
       - name: Cache was not hit
-        if: ${{ matrix.enable-cache == 'false' || (matrix.enable-cache == 'auto' && matrix.os == 'selfhosted-ubuntu-arm64') }}
+        if: ${{ matrix.enable-cache == 'false' }}
         run: |
           if [ "$CACHE_HIT" == "true" ]; then
             exit 1
@@ -657,8 +657,6 @@ jobs:
             expected-cache-dir: "/home/runner/work/_temp/setup-uv-cache"
           - os: windows-latest
             expected-cache-dir: "D:\\a\\_temp\\setup-uv-cache"
-          - os: selfhosted-ubuntu-arm64
-            expected-cache-dir: "/home/ubuntu/.cache/uv"
     runs-on: ${{ matrix.inputs.os }}
     steps:
       - uses: actions/checkout@v6
@@ -716,7 +714,7 @@ jobs:
         shell: bash
 
   test-setup-cache-local:
-    runs-on: selfhosted-ubuntu-arm64
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
@@ -730,7 +728,7 @@ jobs:
       - run: uv sync
         working-directory: __tests__/fixtures/uv-project
   test-restore-cache-local:
-    runs-on: selfhosted-ubuntu-arm64
+    runs-on: ubuntu-latest
     needs: test-setup-cache-local
     steps:
       - uses: actions/checkout@v6
@@ -754,7 +752,7 @@ jobs:
         working-directory: __tests__/fixtures/uv-project
 
   test-tilde-expansion-cache-local-path:
-    runs-on: selfhosted-ubuntu-arm64
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
@@ -770,7 +768,7 @@ jobs:
         working-directory: __tests__/fixtures/uv-project
 
   test-tilde-expansion-cache-dependency-glob:
-    runs-on: selfhosted-ubuntu-arm64
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
@@ -795,7 +793,7 @@ jobs:
       - test-tilde-expansion-cache-local-path
       - test-tilde-expansion-cache-dependency-glob
     if: always()
-    runs-on: selfhosted-ubuntu-arm64
+    runs-on: ubuntu-latest
     steps:
       - name: Remove cache directory
         run: rm -rf ~/uv-cache
@@ -828,7 +826,7 @@ jobs:
       - name: Install from custom manifest file
         uses: ./
         with:
-          manifest-file: "https://raw.githubusercontent.com/astral-sh/setup-uv/${{ github.ref }}/__tests__/download/custom-manifest.json"
+          manifest-file: "https://raw.githubusercontent.com/step-security/setup-uv/${{ github.ref }}/__tests__/download/custom-manifest.json"
       - run: uv sync
         working-directory: __tests__/fixtures/uv-project
       - name: Correct version gets installed
@@ -994,8 +992,6 @@ jobs:
             expected-python-dir: "/home/runner/work/_temp/uv-python-dir"
           - os: windows-latest
             expected-python-dir: "D:\\a\\_temp\\uv-python-dir"
-          - os: selfhosted-ubuntu-arm64
-            expected-python-dir: "/home/ubuntu/.local/share/uv/python"
     runs-on: ${{ matrix.inputs.os }}
     steps:
       - uses: actions/checkout@v6

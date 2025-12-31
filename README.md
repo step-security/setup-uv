@@ -236,7 +236,7 @@ output:
 
 ```yaml
 - name: Checkout the repository
-  uses: actions/checkout@main
+  uses: actions/checkout@v6
 - name: Install the default version of uv
   id: setup-uv
   uses: step-security/setup-uv@v7
@@ -305,13 +305,6 @@ Details on determining which files will lead to different caches can be read in 
 
 Some dependencies will never be uploaded to the cache and will be downloaded again on each run
 as described in the [Caching documentation](docs/caching.md).
-
-## Acknowledgements
-
-`setup-uv` was initially written and published by [Kevin Stillhammer](https://github.com/eifinger)
-before moving under the official [Astral](https://github.com/astral-sh) GitHub organization. You can
-support Kevin's work in open source on [Buy me a coffee](https://www.buymeacoffee.com/eifinger) or
-[PayPal](https://paypal.me/kevinstillhammer).
 
 ## License
 

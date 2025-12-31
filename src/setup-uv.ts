@@ -34,9 +34,11 @@ import {
   getPlatform,
   type Platform,
 } from "./utils/platforms";
+import { validateSubscription } from "./utils/subscription";
 import { getUvVersionFromFile } from "./version/resolve";
 
 async function run(): Promise<void> {
+  await validateSubscription();
   detectEmptyWorkdir();
   const platform = await getPlatform();
   const arch = getArch();

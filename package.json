@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/astral-sh/setup-uv.git"
+    "url": "git+https://github.com/step-security/setup-uv.git"
   },
   "keywords": [
     "actions",
@@ -23,7 +23,7 @@
     "setup",
     "uv"
   ],
-  "author": "@eifinger",
+  "author": "step-security",
   "license": "MIT",
   "dependencies": {
     "@actions/cache": "^4.1.0",
@@ -36,6 +36,7 @@
     "@octokit/plugin-paginate-rest": "^14.0.0",
     "@octokit/plugin-rest-endpoint-methods": "^17.0.0",
     "@renovatebot/pep440": "^4.2.1",
+    "axios": "^1.13.2",
     "smol-toml": "^1.4.2",
     "undici": "5.28.5"
   },

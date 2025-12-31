@@ -17,9 +17,11 @@ import {
   pruneCache as shouldPruneCache,
   saveCache as shouldSaveCache,
 } from "./utils/inputs";
+import { validateSubscription } from "./utils/subscription";
 
 export async function run(): Promise<void> {
   try {
+    await validateSubscription();
     if (enableCache) {
       if (shouldSaveCache) {
         await saveCache();

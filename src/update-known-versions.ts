@@ -8,11 +8,13 @@ import {
 } from "./download/version-manifest";
 import { OWNER, REPO } from "./utils/constants";
 import { Octokit } from "./utils/octokit";
+import { validateSubscription } from "./utils/subscription";
 
 type Release =
   Endpoints["GET /repos/{owner}/{repo}/releases"]["response"]["data"][number];
 
 async function run(): Promise<void> {
+  await validateSubscription();
   const checksumFilePath = process.argv.slice(2)[0];
   const versionsManifestFile = process.argv.slice(2)[1];
   const githubToken = process.argv.slice(2)[2];

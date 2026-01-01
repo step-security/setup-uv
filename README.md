@@ -150,7 +150,7 @@ jobs:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Install the latest version of uv and set the python version
         uses: step-security/setup-uv@v7
         with:
@@ -206,7 +206,7 @@ For example:
 
 ```yaml
 - name: Checkout the repository
-  uses: actions/checkout@main
+  uses: actions/checkout@v6
 - name: Install the latest version of uv
   uses: step-security/setup-uv@v7
   with:
@@ -310,8 +310,3 @@ as described in the [Caching documentation](docs/caching.md).
 
 MIT
 
-<div align="center">
-  <a target="_blank" href="https://astral.sh" style="background:none">
-    <img src="https://raw.githubusercontent.com/astral-sh/uv/main/assets/svg/Astral.svg" alt="Made by Astral">
-  </a>
-</div>

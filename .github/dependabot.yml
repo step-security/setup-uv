@@ -1,0 +1,26 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+
+  - package-ecosystem: pip
+    directory: /__tests__/fixtures/requirements-txt-project
+    schedule:
+      interval: daily
+
+  - package-ecosystem: pip
+    directory: /__tests__/fixtures/uv-in-requirements-hash-txt-project
+    schedule:
+      interval: daily
+
+  - package-ecosystem: pip
+    directory: /__tests__/fixtures/uv-in-requirements-txt-project
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: daily

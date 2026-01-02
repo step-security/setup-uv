@@ -1,0 +1,5 @@
+# Not part of the build process, dependencies used for testing
+
+[[IgnoredVulns]]
+id = "GHSA-8qf3-x8v5-2pj8"
+reason = "It is a test dependency"

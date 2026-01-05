@@ -373,7 +373,8 @@ jobs:
 
   test-musl:
     runs-on: ubuntu-latest
-    container: alpine
+    container:
+      image: alpine
     steps:
       - uses: actions/checkout@v6
         with:

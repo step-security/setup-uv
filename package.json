@@ -37,7 +37,7 @@
     "@octokit/plugin-rest-endpoint-methods": "^17.0.0",
     "@renovatebot/pep440": "^4.2.1",
     "axios": "^1.13.2",
-    "smol-toml": "^1.4.2",
+    "smol-toml": "^1.6.0",
     "undici": "^5.29.0"
   },
   "devDependencies": {

@@ -399,8 +399,6 @@ jobs:
             exit 1
           fi
         shell: bash
-      - run: uv sync
-        working-directory: __tests__/fixtures/uv-project
       - name: Verify output python-version is correct
         run: |
           if [ "$PYTHON_VERSION" != "3.13.1t" ]; then
@@ -409,6 +407,8 @@ jobs:
         shell: bash
         env:
           PYTHON_VERSION: ${{ steps.setup-uv.outputs.python-version }}
+      - run: uv sync
+        working-directory: __tests__/fixtures/uv-project
 
   test-activate-environment:
     runs-on: ${{ matrix.os }}

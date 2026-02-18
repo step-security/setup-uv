@@ -347,33 +347,6 @@ jobs:
       - run: uv tool install ruff
       - run: ruff --version
 
-  test-tilde-expansion-tool-dirs:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
-        with:
-          egress-policy: audit
-
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          persist-credentials: false
-      - name: Setup with cache
-        uses: ./
-        with:
-          tool-bin-dir: "~/tool-bin-dir"
-          tool-dir: "~/tool-dir"
-      - name: "Check if tool dirs are expanded"
-        run: |
-          if ! echo "$PATH" | grep -q "$UV_TOOL_BIN_DIR"; then
-              echo "PATH does not contain $UV_TOOL_BIN_DIR: $PATH"
-              exit 1
-          fi
-          if [ "$UV_TOOL_DIR" != "$HOME/tool-dir" ]; then
-              echo "UV_TOOL_DIR does not match $HOME/tool-dir: $UV_TOOL_DIR"
-              exit 1
-          fi
-
   test-python-version:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -455,11 +428,74 @@ jobs:
         env:
           UV_VENV: ${{ steps.setup-uv.outputs.venv }}
 
+  test-activate-environment-custom-path:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ${{ github.actor == 'dependabot[bot]' && fromJSON('["ubuntu-latest"]') || fromJSON('["ubuntu-latest", "macos-latest", "windows-latest"]') }}
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+      - name: Install latest version
+        id: setup-uv
+        uses: ./
+        with:
+          python-version: 3.13.1t
+          activate-environment: true
+          venv-path: ${{ runner.temp }}/custom-venv
+      - name: Verify VIRTUAL_ENV matches output
+        run: |
+          if [ "$VIRTUAL_ENV" != "$UV_VENV" ]; then
+            echo "VIRTUAL_ENV does not match venv output: $VIRTUAL_ENV vs $UV_VENV"
+            exit 1
+          fi
+        shell: bash
+        env:
+          UV_VENV: ${{ steps.setup-uv.outputs.venv }}
+      - name: Verify venv location is runner.temp/custom-venv
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+
+          venv = Path(os.environ["VIRTUAL_ENV"]).resolve()
+          temp = Path(os.environ["RUNNER_TEMP"]).resolve()
+
+          if venv.name != "custom-venv":
+              raise SystemExit(f"Expected venv name 'custom-venv', got: {venv}")
+          if venv.parent != temp:
+              raise SystemExit(f"Expected venv under {temp}, got: {venv}")
+          if not venv.is_dir():
+              raise SystemExit(f"Venv directory does not exist: {venv}")
+          PY
+        shell: bash
+      - name: Verify packages can be installed
+        run: uv pip install pip
+        shell: bash
+      - name: Verify python runs from custom venv
+        run: |
+          python - <<'PY'
+          import sys
+          if "custom-venv" not in sys.executable:
+              raise SystemExit(f"Python is not running from custom venv: {sys.executable}")
+          PY
+        shell: bash
+
   test-musl:
     runs-on: ubuntu-latest
-    container:
-      image: alpine
+    container: alpine
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
+        with:
+          egress-policy: audit
+
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
@@ -866,120 +902,6 @@ jobs:
           fi
         shell: bash
 
-  test-setup-cache-local:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
-        with:
-          egress-policy: audit
-
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          persist-credentials: false
-      - name: Setup with cache
-        uses: ./
-        with:
-          enable-cache: true
-          cache-suffix: ${{ github.run_id }}-${{ github.run_attempt }}-test-setup-cache-local
-          cache-local-path: /tmp/uv-cache
-      - run: uv sync
-        working-directory: __tests__/fixtures/uv-project
-  test-restore-cache-local:
-    runs-on: ubuntu-latest
-    needs: test-setup-cache-local
-    steps:
-      - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
-        with:
-          egress-policy: audit
-
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          persist-credentials: false
-      - name: Restore with cache
-        id: restore
-        uses: ./
-        with:
-          enable-cache: true
-          cache-suffix: ${{ github.run_id }}-${{ github.run_attempt }}-test-setup-cache-local
-          cache-local-path: /tmp/uv-cache
-      - name: Cache was hit
-        run: |
-          if [ "$CACHE_HIT" != "true" ]; then
-            exit 1
-          fi
-        env:
-          CACHE_HIT: ${{ steps.restore.outputs.cache-hit }}
-      - run: uv sync
-        working-directory: __tests__/fixtures/uv-project
-
-  test-tilde-expansion-cache-local-path:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
-        with:
-          egress-policy: audit
-
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          persist-credentials: false
-      - name: Create cache directory
-        run: mkdir -p ~/uv-cache
-        shell: bash
-      - name: Setup with cache
-        uses: ./
-        with:
-          cache-local-path: ~/uv-cache/cache-local-path
-      - run: uv sync
-        working-directory: __tests__/fixtures/uv-project
-
-  test-tilde-expansion-cache-dependency-glob:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
-        with:
-          egress-policy: audit
-
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          persist-credentials: false
-      - name: Create cache directory
-        run: mkdir -p ~/uv-cache
-        shell: bash
-      - name: Create cache dependency glob file
-        run: touch ~/uv-cache.glob
-        shell: bash
-      - name: Setup with cache
-        uses: ./
-        with:
-          enable-cache: true
-          cache-local-path: ~/uv-cache/cache-dependency-glob
-          cache-dependency-glob: "~/uv-cache.glob"
-      - run: uv sync
-        working-directory: __tests__/fixtures/uv-project
-
-  cleanup-tilde-expansion-tests:
-    needs:
-      - test-tilde-expansion-cache-local-path
-      - test-tilde-expansion-cache-dependency-glob
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
-        with:
-          egress-policy: audit
-
-      - name: Remove cache directory
-        run: rm -rf ~/uv-cache
-        shell: bash
-      - name: Remove cache dependency glob file
-        run: rm -f ~/uv-cache.glob
-        shell: bash
-
   test-no-python-version:
     runs-on: ubuntu-latest
     steps:
@@ -1130,6 +1052,34 @@ jobs:
             exit 1
           fi
 
+  test-cache-python-missing-managed-install-dir:
+    runs-on: ubuntu-latest
+    env:
+      UV_PYTHON_INSTALL_DIR: /tmp/missing-uv-python
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+      - name: Setup uv with cache and python cache enabled
+        uses: ./
+        with:
+          enable-cache: true
+          cache-python: true
+          python-version: "3.12"
+          cache-local-path: /tmp/setup-uv-cache
+          cache-suffix: ${{ github.run_id }}-${{ github.run_attempt }}-test-cache-python-missing-managed-install-dir
+      - name: Ensure uv cache dir exists so only python-cache behavior is tested
+        run: uv sync
+        working-directory: __tests__/fixtures/uv-project
+        shell: bash
+      - name: Ensure managed Python install dir does not exist and this does not break caching
+        run: rm -rf "$UV_PYTHON_INSTALL_DIR"
+
   test-cache-python-installs:
     runs-on: ubuntu-latest
     steps:
@@ -1265,7 +1215,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Validate typings
-        uses: typesafegithub/github-actions-typing@184d97003b1300f6a10e286eb98c191e416ff02b # v2.2.1
+        uses: typesafegithub/github-actions-typing@9ddf35b71a482be7d8922b28e8d00df16b77e315 # v2.2.2
 
   all-tests-passed:
     runs-on: ubuntu-latest
@@ -1282,9 +1232,9 @@ jobs:
       - test-with-explicit-token
       - test-uvx
       - test-tool-install
-      - test-tilde-expansion-tool-dirs
       - test-python-version
       - test-activate-environment
+      - test-activate-environment-custom-path
       - test-musl
       - test-cache-key-os-version
       - test-cache-local
@@ -1300,17 +1250,13 @@ jobs:
       - test-restore-cache-save-cache-false
       - test-setup-cache-restore-cache-false
       - test-restore-cache-restore-cache-false
-      - test-setup-cache-local
-      - test-restore-cache-local
-      - test-tilde-expansion-cache-local-path
-      - test-tilde-expansion-cache-dependency-glob
-      - cleanup-tilde-expansion-tests
       - test-no-python-version
       - test-custom-manifest-file
       - test-absolute-path
       - test-relative-path
       - test-cache-prune-force
       - test-cache-dir-from-file
+      - test-cache-python-missing-managed-install-dir
       - test-cache-python-installs
       - test-restore-python-installs
       - test-python-install-dir

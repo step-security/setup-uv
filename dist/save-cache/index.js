@@ -93377,11 +93377,25 @@ async function saveCache() {
             await pruneCache();
         }
         const actualCachePath = getUvCachePath();
-        await saveCacheToKey(cacheKey, actualCachePath, restore_cache_1.STATE_CACHE_MATCHED_KEY, "uv cache", `Cache path ${actualCachePath} does not exist on disk. This likely indicates that there are no dependencies to cache. Consider disabling the cache input if it is not needed.`);
+        if (!fs.existsSync(actualCachePath)) {
+            if (inputs_1.ignoreNothingToCache) {
+                core.info("No cacheable uv cache paths were found. Ignoring because ignore-nothing-to-cache is enabled.");
+            }
+            else {
+                throw new Error(`Cache path ${actualCachePath} does not exist on disk. This likely indicates that there are no dependencies to cache. Consider disabling the cache input if it is not needed.`);
+            }
+        }
+        else {
+            await saveCacheToKey(cacheKey, actualCachePath, restore_cache_1.STATE_CACHE_MATCHED_KEY, "uv cache");
+        }
     }
     if (inputs_1.cachePython) {
+        if (!fs.existsSync(inputs_1.pythonDir)) {
+            core.warning(`Python cache path ${inputs_1.pythonDir} does not exist on disk. Skipping Python cache save because no managed Python installation was found. If you want uv to install managed Python instead of using a system interpreter, set UV_PYTHON_PREFERENCE=only-managed.`);
+            return;
+        }
         const pythonCacheKey = `${cacheKey}-python`;
-        await saveCacheToKey(pythonCacheKey, inputs_1.pythonDir, restore_cache_1.STATE_PYTHON_CACHE_MATCHED_KEY, "Python cache", `Python cache path ${inputs_1.pythonDir} does not exist on disk. This likely indicates that there are no Python installations to cache. Consider disabling the cache input if it is not needed.`);
+        await saveCacheToKey(pythonCacheKey, inputs_1.pythonDir, restore_cache_1.STATE_PYTHON_CACHE_MATCHED_KEY, "Python cache");
     }
 }
 async function pruneCache() {
@@ -93408,30 +93422,15 @@ function getUvCachePath() {
     }
     return inputs_1.cacheLocalPath.path;
 }
-async function saveCacheToKey(cacheKey, cachePath, stateKey, cacheName, pathNotExistErrorMessage) {
+async function saveCacheToKey(cacheKey, cachePath, stateKey, cacheName) {
     const matchedKey = core.getState(stateKey);
     if (matchedKey === cacheKey) {
         core.info(`${cacheName} hit occurred on key ${cacheKey}, not saving cache.`);
         return;
     }
     core.info(`Including ${cacheName} path: ${cachePath}`);
-    if (!fs.existsSync(cachePath) && !inputs_1.ignoreNothingToCache) {
-        throw new Error(pathNotExistErrorMessage);
-    }
-    try {
-        await cache.saveCache([cachePath], cacheKey);
-        core.info(`${cacheName} saved with key: ${cacheKey}`);
-    }
-    catch (e) {
-        if (e instanceof Error &&
-            e.message ===
-                "Path Validation Error: Path(s) specified in the action for caching do(es) not exist, hence no cache is being saved.") {
-            core.info(`No cacheable ${cacheName} paths were found. Ignoring because ignore-nothing-to-save is enabled.`);
-        }
-        else {
-            throw e;
-        }
-    }
+    await cache.saveCache([cachePath], cacheKey);
+    core.info(`${cacheName} saved with key: ${cacheKey}`);
 }
 run();
 
@@ -93557,7 +93556,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.resolutionStrategy = exports.addProblemMatchers = exports.manifestFile = exports.githubToken = exports.pythonDir = exports.toolDir = exports.toolBinDir = exports.ignoreEmptyWorkdir = exports.ignoreNothingToCache = exports.cachePython = exports.pruneCache = exports.cacheDependencyGlob = exports.cacheLocalPath = exports.cacheSuffix = exports.saveCache = exports.restoreCache = exports.enableCache = exports.checkSum = exports.activateEnvironment = exports.pythonVersion = exports.versionFile = exports.version = exports.workingDirectory = exports.CacheLocalSource = void 0;
+exports.resolutionStrategy = exports.addProblemMatchers = exports.manifestFile = exports.githubToken = exports.pythonDir = exports.toolDir = exports.toolBinDir = exports.ignoreEmptyWorkdir = exports.ignoreNothingToCache = exports.cachePython = exports.pruneCache = exports.cacheDependencyGlob = exports.cacheLocalPath = exports.cacheSuffix = exports.saveCache = exports.restoreCache = exports.enableCache = exports.checkSum = exports.venvPath = exports.activateEnvironment = exports.pythonVersion = exports.versionFile = exports.version = exports.workingDirectory = exports.CacheLocalSource = void 0;
 exports.getUvPythonDir = getUvPythonDir;
 const node_path_1 = __importDefault(__nccwpck_require__(6760));
 const core = __importStar(__nccwpck_require__(7484));
@@ -93574,6 +93573,7 @@ exports.version = core.getInput("version");
 exports.versionFile = getVersionFile();
 exports.pythonVersion = core.getInput("python-version");
 exports.activateEnvironment = core.getBooleanInput("activate-environment");
+exports.venvPath = getVenvPath();
 exports.checkSum = core.getInput("checksum");
 exports.enableCache = getEnableCache();
 exports.restoreCache = core.getInput("restore-cache") === "true";
@@ -93599,6 +93599,17 @@ function getVersionFile() {
         return resolveRelativePath(tildeExpanded);
     }
     return versionFileInput;
+}
+function getVenvPath() {
+    const venvPathInput = core.getInput("venv-path");
+    if (venvPathInput !== "") {
+        if (!exports.activateEnvironment) {
+            core.warning("venv-path is only used when activate-environment is true");
+        }
+        const tildeExpanded = expandTilde(venvPathInput);
+        return normalizePath(resolveRelativePath(tildeExpanded));
+    }
+    return normalizePath(resolveRelativePath(".venv"));
 }
 function getEnableCache() {
     const enableCacheInput = core.getInput("enable-cache");
@@ -93727,6 +93738,16 @@ function expandTilde(input) {
         return `${process.env.HOME}${input.substring(1)}`;
     }
     return input;
+}
+function normalizePath(inputPath) {
+    const normalized = node_path_1.default.normalize(inputPath);
+    const root = node_path_1.default.parse(normalized).root;
+    // Remove any trailing path separators, except when the whole path is the root.
+    let trimmed = normalized;
+    while (trimmed.length > root.length && trimmed.endsWith(node_path_1.default.sep)) {
+        trimmed = trimmed.slice(0, -1);
+    }
+    return trimmed;
 }
 function resolveRelativePath(inputPath) {
     const hasNegation = inputPath.startsWith("!");

@@ -389,6 +389,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Install latest version
+        id: setup-uv
         uses: ./
         with:
           python-version: 3.13.1t

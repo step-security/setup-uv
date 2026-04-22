@@ -39,6 +39,8 @@ import {
 import { validateSubscription } from "./utils/subscription";
 import { getUvVersionFromFile } from "./version/resolve";
 
+const sourceDir = __dirname;
+
 async function getPythonVersion(): Promise<string> {
   if (pythonVersion !== "") {
     return pythonVersion;
@@ -310,7 +312,7 @@ function setCacheDir(): void {
 
 function addMatchers(): void {
   if (addProblemMatchers) {
-    const matchersPath = path.join(__dirname, `..${path.sep}..`, ".github");
+    const matchersPath = path.join(sourceDir, "..", "..", ".github");
     core.info(`##[add-matcher]${path.join(matchersPath, "python.json")}`);
   }
 }

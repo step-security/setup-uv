@@ -37740,7 +37740,7 @@ var require_form_data = __commonJS({
     var http4 = require("http");
     var https4 = require("https");
     var parseUrl2 = require("url").parse;
-    var fs8 = require("fs");
+    var fs9 = require("fs");
     var Stream = require("stream").Stream;
     var crypto4 = require("crypto");
     var mime = require_mime_types();
@@ -37807,7 +37807,7 @@ var require_form_data = __commonJS({
         if (value.end != void 0 && value.end != Infinity && value.start != void 0) {
           callback(null, value.end + 1 - (value.start ? value.start : 0));
         } else {
-          fs8.stat(value.path, function(err, stat2) {
+          fs9.stat(value.path, function(err, stat2) {
             if (err) {
               callback(err);
               return;
@@ -38586,7 +38586,7 @@ __export(save_cache_exports, {
   run: () => run
 });
 module.exports = __toCommonJS(save_cache_exports);
-var fs7 = __toESM(require("node:fs"), 1);
+var fs8 = __toESM(require("node:fs"), 1);
 
 // node_modules/@actions/core/lib/command.js
 var os = __toESM(require("os"), 1);
@@ -79951,19 +79951,45 @@ var {
 } = axios_default;
 
 // src/utils/subscription.ts
+var fs7 = __toESM(require("fs"), 1);
 async function validateSubscription() {
-  const API_URL = `https://agent.api.stepsecurity.io/v1/github/${process.env.GITHUB_REPOSITORY}/actions/subscription`;
+  const eventPath = process.env.GITHUB_EVENT_PATH;
+  let repoPrivate;
+  if (eventPath && fs7.existsSync(eventPath)) {
+    const eventData = JSON.parse(fs7.readFileSync(eventPath, "utf8"));
+    repoPrivate = eventData?.repository?.private;
+  }
+  const upstream = "astral-sh/setup-uv";
+  const action5 = process.env.GITHUB_ACTION_REPOSITORY;
+  const docsUrl = "https://docs.stepsecurity.io/actions/stepsecurity-maintained-actions";
+  info("");
+  info("\x1B[1;36mStepSecurity Maintained Action\x1B[0m");
+  info(`Secure drop-in replacement for ${upstream}`);
+  if (repoPrivate === false)
+    info("\x1B[32m\u2713 Free for public repositories\x1B[0m");
+  info(`\x1B[36mLearn more:\x1B[0m ${docsUrl}`);
+  info("");
+  if (repoPrivate === false) return;
+  const serverUrl = process.env.GITHUB_SERVER_URL || "https://github.com";
+  const body2 = { action: action5 || "" };
+  if (serverUrl !== "https://github.com") body2.ghes_server = serverUrl;
   try {
-    await axios_default.get(API_URL, { timeout: 3e3 });
+    await axios_default.post(
+      `https://agent.api.stepsecurity.io/v1/github/${process.env.GITHUB_REPOSITORY}/actions/maintained-actions-subscription`,
+      body2,
+      { timeout: 3e3 }
+    );
   } catch (error2) {
     if (isAxiosError2(error2) && error2.response?.status === 403) {
       error(
-        "Subscription is not valid. Reach out to support@stepsecurity.io"
+        `\x1B[1;31mThis action requires a StepSecurity subscription for private repositories.\x1B[0m`
+      );
+      error(
+        `\x1B[31mLearn how to enable a subscription: ${docsUrl}\x1B[0m`
       );
       process.exit(1);
-    } else {
-      info("Timeout or API not reachable. Continuing to next step.");
     }
+    info("Timeout or API not reachable. Continuing to next step.");
   }
 }
 
@@ -79999,7 +80025,7 @@ async function saveCache4() {
       await pruneCache2();
     }
     const actualCachePath = getUvCachePath();
-    if (!fs7.existsSync(actualCachePath)) {
+    if (!fs8.existsSync(actualCachePath)) {
       if (ignoreNothingToCache) {
         info(
           "No cacheable uv cache paths were found. Ignoring because ignore-nothing-to-cache is enabled."
@@ -80019,7 +80045,7 @@ async function saveCache4() {
     }
   }
   if (cachePython) {
-    if (!fs7.existsSync(pythonDir)) {
+    if (!fs8.existsSync(pythonDir)) {
       warning(
         `Python cache path ${pythonDir} does not exist on disk. Skipping Python cache save because no managed Python installation was found. If you want uv to install managed Python instead of using a system interpreter, set UV_PYTHON_PREFERENCE=only-managed.`
       );

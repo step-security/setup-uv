@@ -1492,36 +1492,36 @@ var require_diagnostics = __commonJS({
       const debuglog = fetchDebuglog.enabled ? fetchDebuglog : undiciDebugLog;
       diagnosticsChannel.channel("undici:client:beforeConnect").subscribe((evt) => {
         const {
-          connectParams: { version: version4, protocol, port, host }
+          connectParams: { version: version3, protocol, port, host }
         } = evt;
         debuglog(
           "connecting to %s using %s%s",
           `${host}${port ? `:${port}` : ""}`,
           protocol,
-          version4
+          version3
         );
       });
       diagnosticsChannel.channel("undici:client:connected").subscribe((evt) => {
         const {
-          connectParams: { version: version4, protocol, port, host }
+          connectParams: { version: version3, protocol, port, host }
         } = evt;
         debuglog(
           "connected to %s using %s%s",
           `${host}${port ? `:${port}` : ""}`,
           protocol,
-          version4
+          version3
         );
       });
       diagnosticsChannel.channel("undici:client:connectError").subscribe((evt) => {
         const {
-          connectParams: { version: version4, protocol, port, host },
+          connectParams: { version: version3, protocol, port, host },
           error: error2
         } = evt;
         debuglog(
           "connection to %s using %s%s errored - %s",
           `${host}${port ? `:${port}` : ""}`,
           protocol,
-          version4,
+          version3,
           error2.message
         );
       });
@@ -1570,31 +1570,31 @@ var require_diagnostics = __commonJS({
         const debuglog = undiciDebugLog.enabled ? undiciDebugLog : websocketDebuglog;
         diagnosticsChannel.channel("undici:client:beforeConnect").subscribe((evt) => {
           const {
-            connectParams: { version: version4, protocol, port, host }
+            connectParams: { version: version3, protocol, port, host }
           } = evt;
           debuglog(
             "connecting to %s%s using %s%s",
             host,
             port ? `:${port}` : "",
             protocol,
-            version4
+            version3
           );
         });
         diagnosticsChannel.channel("undici:client:connected").subscribe((evt) => {
           const {
-            connectParams: { version: version4, protocol, port, host }
+            connectParams: { version: version3, protocol, port, host }
           } = evt;
           debuglog(
             "connected to %s%s using %s%s",
             host,
             port ? `:${port}` : "",
             protocol,
-            version4
+            version3
           );
         });
         diagnosticsChannel.channel("undici:client:connectError").subscribe((evt) => {
           const {
-            connectParams: { version: version4, protocol, port, host },
+            connectParams: { version: version3, protocol, port, host },
             error: error2
           } = evt;
           debuglog(
@@ -1602,7 +1602,7 @@ var require_diagnostics = __commonJS({
             host,
             port ? `:${port}` : "",
             protocol,
-            version4,
+            version3,
             error2.message
           );
         });
@@ -19706,31 +19706,31 @@ var require_semver = __commonJS({
     var parseOptions = require_parse_options();
     var { compareIdentifiers } = require_identifiers();
     var SemVer = class _SemVer {
-      constructor(version4, options) {
+      constructor(version3, options) {
         options = parseOptions(options);
-        if (version4 instanceof _SemVer) {
-          if (version4.loose === !!options.loose && version4.includePrerelease === !!options.includePrerelease) {
-            return version4;
+        if (version3 instanceof _SemVer) {
+          if (version3.loose === !!options.loose && version3.includePrerelease === !!options.includePrerelease) {
+            return version3;
           } else {
-            version4 = version4.version;
+            version3 = version3.version;
           }
-        } else if (typeof version4 !== "string") {
-          throw new TypeError(`Invalid version. Must be a string. Got type "${typeof version4}".`);
+        } else if (typeof version3 !== "string") {
+          throw new TypeError(`Invalid version. Must be a string. Got type "${typeof version3}".`);
         }
-        if (version4.length > MAX_LENGTH) {
+        if (version3.length > MAX_LENGTH) {
           throw new TypeError(
             `version is longer than ${MAX_LENGTH} characters`
           );
         }
-        debug2("SemVer", version4, options);
+        debug2("SemVer", version3, options);
         this.options = options;
         this.loose = !!options.loose;
         this.includePrerelease = !!options.includePrerelease;
-        const m = version4.trim().match(options.loose ? re[t.LOOSE] : re[t.FULL]);
+        const m = version3.trim().match(options.loose ? re[t.LOOSE] : re[t.FULL]);
         if (!m) {
-          throw new TypeError(`Invalid Version: ${version4}`);
+          throw new TypeError(`Invalid Version: ${version3}`);
         }
-        this.raw = version4;
+        this.raw = version3;
         this.major = +m[1];
         this.minor = +m[2];
         this.patch = +m[3];
@@ -19980,12 +19980,12 @@ var require_parse2 = __commonJS({
   "node_modules/@actions/cache/node_modules/semver/functions/parse.js"(exports2, module2) {
     "use strict";
     var SemVer = require_semver();
-    var parse3 = (version4, options, throwErrors = false) => {
-      if (version4 instanceof SemVer) {
-        return version4;
+    var parse3 = (version3, options, throwErrors = false) => {
+      if (version3 instanceof SemVer) {
+        return version3;
       }
       try {
-        return new SemVer(version4, options);
+        return new SemVer(version3, options);
       } catch (er) {
         if (!throwErrors) {
           return null;
@@ -20002,8 +20002,8 @@ var require_valid = __commonJS({
   "node_modules/@actions/cache/node_modules/semver/functions/valid.js"(exports2, module2) {
     "use strict";
     var parse3 = require_parse2();
-    var valid = (version4, options) => {
-      const v = parse3(version4, options);
+    var valid = (version3, options) => {
+      const v = parse3(version3, options);
       return v ? v.version : null;
     };
     module2.exports = valid;
@@ -20015,8 +20015,8 @@ var require_clean = __commonJS({
   "node_modules/@actions/cache/node_modules/semver/functions/clean.js"(exports2, module2) {
     "use strict";
     var parse3 = require_parse2();
-    var clean2 = (version4, options) => {
-      const s = parse3(version4.trim().replace(/^[=v]+/, ""), options);
+    var clean2 = (version3, options) => {
+      const s = parse3(version3.trim().replace(/^[=v]+/, ""), options);
       return s ? s.version : null;
     };
     module2.exports = clean2;
@@ -20028,7 +20028,7 @@ var require_inc = __commonJS({
   "node_modules/@actions/cache/node_modules/semver/functions/inc.js"(exports2, module2) {
     "use strict";
     var SemVer = require_semver();
-    var inc = (version4, release, options, identifier, identifierBase) => {
+    var inc = (version3, release, options, identifier, identifierBase) => {
       if (typeof options === "string") {
         identifierBase = identifier;
         identifier = options;
@@ -20036,7 +20036,7 @@ var require_inc = __commonJS({
       }
       try {
         return new SemVer(
-          version4 instanceof SemVer ? version4.version : version4,
+          version3 instanceof SemVer ? version3.version : version3,
           options
         ).inc(release, identifier, identifierBase).version;
       } catch (er) {
@@ -20126,8 +20126,8 @@ var require_prerelease = __commonJS({
   "node_modules/@actions/cache/node_modules/semver/functions/prerelease.js"(exports2, module2) {
     "use strict";
     var parse3 = require_parse2();
-    var prerelease = (version4, options) => {
-      const parsed = parse3(version4, options);
+    var prerelease = (version3, options) => {
+      const parsed = parse3(version3, options);
       return parsed && parsed.prerelease.length ? parsed.prerelease : null;
     };
     module2.exports = prerelease;
@@ -20315,24 +20315,24 @@ var require_coerce = __commonJS({
     var SemVer = require_semver();
     var parse3 = require_parse2();
     var { safeRe: re, t } = require_re();
-    var coerce = (version4, options) => {
-      if (version4 instanceof SemVer) {
-        return version4;
+    var coerce = (version3, options) => {
+      if (version3 instanceof SemVer) {
+        return version3;
       }
-      if (typeof version4 === "number") {
-        version4 = String(version4);
+      if (typeof version3 === "number") {
+        version3 = String(version3);
       }
-      if (typeof version4 !== "string") {
+      if (typeof version3 !== "string") {
         return null;
       }
       options = options || {};
       let match2 = null;
       if (!options.rtl) {
-        match2 = version4.match(options.includePrerelease ? re[t.COERCEFULL] : re[t.COERCE]);
+        match2 = version3.match(options.includePrerelease ? re[t.COERCEFULL] : re[t.COERCE]);
       } else {
         const coerceRtlRegex = options.includePrerelease ? re[t.COERCERTLFULL] : re[t.COERCERTL];
         let next;
-        while ((next = coerceRtlRegex.exec(version4)) && (!match2 || match2.index + match2[0].length !== version4.length)) {
+        while ((next = coerceRtlRegex.exec(version3)) && (!match2 || match2.index + match2[0].length !== version3.length)) {
           if (!match2 || next.index + next[0].length !== match2.index + match2[0].length) {
             match2 = next;
           }
@@ -20516,19 +20516,19 @@ var require_range = __commonJS({
         });
       }
       // if ANY of the sets match ALL of its comparators, then pass
-      test(version4) {
-        if (!version4) {
+      test(version3) {
+        if (!version3) {
           return false;
         }
-        if (typeof version4 === "string") {
+        if (typeof version3 === "string") {
           try {
-            version4 = new SemVer(version4, this.options);
+            version3 = new SemVer(version3, this.options);
           } catch (er) {
             return false;
           }
         }
         for (let i = 0; i < this.set.length; i++) {
-          if (testSet(this.set[i], version4, this.options)) {
+          if (testSet(this.set[i], version3, this.options)) {
             return true;
           }
         }
@@ -20743,13 +20743,13 @@ var require_range = __commonJS({
       }
       return `${from} ${to}`.trim();
     };
-    var testSet = (set, version4, options) => {
+    var testSet = (set, version3, options) => {
       for (let i = 0; i < set.length; i++) {
-        if (!set[i].test(version4)) {
+        if (!set[i].test(version3)) {
           return false;
         }
       }
-      if (version4.prerelease.length && !options.includePrerelease) {
+      if (version3.prerelease.length && !options.includePrerelease) {
         for (let i = 0; i < set.length; i++) {
           debug2(set[i].semver);
           if (set[i].semver === Comparator.ANY) {
@@ -20757,7 +20757,7 @@ var require_range = __commonJS({
           }
           if (set[i].semver.prerelease.length > 0) {
             const allowed = set[i].semver;
-            if (allowed.major === version4.major && allowed.minor === version4.minor && allowed.patch === version4.patch) {
+            if (allowed.major === version3.major && allowed.minor === version3.minor && allowed.patch === version3.patch) {
               return true;
             }
           }
@@ -20818,19 +20818,19 @@ var require_comparator = __commonJS({
       toString() {
         return this.value;
       }
-      test(version4) {
-        debug2("Comparator.test", version4, this.options.loose);
-        if (this.semver === ANY || version4 === ANY) {
+      test(version3) {
+        debug2("Comparator.test", version3, this.options.loose);
+        if (this.semver === ANY || version3 === ANY) {
           return true;
         }
-        if (typeof version4 === "string") {
+        if (typeof version3 === "string") {
           try {
-            version4 = new SemVer(version4, this.options);
+            version3 = new SemVer(version3, this.options);
           } catch (er) {
             return false;
           }
         }
-        return cmp(version4, this.operator, this.semver, this.options);
+        return cmp(version3, this.operator, this.semver, this.options);
       }
       intersects(comp26, options) {
         if (!(comp26 instanceof _Comparator)) {
@@ -20887,13 +20887,13 @@ var require_satisfies = __commonJS({
   "node_modules/@actions/cache/node_modules/semver/functions/satisfies.js"(exports2, module2) {
     "use strict";
     var Range = require_range();
-    var satisfies = (version4, range2, options) => {
+    var satisfies = (version3, range2, options) => {
       try {
         range2 = new Range(range2, options);
       } catch (er) {
         return false;
       }
-      return range2.test(version4);
+      return range2.test(version3);
     };
     module2.exports = satisfies;
   }
@@ -21055,8 +21055,8 @@ var require_outside = __commonJS({
     var lt = require_lt();
     var lte = require_lte();
     var gte2 = require_gte();
-    var outside = (version4, range2, hilo, options) => {
-      version4 = new SemVer(version4, options);
+    var outside = (version3, range2, hilo, options) => {
+      version3 = new SemVer(version3, options);
       range2 = new Range(range2, options);
       let gtfn, ltefn, ltfn, comp26, ecomp;
       switch (hilo) {
@@ -21077,7 +21077,7 @@ var require_outside = __commonJS({
         default:
           throw new TypeError('Must provide a hilo val of "<" or ">"');
       }
-      if (satisfies(version4, range2, options)) {
+      if (satisfies(version3, range2, options)) {
         return false;
       }
       for (let i = 0; i < range2.set.length; ++i) {
@@ -21099,9 +21099,9 @@ var require_outside = __commonJS({
         if (high.operator === comp26 || high.operator === ecomp) {
           return false;
         }
-        if ((!low.operator || low.operator === comp26) && ltefn(version4, low.semver)) {
+        if ((!low.operator || low.operator === comp26) && ltefn(version3, low.semver)) {
           return false;
-        } else if (low.operator === ecomp && ltfn(version4, low.semver)) {
+        } else if (low.operator === ecomp && ltfn(version3, low.semver)) {
           return false;
         }
       }
@@ -21116,7 +21116,7 @@ var require_gtr = __commonJS({
   "node_modules/@actions/cache/node_modules/semver/ranges/gtr.js"(exports2, module2) {
     "use strict";
     var outside = require_outside();
-    var gtr = (version4, range2, options) => outside(version4, range2, ">", options);
+    var gtr = (version3, range2, options) => outside(version3, range2, ">", options);
     module2.exports = gtr;
   }
 });
@@ -21126,7 +21126,7 @@ var require_ltr = __commonJS({
   "node_modules/@actions/cache/node_modules/semver/ranges/ltr.js"(exports2, module2) {
     "use strict";
     var outside = require_outside();
-    var ltr = (version4, range2, options) => outside(version4, range2, "<", options);
+    var ltr = (version3, range2, options) => outside(version3, range2, "<", options);
     module2.exports = ltr;
   }
 });
@@ -21156,12 +21156,12 @@ var require_simplify = __commonJS({
       let first = null;
       let prev = null;
       const v = versions.sort((a, b) => compare(a, b, options));
-      for (const version4 of v) {
-        const included = satisfies(version4, range2, options);
+      for (const version3 of v) {
+        const included = satisfies(version3, range2, options);
         if (included) {
-          prev = version4;
+          prev = version3;
           if (!first) {
-            first = version4;
+            first = version3;
           }
         } else {
           if (prev) {
@@ -21984,10 +21984,10 @@ var require_supports_color = __commonJS({
         return 3;
       }
       if ("TERM_PROGRAM" in env) {
-        const version4 = parseInt((env.TERM_PROGRAM_VERSION || "").split(".")[0], 10);
+        const version3 = parseInt((env.TERM_PROGRAM_VERSION || "").split(".")[0], 10);
         switch (env.TERM_PROGRAM) {
           case "iTerm.app":
-            return version4 >= 3 ? 3 : 2;
+            return version3 >= 3 ? 3 : 2;
           case "Apple_Terminal":
             return 2;
         }
@@ -27204,15 +27204,15 @@ var require_version = __commonJS({
       stringify: stringify2
     };
     var validRegex = new RegExp("^" + VERSION_PATTERN + "$", "i");
-    function valid(version4) {
-      return validRegex.test(version4) ? version4 : null;
+    function valid(version3) {
+      return validRegex.test(version3) ? version3 : null;
     }
     var cleanRegex = new RegExp("^\\s*" + VERSION_PATTERN + "\\s*$", "i");
-    function clean2(version4) {
-      return stringify2(parse3(version4, cleanRegex));
+    function clean2(version3) {
+      return stringify2(parse3(version3, cleanRegex));
     }
-    function parse3(version4, regex) {
-      const { groups } = (regex || validRegex).exec(version4) || {};
+    function parse3(version3, regex) {
+      const { groups } = (regex || validRegex).exec(version3) || {};
       if (!groups) {
         return null;
       }
@@ -27286,8 +27286,8 @@ var require_version = __commonJS({
       }
       return null;
     }
-    function explain(version4) {
-      const parsed = parse3(version4);
+    function explain(version3) {
+      const parsed = parse3(version3);
       if (!parsed) {
         return parsed;
       }
@@ -27338,36 +27338,36 @@ var require_operator = __commonJS({
       ">": gt,
       "===": arbitrary
     };
-    function lt(version4, other) {
-      return compare(version4, other) < 0;
+    function lt(version3, other) {
+      return compare(version3, other) < 0;
     }
-    function le(version4, other) {
-      return compare(version4, other) <= 0;
+    function le(version3, other) {
+      return compare(version3, other) <= 0;
     }
-    function eq(version4, other) {
-      return compare(version4, other) === 0;
+    function eq(version3, other) {
+      return compare(version3, other) === 0;
     }
-    function ne(version4, other) {
-      return compare(version4, other) !== 0;
+    function ne(version3, other) {
+      return compare(version3, other) !== 0;
     }
-    function ge(version4, other) {
-      return compare(version4, other) >= 0;
+    function ge(version3, other) {
+      return compare(version3, other) >= 0;
     }
-    function gt(version4, other) {
-      return compare(version4, other) > 0;
+    function gt(version3, other) {
+      return compare(version3, other) > 0;
     }
-    function arbitrary(version4, other) {
-      return version4.toLowerCase() === other.toLowerCase();
+    function arbitrary(version3, other) {
+      return version3.toLowerCase() === other.toLowerCase();
     }
-    function compare(version4, other) {
-      const parsedVersion = parse3(version4);
+    function compare(version3, other) {
+      const parsedVersion = parse3(version3);
       const parsedOther = parse3(other);
       const keyVersion = calculateKey(parsedVersion);
       const keyOther = calculateKey(parsedOther);
       return pyCompare(keyVersion, keyOther);
     }
-    function rcompare(version4, other) {
-      return -compare(version4, other);
+    function rcompare(version3, other) {
+      return -compare(version3, other);
     }
     function pyCompare(elemIn, otherIn) {
       let elem = elemIn;
@@ -27461,9 +27461,9 @@ var require_specifier = __commonJS({
           return null;
         }
         let { ...spec } = groups;
-        const { operator, version: version4, prefix: prefix2, legacy } = groups;
-        if (version4) {
-          spec = { ...spec, ...explainVersion(version4) };
+        const { operator, version: version3, prefix: prefix2, legacy } = groups;
+        if (version3) {
+          spec = { ...spec, ...explainVersion(version3) };
           if (operator === "~=") {
             if (spec.release.length < 2) {
               return null;
@@ -27508,8 +27508,8 @@ var require_specifier = __commonJS({
       if (!parsed) {
         return [];
       }
-      return versions.filter((version4) => {
-        const explained = explainVersion(version4);
+      return versions.filter((version3) => {
+        const explained = explainVersion(version3);
         if (!parsed.length) {
           return explained && !(explained.is_prerelease && !options.prereleases);
         }
@@ -27517,12 +27517,12 @@ var require_specifier = __commonJS({
           if (!pass) {
             return false;
           }
-          return contains({ ...spec, ...options }, { version: version4, explained });
+          return contains({ ...spec, ...options }, { version: version3, explained });
         }, true);
       });
     }
-    function satisfies(version4, specifier, options = {}) {
-      const filtered = pick([version4], specifier, options);
+    function satisfies(version3, specifier, options = {}) {
+      const filtered = pick([version3], specifier, options);
       return filtered.length === 1;
     }
     function arrayStartsWith(array, prefix2) {
@@ -27538,7 +27538,7 @@ var require_specifier = __commonJS({
     }
     function contains(specifier, input) {
       const { explained } = input;
-      let { version: version4 } = input;
+      let { version: version3 } = input;
       const { ...spec } = specifier;
       if (spec.prereleases === void 0) {
         spec.prereleases = spec.is_prerelease;
@@ -27551,7 +27551,7 @@ var require_specifier = __commonJS({
         if (spec.epoch) {
           compatiblePrefix = spec.epoch + "!" + compatiblePrefix;
         }
-        return satisfies(version4, `>=${spec.version}, ==${compatiblePrefix}`, {
+        return satisfies(version3, `>=${spec.version}, ==${compatiblePrefix}`, {
           prereleases: spec.prereleases
         });
       }
@@ -27562,7 +27562,7 @@ var require_specifier = __commonJS({
       }
       if (explained) {
         if (explained.local && spec.version) {
-          version4 = explained.public;
+          version3 = explained.public;
           spec.version = explainVersion(spec.version).public;
         }
       }
@@ -27572,7 +27572,7 @@ var require_specifier = __commonJS({
         }
       }
       const op = Operator[spec.operator];
-      return op(version4, spec.version || spec.legacy);
+      return op(version3, spec.version || spec.legacy);
     }
     function validRange(specifier) {
       return Boolean(parse3(specifier));
@@ -27591,36 +27591,36 @@ var require_semantic = __commonJS({
       inc
     };
     function major(input) {
-      const version4 = explain(input);
-      if (!version4) {
+      const version3 = explain(input);
+      if (!version3) {
         throw new TypeError("Invalid Version: " + input);
       }
-      return version4.release[0];
+      return version3.release[0];
     }
     function minor(input) {
-      const version4 = explain(input);
-      if (!version4) {
+      const version3 = explain(input);
+      if (!version3) {
         throw new TypeError("Invalid Version: " + input);
       }
-      if (version4.release.length < 2) {
+      if (version3.release.length < 2) {
         return 0;
       }
-      return version4.release[1];
+      return version3.release[1];
     }
     function patch(input) {
-      const version4 = explain(input);
-      if (!version4) {
+      const version3 = explain(input);
+      if (!version3) {
         throw new TypeError("Invalid Version: " + input);
       }
-      if (version4.release.length < 3) {
+      if (version3.release.length < 3) {
         return 0;
       }
-      return version4.release[2];
+      return version3.release[2];
     }
     function inc(input, release, preReleaseIdentifier) {
       let identifier = preReleaseIdentifier || `a`;
-      const version4 = parse3(input);
-      if (!version4) {
+      const version3 = parse3(input);
+      if (!version3) {
         return null;
       }
       if (!["a", "b", "c", "rc", "alpha", "beta", "pre", "preview"].includes(
@@ -27631,103 +27631,103 @@ var require_semantic = __commonJS({
       switch (release) {
         case "premajor":
           {
-            const [majorVersion] = version4.release;
-            version4.release.fill(0);
-            version4.release[0] = majorVersion + 1;
+            const [majorVersion] = version3.release;
+            version3.release.fill(0);
+            version3.release[0] = majorVersion + 1;
           }
-          version4.pre = [identifier, 0];
-          delete version4.post;
-          delete version4.dev;
-          delete version4.local;
+          version3.pre = [identifier, 0];
+          delete version3.post;
+          delete version3.dev;
+          delete version3.local;
           break;
         case "preminor":
           {
-            const [majorVersion, minorVersion = 0] = version4.release;
-            version4.release.fill(0);
-            version4.release[0] = majorVersion;
-            version4.release[1] = minorVersion + 1;
+            const [majorVersion, minorVersion = 0] = version3.release;
+            version3.release.fill(0);
+            version3.release[0] = majorVersion;
+            version3.release[1] = minorVersion + 1;
           }
-          version4.pre = [identifier, 0];
-          delete version4.post;
-          delete version4.dev;
-          delete version4.local;
+          version3.pre = [identifier, 0];
+          delete version3.post;
+          delete version3.dev;
+          delete version3.local;
           break;
         case "prepatch":
           {
-            const [majorVersion, minorVersion = 0, patchVersion = 0] = version4.release;
-            version4.release.fill(0);
-            version4.release[0] = majorVersion;
-            version4.release[1] = minorVersion;
-            version4.release[2] = patchVersion + 1;
+            const [majorVersion, minorVersion = 0, patchVersion = 0] = version3.release;
+            version3.release.fill(0);
+            version3.release[0] = majorVersion;
+            version3.release[1] = minorVersion;
+            version3.release[2] = patchVersion + 1;
           }
-          version4.pre = [identifier, 0];
-          delete version4.post;
-          delete version4.dev;
-          delete version4.local;
+          version3.pre = [identifier, 0];
+          delete version3.post;
+          delete version3.dev;
+          delete version3.local;
           break;
         case "prerelease":
-          if (version4.pre === null) {
-            const [majorVersion, minorVersion = 0, patchVersion = 0] = version4.release;
-            version4.release.fill(0);
-            version4.release[0] = majorVersion;
-            version4.release[1] = minorVersion;
-            version4.release[2] = patchVersion + 1;
-            version4.pre = [identifier, 0];
+          if (version3.pre === null) {
+            const [majorVersion, minorVersion = 0, patchVersion = 0] = version3.release;
+            version3.release.fill(0);
+            version3.release[0] = majorVersion;
+            version3.release[1] = minorVersion;
+            version3.release[2] = patchVersion + 1;
+            version3.pre = [identifier, 0];
           } else {
-            if (preReleaseIdentifier === void 0 && version4.pre !== null) {
-              [identifier] = version4.pre;
+            if (preReleaseIdentifier === void 0 && version3.pre !== null) {
+              [identifier] = version3.pre;
             }
-            const [letter, number] = version4.pre;
+            const [letter, number] = version3.pre;
             if (letter === identifier) {
-              version4.pre = [letter, number + 1];
+              version3.pre = [letter, number + 1];
             } else {
-              version4.pre = [identifier, 0];
+              version3.pre = [identifier, 0];
             }
           }
-          delete version4.post;
-          delete version4.dev;
-          delete version4.local;
+          delete version3.post;
+          delete version3.dev;
+          delete version3.local;
           break;
         case "major":
-          if (version4.release.slice(1).some((value) => value !== 0) || version4.pre === null) {
-            const [majorVersion] = version4.release;
-            version4.release.fill(0);
-            version4.release[0] = majorVersion + 1;
+          if (version3.release.slice(1).some((value) => value !== 0) || version3.pre === null) {
+            const [majorVersion] = version3.release;
+            version3.release.fill(0);
+            version3.release[0] = majorVersion + 1;
           }
-          delete version4.pre;
-          delete version4.post;
-          delete version4.dev;
-          delete version4.local;
+          delete version3.pre;
+          delete version3.post;
+          delete version3.dev;
+          delete version3.local;
           break;
         case "minor":
-          if (version4.release.slice(2).some((value) => value !== 0) || version4.pre === null) {
-            const [majorVersion, minorVersion = 0] = version4.release;
-            version4.release.fill(0);
-            version4.release[0] = majorVersion;
-            version4.release[1] = minorVersion + 1;
+          if (version3.release.slice(2).some((value) => value !== 0) || version3.pre === null) {
+            const [majorVersion, minorVersion = 0] = version3.release;
+            version3.release.fill(0);
+            version3.release[0] = majorVersion;
+            version3.release[1] = minorVersion + 1;
           }
-          delete version4.pre;
-          delete version4.post;
-          delete version4.dev;
-          delete version4.local;
+          delete version3.pre;
+          delete version3.post;
+          delete version3.dev;
+          delete version3.local;
           break;
         case "patch":
-          if (version4.release.slice(3).some((value) => value !== 0) || version4.pre === null) {
-            const [majorVersion, minorVersion = 0, patchVersion = 0] = version4.release;
-            version4.release.fill(0);
-            version4.release[0] = majorVersion;
-            version4.release[1] = minorVersion;
-            version4.release[2] = patchVersion + 1;
+          if (version3.release.slice(3).some((value) => value !== 0) || version3.pre === null) {
+            const [majorVersion, minorVersion = 0, patchVersion = 0] = version3.release;
+            version3.release.fill(0);
+            version3.release[0] = majorVersion;
+            version3.release[1] = minorVersion;
+            version3.release[2] = patchVersion + 1;
           }
-          delete version4.pre;
-          delete version4.post;
-          delete version4.dev;
-          delete version4.local;
+          delete version3.pre;
+          delete version3.post;
+          delete version3.dev;
+          delete version3.local;
           break;
         default:
           return null;
       }
-      return stringify2(version4);
+      return stringify2(version3);
     }
   }
 });
@@ -41411,8 +41411,8 @@ function getVersion(app_1) {
 function getCompressionMethod() {
   return __awaiter10(this, void 0, void 0, function* () {
     const versionOutput = yield getVersion("zstd", ["--quiet"]);
-    const version4 = semver.clean(versionOutput);
-    debug(`zstd version: ${version4}`);
+    const version3 = semver.clean(versionOutput);
+    debug(`zstd version: ${version3}`);
     if (versionOutput === "") {
       return CompressionMethod.Gzip;
     } else {
@@ -47869,8 +47869,8 @@ var EntityDecoder = class {
    * Call this as soon as the document's `<?xml version="...">` declaration is parsed.
    * @param {1.0|1.1|number} version
    */
-  setXmlVersion(version4) {
-    this._ncrXmlVersion = version4 === 1.1 ? 1.1 : 1;
+  setXmlVersion(version3) {
+    this._ncrXmlVersion = version3 === 1.1 ? 1.1 : 1;
   }
   // -------------------------------------------------------------------------
   // Primary API
@@ -67493,8 +67493,8 @@ var SASQueryParameters = class {
     }
     return void 0;
   }
-  constructor(version4, signature, permissionsOrOptions, services, resourceTypes, protocol, startsOn, expiresOn2, ipRange, identifier, resource, cacheControl, contentDisposition, contentEncoding, contentLanguage, contentType2, userDelegationKey, preauthorizedAgentObjectId, correlationId, encryptionScope2, delegatedUserObjectId) {
-    this.version = version4;
+  constructor(version3, signature, permissionsOrOptions, services, resourceTypes, protocol, startsOn, expiresOn2, ipRange, identifier, resource, cacheControl, contentDisposition, contentEncoding, contentLanguage, contentType2, userDelegationKey, preauthorizedAgentObjectId, correlationId, encryptionScope2, delegatedUserObjectId) {
+    this.version = version3;
     this.signature = signature;
     if (permissionsOrOptions !== void 0 && typeof permissionsOrOptions !== "string") {
       this.permissions = permissionsOrOptions.permissions;
@@ -67701,7 +67701,7 @@ function generateBlobSASQueryParameters(blobSASSignatureValues, sharedKeyCredent
   return generateBlobSASQueryParametersInternal(blobSASSignatureValues, sharedKeyCredentialOrUserDelegationKey, accountName).sasQueryParameters;
 }
 function generateBlobSASQueryParametersInternal(blobSASSignatureValues, sharedKeyCredentialOrUserDelegationKey, accountName) {
-  const version4 = blobSASSignatureValues.version ? blobSASSignatureValues.version : SERVICE_VERSION;
+  const version3 = blobSASSignatureValues.version ? blobSASSignatureValues.version : SERVICE_VERSION;
   const sharedKeyCredential = sharedKeyCredentialOrUserDelegationKey instanceof StorageSharedKeyCredential ? sharedKeyCredentialOrUserDelegationKey : void 0;
   let userDelegationKeyCredential;
   if (sharedKeyCredential === void 0 && accountName !== void 0) {
@@ -67710,29 +67710,29 @@ function generateBlobSASQueryParametersInternal(blobSASSignatureValues, sharedKe
   if (sharedKeyCredential === void 0 && userDelegationKeyCredential === void 0) {
     throw TypeError("Invalid sharedKeyCredential, userDelegationKey or accountName.");
   }
-  if (version4 >= "2020-12-06") {
+  if (version3 >= "2020-12-06") {
     if (sharedKeyCredential !== void 0) {
       return generateBlobSASQueryParameters20201206(blobSASSignatureValues, sharedKeyCredential);
     } else {
-      if (version4 >= "2025-07-05") {
+      if (version3 >= "2025-07-05") {
         return generateBlobSASQueryParametersUDK20250705(blobSASSignatureValues, userDelegationKeyCredential);
       } else {
         return generateBlobSASQueryParametersUDK20201206(blobSASSignatureValues, userDelegationKeyCredential);
       }
     }
   }
-  if (version4 >= "2018-11-09") {
+  if (version3 >= "2018-11-09") {
     if (sharedKeyCredential !== void 0) {
       return generateBlobSASQueryParameters20181109(blobSASSignatureValues, sharedKeyCredential);
     } else {
-      if (version4 >= "2020-02-10") {
+      if (version3 >= "2020-02-10") {
         return generateBlobSASQueryParametersUDK20200210(blobSASSignatureValues, userDelegationKeyCredential);
       } else {
         return generateBlobSASQueryParametersUDK20181109(blobSASSignatureValues, userDelegationKeyCredential);
       }
     }
   }
-  if (version4 >= "2015-04-05") {
+  if (version3 >= "2015-04-05") {
     if (sharedKeyCredential !== void 0) {
       return generateBlobSASQueryParameters20150405(blobSASSignatureValues, sharedKeyCredential);
     } else {
@@ -68107,44 +68107,44 @@ function getCanonicalName(accountName, containerName, blobName) {
   return elements.join("");
 }
 function SASSignatureValuesSanityCheckAndAutofill(blobSASSignatureValues) {
-  const version4 = blobSASSignatureValues.version ? blobSASSignatureValues.version : SERVICE_VERSION;
-  if (blobSASSignatureValues.snapshotTime && version4 < "2018-11-09") {
+  const version3 = blobSASSignatureValues.version ? blobSASSignatureValues.version : SERVICE_VERSION;
+  if (blobSASSignatureValues.snapshotTime && version3 < "2018-11-09") {
     throw RangeError("'version' must be >= '2018-11-09' when providing 'snapshotTime'.");
   }
   if (blobSASSignatureValues.blobName === void 0 && blobSASSignatureValues.snapshotTime) {
     throw RangeError("Must provide 'blobName' when providing 'snapshotTime'.");
   }
-  if (blobSASSignatureValues.versionId && version4 < "2019-10-10") {
+  if (blobSASSignatureValues.versionId && version3 < "2019-10-10") {
     throw RangeError("'version' must be >= '2019-10-10' when providing 'versionId'.");
   }
   if (blobSASSignatureValues.blobName === void 0 && blobSASSignatureValues.versionId) {
     throw RangeError("Must provide 'blobName' when providing 'versionId'.");
   }
-  if (blobSASSignatureValues.permissions && blobSASSignatureValues.permissions.setImmutabilityPolicy && version4 < "2020-08-04") {
+  if (blobSASSignatureValues.permissions && blobSASSignatureValues.permissions.setImmutabilityPolicy && version3 < "2020-08-04") {
     throw RangeError("'version' must be >= '2020-08-04' when provided 'i' permission.");
   }
-  if (blobSASSignatureValues.permissions && blobSASSignatureValues.permissions.deleteVersion && version4 < "2019-10-10") {
+  if (blobSASSignatureValues.permissions && blobSASSignatureValues.permissions.deleteVersion && version3 < "2019-10-10") {
     throw RangeError("'version' must be >= '2019-10-10' when providing 'x' permission.");
   }
-  if (blobSASSignatureValues.permissions && blobSASSignatureValues.permissions.permanentDelete && version4 < "2019-10-10") {
+  if (blobSASSignatureValues.permissions && blobSASSignatureValues.permissions.permanentDelete && version3 < "2019-10-10") {
     throw RangeError("'version' must be >= '2019-10-10' when providing 'y' permission.");
   }
-  if (blobSASSignatureValues.permissions && blobSASSignatureValues.permissions.tag && version4 < "2019-12-12") {
+  if (blobSASSignatureValues.permissions && blobSASSignatureValues.permissions.tag && version3 < "2019-12-12") {
     throw RangeError("'version' must be >= '2019-12-12' when providing 't' permission.");
   }
-  if (version4 < "2020-02-10" && blobSASSignatureValues.permissions && (blobSASSignatureValues.permissions.move || blobSASSignatureValues.permissions.execute)) {
+  if (version3 < "2020-02-10" && blobSASSignatureValues.permissions && (blobSASSignatureValues.permissions.move || blobSASSignatureValues.permissions.execute)) {
     throw RangeError("'version' must be >= '2020-02-10' when providing the 'm' or 'e' permission.");
   }
-  if (version4 < "2021-04-10" && blobSASSignatureValues.permissions && blobSASSignatureValues.permissions.filterByTags) {
+  if (version3 < "2021-04-10" && blobSASSignatureValues.permissions && blobSASSignatureValues.permissions.filterByTags) {
     throw RangeError("'version' must be >= '2021-04-10' when providing the 'f' permission.");
   }
-  if (version4 < "2020-02-10" && (blobSASSignatureValues.preauthorizedAgentObjectId || blobSASSignatureValues.correlationId)) {
+  if (version3 < "2020-02-10" && (blobSASSignatureValues.preauthorizedAgentObjectId || blobSASSignatureValues.correlationId)) {
     throw RangeError("'version' must be >= '2020-02-10' when providing 'preauthorizedAgentObjectId' or 'correlationId'.");
   }
-  if (blobSASSignatureValues.encryptionScope && version4 < "2020-12-06") {
+  if (blobSASSignatureValues.encryptionScope && version3 < "2020-12-06") {
     throw RangeError("'version' must be >= '2020-12-06' when provided 'encryptionScope' in SAS.");
   }
-  blobSASSignatureValues.version = version4;
+  blobSASSignatureValues.version = version3;
   return blobSASSignatureValues;
 }
 
@@ -73540,14 +73540,14 @@ function getCacheServiceVersion() {
   return process.env["ACTIONS_CACHE_SERVICE_V2"] ? "v2" : "v1";
 }
 function getCacheServiceURL() {
-  const version4 = getCacheServiceVersion();
-  switch (version4) {
+  const version3 = getCacheServiceVersion();
+  switch (version3) {
     case "v1":
       return process.env["ACTIONS_CACHE_URL"] || process.env["ACTIONS_RESULTS_URL"] || "";
     case "v2":
       return process.env["ACTIONS_RESULTS_URL"] || "";
     default:
-      throw new Error(`Unsupported cache service version: ${version4}`);
+      throw new Error(`Unsupported cache service version: ${version3}`);
   }
 }
 
@@ -73613,10 +73613,10 @@ function createHttpClient() {
 function reserveCache(key, paths, options) {
   return __awaiter13(this, void 0, void 0, function* () {
     const httpClient = createHttpClient();
-    const version4 = getCacheVersion(paths, options === null || options === void 0 ? void 0 : options.compressionMethod, options === null || options === void 0 ? void 0 : options.enableCrossOsArchive);
+    const version3 = getCacheVersion(paths, options === null || options === void 0 ? void 0 : options.compressionMethod, options === null || options === void 0 ? void 0 : options.enableCrossOsArchive);
     const reserveCacheRequest = {
       key,
-      version: version4,
+      version: version3,
       cacheSize: options === null || options === void 0 ? void 0 : options.cacheSize
     };
     const response = yield retryTypedResponse("reserveCache", () => __awaiter13(this, void 0, void 0, function* () {
@@ -74626,14 +74626,14 @@ function getTarArgs(tarPath_1, compressionMethod_1, type_1) {
     const args = [`"${tarPath.path}"`];
     const cacheFileName = getCacheFileName(compressionMethod);
     const tarFile = "cache.tar";
-    const workingDirectory2 = getWorkingDirectory();
+    const workingDirectory = getWorkingDirectory();
     const BSD_TAR_ZSTD = tarPath.type === ArchiveToolType.BSD && compressionMethod !== CompressionMethod.Gzip && IS_WINDOWS8;
     switch (type) {
       case "create":
-        args.push("--posix", "-cf", BSD_TAR_ZSTD ? tarFile : cacheFileName.replace(new RegExp(`\\${path9.sep}`, "g"), "/"), "--exclude", BSD_TAR_ZSTD ? tarFile : cacheFileName.replace(new RegExp(`\\${path9.sep}`, "g"), "/"), "-P", "-C", workingDirectory2.replace(new RegExp(`\\${path9.sep}`, "g"), "/"), "--files-from", ManifestFilename);
+        args.push("--posix", "-cf", BSD_TAR_ZSTD ? tarFile : cacheFileName.replace(new RegExp(`\\${path9.sep}`, "g"), "/"), "--exclude", BSD_TAR_ZSTD ? tarFile : cacheFileName.replace(new RegExp(`\\${path9.sep}`, "g"), "/"), "-P", "-C", workingDirectory.replace(new RegExp(`\\${path9.sep}`, "g"), "/"), "--files-from", ManifestFilename);
         break;
       case "extract":
-        args.push("-xf", BSD_TAR_ZSTD ? tarFile : archivePath.replace(new RegExp(`\\${path9.sep}`, "g"), "/"), "-P", "-C", workingDirectory2.replace(new RegExp(`\\${path9.sep}`, "g"), "/"));
+        args.push("-xf", BSD_TAR_ZSTD ? tarFile : archivePath.replace(new RegExp(`\\${path9.sep}`, "g"), "/"), "-P", "-C", workingDirectory.replace(new RegExp(`\\${path9.sep}`, "g"), "/"));
         break;
       case "list":
         args.push("-tf", BSD_TAR_ZSTD ? tarFile : archivePath.replace(new RegExp(`\\${path9.sep}`, "g"), "/"), "-P");
@@ -74916,10 +74916,10 @@ function saveCacheV2(paths_1, key_1, options_1) {
       debug(`File Size: ${archiveFileSize}`);
       options.archiveSizeBytes = archiveFileSize;
       debug("Reserving Cache");
-      const version4 = getCacheVersion(paths, compressionMethod, enableCrossOsArchive);
+      const version3 = getCacheVersion(paths, compressionMethod, enableCrossOsArchive);
       const request = {
         key,
-        version: version4
+        version: version3
       };
       let signedUploadUrl;
       try {
@@ -74939,7 +74939,7 @@ function saveCacheV2(paths_1, key_1, options_1) {
       yield saveCache(cacheId, archivePath, signedUploadUrl, options);
       const finalizeRequest = {
         key,
-        version: version4,
+        version: version3,
         sizeBytes: `${archiveFileSize}`
       };
       const finalizeResponse = yield twirpClient.FinalizeCacheEntryUpload(finalizeRequest);
@@ -74979,6 +74979,15 @@ function saveCacheV2(paths_1, key_1, options_1) {
 
 // src/save-cache.ts
 var pep440 = __toESM(require_pep440(), 1);
+
+// src/cache/restore-cache.ts
+var STATE_CACHE_KEY = "cache-key";
+var STATE_CACHE_MATCHED_KEY = "cache-matched-key";
+var STATE_PYTHON_CACHE_MATCHED_KEY = "python-cache-matched-key";
+
+// src/utils/constants.ts
+var STATE_UV_PATH = "uv-path";
+var STATE_UV_VERSION = "uv-version";
 
 // src/utils/inputs.ts
 var import_node_path = __toESM(require("node:path"), 1);
@@ -75691,48 +75700,80 @@ function getConfigValueFromTomlFile(filePath, key) {
 }
 
 // src/utils/inputs.ts
-var workingDirectory = getInput("working-directory");
-var version3 = getInput("version");
-var versionFile = getVersionFile();
-var pythonVersion = getInput("python-version");
-var activateEnvironment = getBooleanInput("activate-environment");
-var venvPath = getVenvPath();
-var checkSum = getInput("checksum");
-var enableCache = getEnableCache();
-var restoreCache = getInput("restore-cache") === "true";
-var saveCache3 = getInput("save-cache") === "true";
-var cacheSuffix = getInput("cache-suffix") || "";
-var cacheLocalPath = getCacheLocalPath();
-var cacheDependencyGlob = getCacheDependencyGlob();
-var pruneCache = getInput("prune-cache") === "true";
-var cachePython = getInput("cache-python") === "true";
-var ignoreNothingToCache = getInput("ignore-nothing-to-cache") === "true";
-var ignoreEmptyWorkdir = getInput("ignore-empty-workdir") === "true";
-var toolBinDir = getToolBinDir();
-var toolDir = getToolDir();
-var pythonDir = getUvPythonDir();
-var githubToken = getInput("github-token");
-var manifestFile = getManifestFile();
-var addProblemMatchers = getInput("add-problem-matchers") === "true";
-var resolutionStrategy = getResolutionStrategy();
-function getVersionFile() {
+function loadInputs() {
+  const workingDirectory = getInput("working-directory");
+  const version3 = getInput("version");
+  const versionFile = getVersionFile(workingDirectory);
+  const pythonVersion = getInput("python-version");
+  const activateEnvironment = getBooleanInput("activate-environment");
+  const venvPath = getVenvPath(workingDirectory, activateEnvironment);
+  const checksum = getInput("checksum");
+  const enableCache = getEnableCache();
+  const restoreCache2 = getInput("restore-cache") === "true";
+  const saveCache4 = getInput("save-cache") === "true";
+  const cacheSuffix = getInput("cache-suffix") || "";
+  const cacheLocalPath = getCacheLocalPath(
+    workingDirectory,
+    versionFile,
+    enableCache
+  );
+  const cacheDependencyGlob = getCacheDependencyGlob(workingDirectory);
+  const pruneCache2 = getInput("prune-cache") === "true";
+  const cachePython = getInput("cache-python") === "true";
+  const ignoreNothingToCache = getInput("ignore-nothing-to-cache") === "true";
+  const ignoreEmptyWorkdir = getInput("ignore-empty-workdir") === "true";
+  const toolBinDir = getToolBinDir(workingDirectory);
+  const toolDir = getToolDir(workingDirectory);
+  const pythonDir = getUvPythonDir();
+  const githubToken = getInput("github-token");
+  const manifestFile = getManifestFile();
+  const addProblemMatchers = getInput("add-problem-matchers") === "true";
+  const resolutionStrategy = getResolutionStrategy();
+  return {
+    activateEnvironment,
+    addProblemMatchers,
+    cacheDependencyGlob,
+    cacheLocalPath,
+    cachePython,
+    cacheSuffix,
+    checksum,
+    enableCache,
+    githubToken,
+    ignoreEmptyWorkdir,
+    ignoreNothingToCache,
+    manifestFile,
+    pruneCache: pruneCache2,
+    pythonDir,
+    pythonVersion,
+    resolutionStrategy,
+    restoreCache: restoreCache2,
+    saveCache: saveCache4,
+    toolBinDir,
+    toolDir,
+    venvPath,
+    version: version3,
+    versionFile,
+    workingDirectory
+  };
+}
+function getVersionFile(workingDirectory) {
   const versionFileInput = getInput("version-file");
   if (versionFileInput !== "") {
     const tildeExpanded = expandTilde(versionFileInput);
-    return resolveRelativePath(tildeExpanded);
+    return resolveRelativePath(workingDirectory, tildeExpanded);
   }
   return versionFileInput;
 }
-function getVenvPath() {
+function getVenvPath(workingDirectory, activateEnvironment) {
   const venvPathInput = getInput("venv-path");
   if (venvPathInput !== "") {
     if (!activateEnvironment) {
       warning("venv-path is only used when activate-environment is true");
     }
     const tildeExpanded = expandTilde(venvPathInput);
-    return normalizePath(resolveRelativePath(tildeExpanded));
+    return normalizePath(resolveRelativePath(workingDirectory, tildeExpanded));
   }
-  return normalizePath(resolveRelativePath(".venv"));
+  return normalizePath(resolveRelativePath(workingDirectory, ".venv"));
 }
 function getEnableCache() {
   const enableCacheInput = getInput("enable-cache");
@@ -75741,11 +75782,11 @@ function getEnableCache() {
   }
   return enableCacheInput === "true";
 }
-function getToolBinDir() {
+function getToolBinDir(workingDirectory) {
   const toolBinDirInput = getInput("tool-bin-dir");
   if (toolBinDirInput !== "") {
     const tildeExpanded = expandTilde(toolBinDirInput);
-    return resolveRelativePath(tildeExpanded);
+    return resolveRelativePath(workingDirectory, tildeExpanded);
   }
   if (process.platform === "win32") {
     if (process.env.RUNNER_TEMP !== void 0) {
@@ -75757,11 +75798,11 @@ function getToolBinDir() {
   }
   return void 0;
 }
-function getToolDir() {
+function getToolDir(workingDirectory) {
   const toolDirInput = getInput("tool-dir");
   if (toolDirInput !== "") {
     const tildeExpanded = expandTilde(toolDirInput);
-    return resolveRelativePath(tildeExpanded);
+    return resolveRelativePath(workingDirectory, tildeExpanded);
   }
   if (process.platform === "win32") {
     if (process.env.RUNNER_TEMP !== void 0) {
@@ -75773,16 +75814,19 @@ function getToolDir() {
   }
   return void 0;
 }
-function getCacheLocalPath() {
+function getCacheLocalPath(workingDirectory, versionFile, enableCache) {
   const cacheLocalPathInput = getInput("cache-local-path");
   if (cacheLocalPathInput !== "") {
     const tildeExpanded = expandTilde(cacheLocalPathInput);
     return {
-      path: resolveRelativePath(tildeExpanded),
+      path: resolveRelativePath(workingDirectory, tildeExpanded),
       source: 0 /* Input */
     };
   }
-  const cacheDirFromConfig = getCacheDirFromConfig();
+  const cacheDirFromConfig = getCacheDirFromConfig(
+    workingDirectory,
+    versionFile
+  );
   if (cacheDirFromConfig !== void 0) {
     return { path: cacheDirFromConfig, source: 1 /* Config */ };
   }
@@ -75790,7 +75834,7 @@ function getCacheLocalPath() {
     info(`UV_CACHE_DIR is already set to ${process.env.UV_CACHE_DIR}`);
     return { path: process.env.UV_CACHE_DIR, source: 2 /* Env */ };
   }
-  if (getEnableCache()) {
+  if (enableCache) {
     if (process.env.RUNNER_ENVIRONMENT === "github-hosted") {
       if (process.env.RUNNER_TEMP !== void 0) {
         return {
@@ -75814,9 +75858,9 @@ function getCacheLocalPath() {
     };
   }
 }
-function getCacheDirFromConfig() {
+function getCacheDirFromConfig(workingDirectory, versionFile) {
   for (const filePath of [versionFile, "uv.toml", "pyproject.toml"]) {
-    const resolvedPath = resolveRelativePath(filePath);
+    const resolvedPath = resolveRelativePath(workingDirectory, filePath);
     try {
       const cacheDir = getConfigValueFromTomlFile(resolvedPath, "cache-dir");
       if (cacheDir !== void 0) {
@@ -75841,9 +75885,8 @@ function getUvPythonDir() {
   if (process.env.RUNNER_ENVIRONMENT !== "github-hosted") {
     if (process.platform === "win32") {
       return `${process.env.APPDATA}${import_node_path.default.sep}uv${import_node_path.default.sep}python`;
-    } else {
-      return `${process.env.HOME}${import_node_path.default.sep}.local${import_node_path.default.sep}share${import_node_path.default.sep}uv${import_node_path.default.sep}python`;
     }
+    return `${process.env.HOME}${import_node_path.default.sep}.local${import_node_path.default.sep}share${import_node_path.default.sep}uv${import_node_path.default.sep}python`;
   }
   if (process.env.RUNNER_TEMP !== void 0) {
     return `${process.env.RUNNER_TEMP}${import_node_path.default.sep}uv-python-dir`;
@@ -75852,10 +75895,10 @@ function getUvPythonDir() {
     "Could not determine UV_PYTHON_INSTALL_DIR. Please make sure RUNNER_TEMP is set or provide the UV_PYTHON_INSTALL_DIR environment variable"
   );
 }
-function getCacheDependencyGlob() {
+function getCacheDependencyGlob(workingDirectory) {
   const cacheDependencyGlobInput = getInput("cache-dependency-glob");
   if (cacheDependencyGlobInput !== "") {
-    return cacheDependencyGlobInput.split("\n").map((part) => part.trim()).map((part) => expandTilde(part)).map((part) => resolveRelativePath(part)).join("\n");
+    return cacheDependencyGlobInput.split("\n").map((part) => part.trim()).map((part) => expandTilde(part)).map((part) => resolveRelativePath(workingDirectory, part)).join("\n");
   }
   return cacheDependencyGlobInput;
 }
@@ -75874,7 +75917,7 @@ function normalizePath(inputPath) {
   }
   return trimmed;
 }
-function resolveRelativePath(inputPath) {
+function resolveRelativePath(workingDirectory, inputPath) {
   const hasNegation = inputPath.startsWith("!");
   const pathWithoutNegation = hasNegation ? inputPath.substring(1) : inputPath;
   const resolvedPath = import_node_path.default.resolve(workingDirectory, pathWithoutNegation);
@@ -75902,15 +75945,6 @@ function getResolutionStrategy() {
     `Invalid resolution-strategy: ${resolutionStrategyInput}. Must be 'highest' or 'lowest'.`
   );
 }
-
-// src/cache/restore-cache.ts
-var STATE_CACHE_KEY = "cache-key";
-var STATE_CACHE_MATCHED_KEY = "cache-matched-key";
-var STATE_PYTHON_CACHE_MATCHED_KEY = "python-cache-matched-key";
-
-// src/utils/constants.ts
-var STATE_UV_PATH = "uv-path";
-var STATE_UV_VERSION = "uv-version";
 
 // node_modules/axios/lib/helpers/bind.js
 function bind(fn, thisArg) {
@@ -79090,23 +79124,23 @@ var validators = {};
   };
 });
 var deprecatedWarnings = {};
-validators.transitional = function transitional(validator, version4, message) {
+validators.transitional = function transitional(validator, version3, message) {
   function formatMessage(opt, desc) {
     return "[Axios v" + VERSION + "] Transitional option '" + opt + "'" + desc + (message ? ". " + message : "");
   }
   return (value, opt, opts) => {
     if (validator === false) {
       throw new AxiosError_default(
-        formatMessage(opt, " has been removed" + (version4 ? " in " + version4 : "")),
+        formatMessage(opt, " has been removed" + (version3 ? " in " + version3 : "")),
         AxiosError_default.ERR_DEPRECATED
       );
     }
-    if (version4 && !deprecatedWarnings[opt]) {
+    if (version3 && !deprecatedWarnings[opt]) {
       deprecatedWarnings[opt] = true;
       console.warn(
         formatMessage(
           opt,
-          " has been deprecated since v" + version4 + " and will be removed in the near future"
+          " has been deprecated since v" + version3 + " and will be removed in the near future"
         )
       );
     }
@@ -79586,9 +79620,10 @@ async function validateSubscription() {
 async function run() {
   try {
     await validateSubscription();
-    if (enableCache) {
-      if (saveCache3) {
-        await saveCache4();
+    const inputs = loadInputs();
+    if (inputs.enableCache) {
+      if (inputs.saveCache) {
+        await saveCache3(inputs);
       } else {
         info("save-cache is false. Skipping save cache step.");
       }
@@ -79600,7 +79635,7 @@ async function run() {
     setFailed(err.message);
   }
 }
-async function saveCache4() {
+async function saveCache3(inputs) {
   const cacheKey = getState(STATE_CACHE_KEY);
   const matchedKey = getState(STATE_CACHE_MATCHED_KEY);
   if (!cacheKey) {
@@ -79610,12 +79645,12 @@ async function saveCache4() {
   if (matchedKey === cacheKey) {
     info(`Cache hit occurred on key ${cacheKey}, not saving cache.`);
   } else {
-    if (pruneCache) {
-      await pruneCache2();
+    if (inputs.pruneCache) {
+      await pruneCache();
     }
-    const actualCachePath = getUvCachePath();
+    const actualCachePath = getUvCachePath(inputs);
     if (!fs7.existsSync(actualCachePath)) {
-      if (ignoreNothingToCache) {
+      if (inputs.ignoreNothingToCache) {
         info(
           "No cacheable uv cache paths were found. Ignoring because ignore-nothing-to-cache is enabled."
         );
@@ -79633,23 +79668,23 @@ async function saveCache4() {
       );
     }
   }
-  if (cachePython) {
-    if (!fs7.existsSync(pythonDir)) {
+  if (inputs.cachePython) {
+    if (!fs7.existsSync(inputs.pythonDir)) {
       warning(
-        `Python cache path ${pythonDir} does not exist on disk. Skipping Python cache save because no managed Python installation was found. If you want uv to install managed Python instead of using a system interpreter, set UV_PYTHON_PREFERENCE=only-managed.`
+        `Python cache path ${inputs.pythonDir} does not exist on disk. Skipping Python cache save because no managed Python installation was found. If you want uv to install managed Python instead of using a system interpreter, set UV_PYTHON_PREFERENCE=only-managed.`
       );
       return;
     }
     const pythonCacheKey = `${cacheKey}-python`;
     await saveCacheToKey(
       pythonCacheKey,
-      pythonDir,
+      inputs.pythonDir,
       STATE_PYTHON_CACHE_MATCHED_KEY,
       "Python cache"
     );
   }
 }
-async function pruneCache2() {
+async function pruneCache() {
   const forceSupported = pep440.gte(getState(STATE_UV_VERSION), "0.8.24");
   const options = {
     silent: false
@@ -79662,19 +79697,19 @@ async function pruneCache2() {
   const uvPath = getState(STATE_UV_PATH);
   await exec(uvPath, execArgs, options);
 }
-function getUvCachePath() {
-  if (cacheLocalPath === void 0) {
+function getUvCachePath(inputs) {
+  if (inputs.cacheLocalPath === void 0) {
     throw new Error(
       "cache-local-path is not set. Cannot save cache without a valid cache path."
     );
   }
-  if (process.env.UV_CACHE_DIR && process.env.UV_CACHE_DIR !== cacheLocalPath.path) {
+  if (process.env.UV_CACHE_DIR && process.env.UV_CACHE_DIR !== inputs.cacheLocalPath.path) {
     warning(
-      `The environment variable UV_CACHE_DIR has been changed to "${process.env.UV_CACHE_DIR}", by an action or step running after astral-sh/setup-uv. This can lead to unexpected behavior. If you expected this to happen set the cache-local-path input to "${process.env.UV_CACHE_DIR}" instead of "${cacheLocalPath.path}".`
+      `The environment variable UV_CACHE_DIR has been changed to "${process.env.UV_CACHE_DIR}", by an action or step running after astral-sh/setup-uv. This can lead to unexpected behavior. If you expected this to happen set the cache-local-path input to "${process.env.UV_CACHE_DIR}" instead of "${inputs.cacheLocalPath.path}".`
     );
     return process.env.UV_CACHE_DIR;
   }
-  return cacheLocalPath.path;
+  return inputs.cacheLocalPath.path;
 }
 async function saveCacheToKey(cacheKey, cachePath, stateKey, cacheName) {
   const matchedKey = getState(stateKey);

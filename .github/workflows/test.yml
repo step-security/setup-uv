@@ -440,6 +440,54 @@ jobs:
         env:
           UV_VENV: ${{ steps.setup-uv.outputs.venv }}
 
+  test-activate-environment-no-project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+      - name: Create incompatible pyproject.toml
+        run: |
+          cat > pyproject.toml <<'EOF'
+          [project]
+          name = "test-no-project"
+          version = "0.1.0"
+
+          [dependency-groups]
+          dev = [
+              "-e file:///${PROJECT_ROOT}/projects/pkg",
+          ]
+          EOF
+        shell: bash
+      - name: Install latest version with no-project
+        id: setup-uv
+        uses: ./
+        with:
+          python-version: 3.13.1t
+          activate-environment: true
+          no-project: true
+      - name: Verify packages can be installed
+        run: uv pip install pip
+        shell: bash
+      - name: Verify output venv is set
+        run: |
+          if [ -z "$UV_VENV" ]; then
+            echo "output venv is not set"
+            exit 1
+          fi
+          if [ ! -d "$UV_VENV" ]; then
+            echo "output venv not point to a directory: $UV_VENV"
+            exit 1
+          fi
+        shell: bash
+        env:
+          UV_VENV: ${{ steps.setup-uv.outputs.venv }}
+
   test-activate-environment-custom-path:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -1261,6 +1309,7 @@ jobs:
       - test-python-version
       - test-activate-environment
       - test-activate-environment-custom-path
+      - test-activate-environment-no-project
       - test-debian-unstable
       - test-musl
       - test-cache-key-os-version

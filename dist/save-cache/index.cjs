@@ -75636,6 +75636,12 @@ function getConfigValueFromTomlFile(filePath, key) {
     return void 0;
   }
   const fileContent = import_node_fs2.default.readFileSync(filePath, "utf-8");
+  return getConfigValueFromTomlContent(filePath, fileContent, key);
+}
+function getConfigValueFromTomlContent(filePath, fileContent, key) {
+  if (!filePath.endsWith(".toml")) {
+    return void 0;
+  }
   if (filePath.endsWith("pyproject.toml")) {
     const tomlContent2 = parse2(fileContent);
     return tomlContent2?.tool?.uv?.[key];
@@ -75651,6 +75657,7 @@ function loadInputs() {
   const versionFile = getVersionFile(workingDirectory);
   const pythonVersion = getInput("python-version");
   const activateEnvironment = getBooleanInput("activate-environment");
+  const noProject = getBooleanInput("no-project");
   const venvPath = getVenvPath(workingDirectory, activateEnvironment);
   const checksum = getInput("checksum");
   const enableCache = getEnableCache();
@@ -75687,6 +75694,7 @@ function loadInputs() {
     ignoreEmptyWorkdir,
     ignoreNothingToCache,
     manifestFile,
+    noProject,
     pruneCache: pruneCache2,
     pythonDir,
     pythonVersion,

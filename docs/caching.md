@@ -23,7 +23,7 @@ The computed cache key is available as the `cache-key` output:
 ```yaml
 - name: Setup uv
   id: setup-uv
-  uses: step-security/setup-uv@v7
+  uses: step-security/setup-uv@v8
   with:
     enable-cache: true
 - name: Print cache key
@@ -50,7 +50,7 @@ You can optionally define a custom cache key suffix.
 ```yaml
 - name: Enable caching and define a custom cache key suffix
   id: setup-uv
-  uses: step-security/setup-uv@v7
+  uses: step-security/setup-uv@v8
   with:
     enable-cache: true
     cache-suffix: "optional-suffix"
@@ -89,7 +89,7 @@ changes. If you use relative paths, they are relative to the working directory.
 
 ```yaml
 - name: Define a cache dependency glob
-  uses: step-security/setup-uv@v7
+  uses: step-security/setup-uv@v8
   with:
     enable-cache: true
     cache-dependency-glob: "**/pyproject.toml"
@@ -97,7 +97,7 @@ changes. If you use relative paths, they are relative to the working directory.
 
 ```yaml
 - name: Define a list of cache dependency globs
-  uses: step-security/setup-uv@v7
+  uses: step-security/setup-uv@v8
   with:
     enable-cache: true
     cache-dependency-glob: |
@@ -107,7 +107,7 @@ changes. If you use relative paths, they are relative to the working directory.
 
 ```yaml
 - name: Define an absolute cache dependency glob
-  uses: step-security/setup-uv@v7
+  uses: step-security/setup-uv@v8
   with:
     enable-cache: true
     cache-dependency-glob: "/tmp/my-folder/requirements*.txt"
@@ -115,7 +115,7 @@ changes. If you use relative paths, they are relative to the working directory.
 
 ```yaml
 - name: Never invalidate the cache
-  uses: step-security/setup-uv@v7
+  uses: step-security/setup-uv@v8
   with:
     enable-cache: true
     cache-dependency-glob: ""
@@ -128,7 +128,7 @@ By default, the cache will be restored.
 
 ```yaml
 - name: Don't restore an existing cache
-  uses: step-security/setup-uv@v7
+  uses: step-security/setup-uv@v8
   with:
     enable-cache: true
     restore-cache: false
@@ -142,7 +142,7 @@ By default, the cache will be saved.
 
 ```yaml
 - name: Don't save the cache after the run
-  uses: step-security/setup-uv@v7
+  uses: step-security/setup-uv@v8
   with:
     enable-cache: true
     save-cache: false
@@ -168,7 +168,7 @@ It defaults to `setup-uv-cache` in the `TMP` dir, `D:\a\_temp\setup-uv-cache` on
 
 ```yaml
 - name: Define a custom uv cache path
-  uses: step-security/setup-uv@v7
+  uses: step-security/setup-uv@v8
   with:
     cache-local-path: "/path/to/cache"
 ```
@@ -187,7 +187,7 @@ input.
 
 ```yaml
 - name: Don't prune the cache before saving it
-  uses: step-security/setup-uv@v7
+  uses: step-security/setup-uv@v8
   with:
     enable-cache: true
     prune-cache: false
@@ -205,7 +205,7 @@ To force managed Python installs, set `UV_PYTHON_PREFERENCE=only-managed`.
 
 ```yaml
 - name: Cache Python installs
-  uses: step-security/setup-uv@v7
+  uses: step-security/setup-uv@v8
   with:
     enable-cache: true
     cache-python: true
@@ -213,12 +213,17 @@ To force managed Python installs, set `UV_PYTHON_PREFERENCE=only-managed`.
 
 ## Ignore nothing to cache
 
-By default, the action will fail if caching is enabled but there is nothing to upload (the uv cache directory does not exist).
+By default, the action will fail if caching is enabled but there is nothing to upload (the uv cache directory does not exist) with an error like
+
+```console
+Error: Cache path /home/runner/.cache/uv does not exist on disk. This likely indicates that there are no dependencies to cache. Consider disabling the cache input if it is not needed.
+```
+
 If you want to ignore this, set the `ignore-nothing-to-cache` input to `true`.
 
 ```yaml
 - name: Ignore nothing to cache
-  uses: step-security/setup-uv@v7
+  uses: step-security/setup-uv@v8
   with:
     enable-cache: true
     ignore-nothing-to-cache: true

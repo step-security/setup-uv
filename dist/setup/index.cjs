@@ -109964,6 +109964,9 @@ function getResolutionStrategy() {
   );
 }
 
+// src/utils/subscription.ts
+var fs15 = __toESM(require("node:fs"), 1);
+
 // node_modules/axios/lib/helpers/bind.js
 function bind(fn, thisArg) {
   return function wrap() {
@@ -114058,7 +114061,6 @@ var {
 } = axios_default;
 
 // src/utils/subscription.ts
-var fs15 = __toESM(require("fs"), 1);
 async function validateSubscription() {
   const eventPath = process.env.GITHUB_EVENT_PATH;
   let repoPrivate;
@@ -114072,7 +114074,8 @@ async function validateSubscription() {
   info("");
   info("\x1B[1;36mStepSecurity Maintained Action\x1B[0m");
   info(`Secure drop-in replacement for ${upstream}`);
-  if (repoPrivate === false) info("\x1B[32m\u2713 Free for public repositories\x1B[0m");
+  if (repoPrivate === false)
+    info("\x1B[32m\u2713 Free for public repositories\x1B[0m");
   info(`\x1B[36mLearn more:\x1B[0m ${docsUrl}`);
   info("");
   if (repoPrivate === false) return;
@@ -114090,7 +114093,9 @@ async function validateSubscription() {
       error(
         "\x1B[1;31mThis action requires a StepSecurity subscription for private repositories.\x1B[0m"
       );
-      error(`\x1B[31mLearn how to enable a subscription: ${docsUrl}\x1B[0m`);
+      error(
+        `\x1B[31mLearn how to enable a subscription: ${docsUrl}\x1B[0m`
+      );
       process.exit(1);
     }
     info("Timeout or API not reachable. Continuing to next step.");

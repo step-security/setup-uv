@@ -6,10 +6,10 @@ import {
   updateChecksums,
 } from "./download/checksum/update-known-checksums";
 import {
-  fetchVersionData,
+  fetchManifest,
   getLatestVersion,
-  type NdjsonVersion,
-} from "./download/versions-client";
+  type ManifestVersion,
+} from "./download/manifest";
 import { validateSubscription } from "./utils/subscription";
 
 const VERSION_IN_CHECKSUM_KEY_PATTERN =
@@ -34,8 +34,8 @@ async function run(): Promise<void> {
     return;
   }
 
-  const versions = await fetchVersionData();
-  const checksumEntries = extractChecksumsFromNdjson(versions);
+  const versions = await fetchManifest();
+  const checksumEntries = extractChecksumsFromManifest(versions);
   await updateChecksums(checksumFilePath, checksumEntries);
 
   core.setOutput("latest-version", latestVersion);
@@ -63,8 +63,8 @@ function extractVersionFromChecksumKey(key: string): string | undefined {
   return key.match(VERSION_IN_CHECKSUM_KEY_PATTERN)?.[1];
 }
 
-function extractChecksumsFromNdjson(
-  versions: NdjsonVersion[],
+function extractChecksumsFromManifest(
+  versions: ManifestVersion[],
 ): ChecksumEntry[] {
   const checksums: ChecksumEntry[] = [];
 

@@ -7,7 +7,7 @@ inputs:
     description: "The version of uv to install e.g., `0.5.0` Defaults to the version in pyproject.toml or 'latest'."
     default: ""
   version-file:
-    description: "Path to a file containing the version of uv to install. Defaults to searching for uv.toml and if not found pyproject.toml."
+    description: "Path to a file containing the version of uv to install, e.g., uv.toml, pyproject.toml, .tool-versions, requirements.txt or uv.lock. Defaults to searching for uv.toml and if not found pyproject.toml."
     default: ""
   python-version:
     description: "The version of Python to set UV_PYTHON to"
@@ -80,9 +80,15 @@ inputs:
   manifest-file:
     description: "URL to a custom manifest file in the astral-sh/versions format."
     required: false
+  download-from-astral-mirror:
+    description: "Download uv from the Astral mirror instead of directly from GitHub Releases."
+    default: "true"
   add-problem-matchers:
     description: "Add problem matchers."
     default: "true"
+  quiet:
+    description: "Suppress info-level log output. Only warnings and errors are shown."
+    default: "false"
   resolution-strategy:
     description: "Resolution strategy to use when resolving version ranges. 'highest' uses the latest compatible version, 'lowest' uses the oldest compatible version."
     default: "highest"

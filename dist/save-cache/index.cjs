@@ -82346,7 +82346,7 @@ function getUvCachePath(inputs) {
   }
   if (process.env.UV_CACHE_DIR && process.env.UV_CACHE_DIR !== inputs.cacheLocalPath.path) {
     warning2(
-      `The environment variable UV_CACHE_DIR has been changed to "${process.env.UV_CACHE_DIR}", by an action or step running after astral-sh/setup-uv. This can lead to unexpected behavior. If you expected this to happen set the cache-local-path input to "${process.env.UV_CACHE_DIR}" instead of "${inputs.cacheLocalPath.path}".`
+      `The environment variable UV_CACHE_DIR has been changed to "${process.env.UV_CACHE_DIR}", by an action or step running after step-security/setup-uv. This can lead to unexpected behavior. If you expected this to happen set the cache-local-path input to "${process.env.UV_CACHE_DIR}" instead of "${inputs.cacheLocalPath.path}".`
     );
     return process.env.UV_CACHE_DIR;
   }

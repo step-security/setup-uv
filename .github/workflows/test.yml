@@ -148,6 +148,9 @@ jobs:
         with:
           version: ${{ matrix.input.version-input }}
           resolution-strategy: ${{ matrix.input.resolution-strategy || 'highest' }}
+          # Older uv versions (e.g. 0.1.x) do not support `uv cache prune`, which the
+          # post step would invoke when caching is enabled.
+          enable-cache: false
       - name: Correct version gets installed
         run: |
           if [ "$(uv --version)" != "uv ${{ matrix.input.expected-version }}" ]; then
@@ -1020,6 +1023,25 @@ jobs:
             exit 1
           fi
 
+  test-download-from-astral-mirror-false:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+      - name: Install with download-from-astral-mirror disabled
+        id: setup-uv
+        uses: ./
+        with:
+          download-from-astral-mirror: false
+      - name: Verify uv is installed
+        run: uv --version
+
   test-absolute-path:
     runs-on: ubuntu-latest
     steps:
@@ -1328,6 +1350,7 @@ jobs:
       - test-restore-cache-restore-cache-false
       - test-no-python-version
       - test-custom-manifest-file
+      - test-download-from-astral-mirror-false
       - test-absolute-path
       - test-relative-path
       - test-cache-prune-force

@@ -49,7 +49,7 @@ Have a look under [Advanced Configuration](#advanced-configuration) for detailed
     # The version of uv to install (default: searches for version in config files, then latest)
     version: ""
 
-    # Path to a file containing the version of uv to install (default: searches uv.toml then pyproject.toml)
+    # Path to a file containing the version of uv to install, e.g., uv.toml, pyproject.toml, .tool-versions, requirements.txt or uv.lock (default: searches uv.toml then pyproject.toml)
     version-file: ""
 
     # Resolution strategy when resolving version ranges: 'highest' or 'lowest'
@@ -122,8 +122,14 @@ Have a look under [Advanced Configuration](#advanced-configuration) for detailed
     # URL to a custom manifest file in the astral-sh/versions format
     manifest-file: ""
 
+    # Download uv from the Astral mirror instead of directly from GitHub Releases
+    download-from-astral-mirror: "true"
+
     # Add problem matchers
     add-problem-matchers: "true"
+
+    # Suppress info-level log output. Only warnings and errors are shown
+    quiet: "false"
 ```
 
 ### Outputs

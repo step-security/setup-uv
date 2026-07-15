@@ -35,9 +35,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # This is a TypeScript/JavaScript action. Test fixtures under
-        # __tests__/fixtures contain sample Python projects only.
-        language: ["javascript", "typescript"]
+        language: ["javascript", "python", "typescript"]
         # CodeQL supports [ $supported-codeql-languages ]
         # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
 
@@ -55,7 +53,6 @@ jobs:
         uses: github/codeql-action/init@45c373516f557556c15d420e3f5e0aa3d64366bc # v3.31.9
         with:
           languages: ${{ matrix.language }}
-          config-file: ./.github/codeql/codeql-config.yml
           # If you wish to specify custom queries, you can do so here or in a config file.
           # By default, queries listed here will override any specified in a config file.
           # Prefix the list here with "+" to use these queries and those in the config file.

@@ -148,6 +148,9 @@ jobs:
         with:
           version: ${{ matrix.input.version-input }}
           resolution-strategy: ${{ matrix.input.resolution-strategy || 'highest' }}
+          # Older uv versions (e.g. 0.1.x) do not support `uv cache prune`, which the
+          # post step would invoke when caching is enabled.
+          enable-cache: false
       - name: Correct version gets installed
         run: |
           if [ "$(uv --version)" != "uv ${{ matrix.input.expected-version }}" ]; then

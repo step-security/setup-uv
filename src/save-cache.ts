@@ -114,7 +114,16 @@ async function saveCache(inputs: SetupInputs): Promise<void> {
 }
 
 async function pruneCache(): Promise<void> {
-  const forceSupported = pep440.gte(core.getState(STATE_UV_VERSION), "0.8.24");
+  const uvVersion = core.getState(STATE_UV_VERSION);
+  // `uv cache prune --ci` is not available on very old uv releases (e.g. 0.1.x).
+  if (pep440.lt(uvVersion, "0.2.0")) {
+    log.info(
+      `Skipping cache prune for uv ${uvVersion} (cache prune is not supported).`,
+    );
+    return;
+  }
+
+  const forceSupported = pep440.gte(uvVersion, "0.8.24");
 
   const options: exec.ExecOptions = {
     silent: false,

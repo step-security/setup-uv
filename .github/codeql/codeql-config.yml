@@ -1,0 +1,9 @@
+name: "StepSecurity setup-uv CodeQL config"
+
+# Generated action bundles contain vendored third-party code and produce
+# noisy false positives (weak crypto, HTML regexes, etc.). Source under src/
+# remains fully analyzed.
+paths-ignore:
+  - dist/**
+  - node_modules/**
+  - __tests__/fixtures/**

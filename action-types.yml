@@ -52,7 +52,11 @@ inputs:
     type: string
   manifest-file:
     type: string
+  download-from-astral-mirror:
+    type: boolean
   add-problem-matchers:
+    type: boolean
+  quiet:
     type: boolean
   resolution-strategy:
     type: enum

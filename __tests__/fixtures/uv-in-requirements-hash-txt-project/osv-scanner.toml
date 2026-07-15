@@ -11,3 +11,15 @@ reason = "It is a test dependency"
 [[IgnoredVulns]]
 id = "GHSA-pqhf-p39g-3x64"
 reason = "It is a test dependency"
+
+[[IgnoredVulns]]
+id = "PYSEC-2026-2132"
+reason = "It is a test dependency"
+
+[[IgnoredVulns]]
+id = "GHSA-4gg8-gxpx-9rph"
+reason = "It is a test dependency"
+
+[[IgnoredVulns]]
+id = "GHSA-pjjw-68hj-v9mw"
+reason = "It is a test dependency"

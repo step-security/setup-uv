@@ -9270,7 +9270,7 @@ var require_readable = __commonJS({
   "node_modules/@actions/http-client/node_modules/undici/lib/api/readable.js"(exports2, module2) {
     "use strict";
     var assert = require("node:assert");
-    var { Readable: Readable2 } = require("node:stream");
+    var { Readable: Readable3 } = require("node:stream");
     var { RequestAbortedError, NotSupportedError, InvalidArgumentError, AbortError } = require_errors();
     var util4 = require_util();
     var { ReadableStreamFrom } = require_util();
@@ -9282,7 +9282,7 @@ var require_readable = __commonJS({
     var kContentLength = /* @__PURE__ */ Symbol("kContentLength");
     var noop2 = () => {
     };
-    var BodyReadable = class extends Readable2 {
+    var BodyReadable = class extends Readable3 {
       constructor({
         resume,
         abort,
@@ -9624,7 +9624,7 @@ var require_api_request = __commonJS({
   "node_modules/@actions/http-client/node_modules/undici/lib/api/api-request.js"(exports2, module2) {
     "use strict";
     var assert = require("node:assert");
-    var { Readable: Readable2 } = require_readable();
+    var { Readable: Readable3 } = require_readable();
     var { InvalidArgumentError, RequestAbortedError } = require_errors();
     var util4 = require_util();
     var { getResolveErrorBodyCallback } = require_util3();
@@ -9719,7 +9719,7 @@ var require_api_request = __commonJS({
         const parsedHeaders = responseHeaders === "raw" ? util4.parseHeaders(rawHeaders) : headers;
         const contentType = parsedHeaders["content-type"];
         const contentLength = parsedHeaders["content-length"];
-        const res = new Readable2({
+        const res = new Readable3({
           resume,
           abort,
           contentType,
@@ -10034,7 +10034,7 @@ var require_api_pipeline = __commonJS({
   "node_modules/@actions/http-client/node_modules/undici/lib/api/api-pipeline.js"(exports2, module2) {
     "use strict";
     var {
-      Readable: Readable2,
+      Readable: Readable3,
       Duplex,
       PassThrough
     } = require("node:stream");
@@ -10048,7 +10048,7 @@ var require_api_pipeline = __commonJS({
     var { addSignal, removeSignal } = require_abort_signal();
     var assert = require("node:assert");
     var kResume = /* @__PURE__ */ Symbol("resume");
-    var PipelineRequest = class extends Readable2 {
+    var PipelineRequest = class extends Readable3 {
       constructor() {
         super({ autoDestroy: true });
         this[kResume] = null;
@@ -10065,7 +10065,7 @@ var require_api_pipeline = __commonJS({
         callback(err);
       }
     };
-    var PipelineResponse = class extends Readable2 {
+    var PipelineResponse = class extends Readable3 {
       constructor(resume) {
         super({ autoDestroy: true });
         this[kResume] = resume;
@@ -13390,7 +13390,7 @@ var require_fetch = __commonJS({
       subresourceSet
     } = require_constants3();
     var EE = require("node:events");
-    var { Readable: Readable2, pipeline, finished } = require("node:stream");
+    var { Readable: Readable3, pipeline, finished } = require("node:stream");
     var { addAbortListener, isErrored, isReadable, bufferToLowerCasedHeaderName } = require_util();
     var { dataURLProcessor, serializeAMimeType, minimizeSupportedMimeType } = require_data_url();
     var { getGlobalDispatcher } = require_global2();
@@ -14291,7 +14291,7 @@ var require_fetch = __commonJS({
                 headersList.append(bufferToLowerCasedHeaderName(rawHeaders[i]), rawHeaders[i + 1].toString("latin1"), true);
               }
               location = headersList.get("location", true);
-              this.body = new Readable2({ read: resume });
+              this.body = new Readable3({ read: resume });
               const decoders = [];
               const willFollow = location && request.redirect === "follow" && redirectStatusSet.has(status);
               if (request.method !== "HEAD" && request.method !== "CONNECT" && !nullBodyStatus.includes(status) && !willFollow) {
@@ -31782,7 +31782,7 @@ var require_readable2 = __commonJS({
     "use strict";
     var assert = require("node:assert");
     var { addAbortListener } = require("node:events");
-    var { Readable: Readable2 } = require("node:stream");
+    var { Readable: Readable3 } = require("node:stream");
     var { RequestAbortedError, NotSupportedError, InvalidArgumentError, AbortError } = require_errors2();
     var util4 = require_util9();
     var { ReadableStreamFrom } = require_util9();
@@ -31797,7 +31797,7 @@ var require_readable2 = __commonJS({
     var kPreservedBuffer = /* @__PURE__ */ Symbol("kPreservedBuffer");
     var noop2 = () => {
     };
-    var BodyReadable = class extends Readable2 {
+    var BodyReadable = class extends Readable3 {
       /**
        * @param {object} opts
        * @param {(this: Readable, size: number) => void} opts.resume
@@ -32210,7 +32210,7 @@ var require_api_request2 = __commonJS({
     "use strict";
     var assert = require("node:assert");
     var { AsyncResource } = require("node:async_hooks");
-    var { Readable: Readable2 } = require_readable2();
+    var { Readable: Readable3 } = require_readable2();
     var { InvalidArgumentError, RequestAbortedError } = require_errors2();
     var util4 = require_util9();
     function noop2() {
@@ -32296,7 +32296,7 @@ var require_api_request2 = __commonJS({
         const parsedHeaders = headers;
         const contentType = parsedHeaders?.["content-type"];
         const contentLength = parsedHeaders?.["content-length"];
-        const res = new Readable2({
+        const res = new Readable3({
           resume: () => controller.resume(),
           abort: (reason) => controller.abort(reason),
           contentType,
@@ -32672,7 +32672,7 @@ var require_api_pipeline2 = __commonJS({
   "node_modules/undici/lib/api/api-pipeline.js"(exports2, module2) {
     "use strict";
     var {
-      Readable: Readable2,
+      Readable: Readable3,
       Duplex,
       PassThrough
     } = require("node:stream");
@@ -32689,7 +32689,7 @@ var require_api_pipeline2 = __commonJS({
     function noop2() {
     }
     var kResume = /* @__PURE__ */ Symbol("resume");
-    var PipelineRequest = class extends Readable2 {
+    var PipelineRequest = class extends Readable3 {
       constructor() {
         super({ autoDestroy: true });
         this[kResume] = null;
@@ -32707,7 +32707,7 @@ var require_api_pipeline2 = __commonJS({
         callback(err);
       }
     };
-    var PipelineResponse = class extends Readable2 {
+    var PipelineResponse = class extends Readable3 {
       constructor(resume) {
         super({ autoDestroy: true });
         this[kResume] = resume;
@@ -37356,7 +37356,7 @@ var require_cache3 = __commonJS({
   "node_modules/undici/lib/interceptor/cache.js"(exports2, module2) {
     "use strict";
     var assert = require("node:assert");
-    var { Readable: Readable2 } = require("node:stream");
+    var { Readable: Readable3 } = require("node:stream");
     var util4 = require_util9();
     var CacheHandler = require_cache_handler();
     var MemoryCacheStore = require_memory_cache_store();
@@ -37452,7 +37452,7 @@ var require_cache3 = __commonJS({
       return dispatch(opts, new CacheHandler(globalOpts, cacheKey, handler));
     }
     function sendCachedValue(handler, opts, result, age, context, isStale2) {
-      const stream4 = util4.isStream(result.body) ? result.body : Readable2.from(result.body ?? []);
+      const stream4 = util4.isStream(result.body) ? result.body : Readable3.from(result.body ?? []);
       assert(!stream4.destroyed, "stream should not be destroyed");
       assert(!stream4.readableDidRead, "stream should not be readableDidRead");
       const controller = {
@@ -40597,7 +40597,7 @@ var require_fetch2 = __commonJS({
       subresourceSet
     } = require_constants8();
     var EE = require("node:events");
-    var { Readable: Readable2, pipeline, finished, isErrored, isReadable } = require("node:stream");
+    var { Readable: Readable3, pipeline, finished, isErrored, isReadable } = require("node:stream");
     var { addAbortListener, bufferToLowerCasedHeaderName } = require_util9();
     var { dataURLProcessor, serializeAMimeType, minimizeSupportedMimeType } = require_data_url2();
     var { getGlobalDispatcher } = require_global4();
@@ -41573,7 +41573,7 @@ var require_fetch2 = __commonJS({
                 const headersList = new HeadersList();
                 appendHeadersListFromResponseHeaders(headersList, headers, rawHeaders);
                 const location = headersList.get("location", true);
-                this.body = new Readable2({ read: () => controller.resume() });
+                this.body = new Readable3({ read: () => controller.resume() });
                 const willFollow = location && request.redirect === "follow" && redirectStatusSet.has(status);
                 const decoders = [];
                 if (request.method !== "HEAD" && request.method !== "CONNECT" && !nullBodyStatus.includes(status) && !willFollow) {
@@ -58378,6 +58378,42 @@ var semver = __toESM(require_semver(), 1);
 
 // src/download/checksum/known-checksums.ts
 var KNOWN_CHECKSUMS = {
+  "aarch64-apple-darwin-0.11.30": "9bed3567d496d8dab84ecf7a1247551ac94ef1baaebb7b65df008dd93e9dc357",
+  "aarch64-pc-windows-msvc-0.11.30": "0edc44e7f23668bce7985facd96b2fe04a4d8ea8edfc7e53294afd8993e960fc",
+  "aarch64-unknown-linux-gnu-0.11.30": "8c11d90f5f66d232930cf8ae3a085c39877690d409e10878234802b028b20e2a",
+  "aarch64-unknown-linux-musl-0.11.30": "7562a40e4e08b1bfd566bd6aeca55a16ee5ac45211554543e8cdb3c395b47416",
+  "arm-unknown-linux-musleabihf-0.11.30": "58967610a6f14f2785e3be3b1b47553b5ff92c3d51bc0f1d9d90d83dc224f0db",
+  "armv7-unknown-linux-gnueabihf-0.11.30": "8e2d2ab63a37af47c1b4126c5871ee191b983a10670af91d8ef0bee198292931",
+  "armv7-unknown-linux-musleabihf-0.11.30": "33b515887e04c79d4d5de5967b8278b9dac1853cc8d657bf77052bab16a6629f",
+  "i686-pc-windows-msvc-0.11.30": "8ceaa74889e30d64adf55d7ad7acce6ed101fb036155bf2d7613715c9d9533c1",
+  "i686-unknown-linux-gnu-0.11.30": "e53221602d83b03c63a5e262bfcbf0f5f6e5972e93847498418bdb42005f04e7",
+  "i686-unknown-linux-musl-0.11.30": "f66898852a6a745a8c0ab0a26e046857ee77c9f24e4a3b64cb078753490b3978",
+  "powerpc64le-unknown-linux-gnu-0.11.30": "81a71fa495239c372b3b0c1bb2509167da00cf307323a2d2a39cbc92f0c6d5d1",
+  "riscv64gc-unknown-linux-gnu-0.11.30": "e2d65822d8f668f6d055679dba4937e386764b9561f9d1269d3bc9e7140f7491",
+  "riscv64gc-unknown-linux-musl-0.11.30": "3d75e26ace5e679e5de26106a71ee775af5c7f7ad872cd04f33b4d53c523a707",
+  "s390x-unknown-linux-gnu-0.11.30": "a30f253aca1291dbcdbb7f76c754235f268ff84d106a595f7d1abf337ab22ac1",
+  "x86_64-apple-darwin-0.11.30": "ce285fbbfbe294b1e1bc6c87c8b59d9622b85383b88b2b132a2df5c73e83d7c1",
+  "x86_64-pc-windows-msvc-0.11.30": "be8d78c992312212e5cc05e9f9de3fa996db73b7c86a186dfb9231eb9f91d33e",
+  "x86_64-unknown-linux-gnu-0.11.30": "04bc7d180d6138bf6dc08387acf507a823f397a98fea55da36b0ccc7fbce3b68",
+  "x86_64-unknown-linux-musl-0.11.30": "023fdd3b59fccfb67b365c69fb34182aaaed1d685d367a57571e3c1468a4c70c",
+  "aarch64-apple-darwin-0.11.29": "61c04acc52a33ef0f331e494bdfbedcdb6c26c6970c022ed3699e5860f8930e3",
+  "aarch64-pc-windows-msvc-0.11.29": "55b597ae81bc29531a7c352a1431a8a73cc2755d7a5b9ec454580cbe02e5154f",
+  "aarch64-unknown-linux-gnu-0.11.29": "94500fb064ae3c971a873cba64d94694c50677e0a4dbf78735c80509e7429919",
+  "aarch64-unknown-linux-musl-0.11.29": "593d79a797ece3f1dfaaf3e0a973263422a135d9262c7dbc6cd75d9c11acc0b4",
+  "arm-unknown-linux-musleabihf-0.11.29": "b160d7eb7dc45af378b3c9dd2cd6b07d64c65b509f2da673434e8e5dc996e5b1",
+  "armv7-unknown-linux-gnueabihf-0.11.29": "7b5717ae304fbb1e94104699fb8c08b32d1537fedc90dd8fcf87768d818951ed",
+  "armv7-unknown-linux-musleabihf-0.11.29": "bfd05286a80b39bd4708bbbb4450fe09f07fea86eea60d31ea2de0b5e816ef54",
+  "i686-pc-windows-msvc-0.11.29": "c173af6f6e125d65214b55d6b75fcf1a32d5e1c3a656938740fe0b2379cd4bcc",
+  "i686-unknown-linux-gnu-0.11.29": "c62af324951ae6f31f9453280e077176c96b6e31897d8133c00411a91a20878f",
+  "i686-unknown-linux-musl-0.11.29": "368dd75d030cae0512631ba0d50604e8471275ec2d9f02836edb91e4c82ad36a",
+  "powerpc64le-unknown-linux-gnu-0.11.29": "641b15637de9fedc7e738b0e4716b2233c792ba6dca722ba0484381749e1a9fd",
+  "riscv64gc-unknown-linux-gnu-0.11.29": "5c1229cc0309ebc6872ee847b8fc75564b3b7688edeb09e19427203e2dbc0ea7",
+  "riscv64gc-unknown-linux-musl-0.11.29": "d4708d913ba88fad9fe1d81da3e13aecadde7a3190cc095a7f2af2fa5c8caa8f",
+  "s390x-unknown-linux-gnu-0.11.29": "fa029183f550a3b00b89c06529fabfa11e0c69c097ccd397a8e7eae46f397348",
+  "x86_64-apple-darwin-0.11.29": "c4c4de482da9ccdd076dc4fb5cfe7b740609029385c72f58606be3153602387d",
+  "x86_64-pc-windows-msvc-0.11.29": "a047d55651bc3e0ca24595b25ec4cfcb10f9dca9fb56514e661269b37d4fae68",
+  "x86_64-unknown-linux-gnu-0.11.29": "04f8b82f5d47f0512dcd32c67a4a6f16a0ea27c81537c338fd0ad6b23cebe829",
+  "x86_64-unknown-linux-musl-0.11.29": "46711858adb2a3acaa9cee00f9060688ad1fd5706aecc005b96a6a7f285a00b7",
   "aarch64-apple-darwin-0.11.28": "33540eb7c883ab857eff79bd5ac2aa31fe27b595abecb4a9c003a2c998447232",
   "aarch64-pc-windows-msvc-0.11.28": "3248109afad3ec59baad299d324ff53de17e2d9a3b3e21580ffd26744b11e036",
   "aarch64-unknown-linux-gnu-0.11.28": "03e9fe0a81b0718d0bc84625de3885df6cc3f89a8b6af6121d6b9f6113fb6533",
@@ -63360,6 +63396,10 @@ async function updateChecksums(filePath, checksumEntries) {
   await import_node_fs.promises.writeFile(filePath, content);
 }
 
+// src/download/manifest.ts
+var import_node_readline = require("node:readline");
+var import_node_stream = require("node:stream");
+
 // src/utils/constants.ts
 var VERSIONS_MANIFEST_URL = "https://raw.githubusercontent.com/astral-sh/versions/main/v1/uv.ndjson";
 
@@ -63404,21 +63444,15 @@ function info2(msg) {
 // src/download/manifest.ts
 var cachedManifestData = /* @__PURE__ */ new Map();
 async function fetchManifest(manifestUrl = VERSIONS_MANIFEST_URL) {
-  const cachedVersions = cachedManifestData.get(manifestUrl);
-  if (cachedVersions !== void 0) {
+  const cachedManifest = cachedManifestData.get(manifestUrl);
+  if (cachedManifest?.complete === true) {
     debug(`Using cached manifest data from ${manifestUrl}`);
-    return cachedVersions;
+    return cachedManifest.versions;
   }
-  info2(`Fetching manifest data from ${manifestUrl} ...`);
-  const response = await fetch2(manifestUrl, {});
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch manifest data: ${response.status} ${response.statusText}`
-    );
-  }
+  const response = await fetchManifestResponse(manifestUrl);
   const body = await response.text();
   const versions = parseManifest(body, manifestUrl);
-  cachedManifestData.set(manifestUrl, versions);
+  cachedManifestData.set(manifestUrl, { complete: true, versions });
   return versions;
 }
 function parseManifest(data, sourceDescription) {
@@ -63426,31 +63460,14 @@ function parseManifest(data, sourceDescription) {
   if (trimmed === "") {
     throw new Error(`Manifest at ${sourceDescription} is empty.`);
   }
-  if (trimmed.startsWith("[")) {
-    throw new Error(
-      `Legacy JSON array manifests are no longer supported in ${sourceDescription}. Use the astral-sh/versions manifest format instead.`
-    );
-  }
+  rejectLegacyManifest(trimmed, sourceDescription);
   const versions = [];
   for (const [index, line] of data.split("\n").entries()) {
     const record = line.trim();
     if (record === "") {
       continue;
     }
-    let parsed;
-    try {
-      parsed = JSON.parse(record);
-    } catch (error2) {
-      throw new Error(
-        `Failed to parse manifest data from ${sourceDescription} at line ${index + 1}: ${error2.message}`
-      );
-    }
-    if (!isManifestVersion(parsed)) {
-      throw new Error(
-        `Invalid manifest record in ${sourceDescription} at line ${index + 1}.`
-      );
-    }
-    versions.push(parsed);
+    versions.push(parseManifestRecord(record, sourceDescription, index + 1));
   }
   if (versions.length === 0) {
     throw new Error(`No manifest data found in ${sourceDescription}.`);
@@ -63458,12 +63475,103 @@ function parseManifest(data, sourceDescription) {
   return versions;
 }
 async function getLatestVersion(manifestUrl = VERSIONS_MANIFEST_URL) {
-  const latestVersion = (await fetchManifest(manifestUrl))[0]?.version;
+  const latestVersion = manifestUrl === VERSIONS_MANIFEST_URL ? (await findManifestVersion(() => true))?.version : (await fetchManifest(manifestUrl))[0]?.version;
   if (latestVersion === void 0) {
     throw new Error("No versions found in manifest data");
   }
   debug(`Latest version from manifest: ${latestVersion}`);
   return latestVersion;
+}
+async function fetchManifestResponse(manifestUrl) {
+  info2(`Fetching manifest data from ${manifestUrl} ...`);
+  const response = await fetch2(manifestUrl, {});
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch manifest data: ${response.status} ${response.statusText}`
+    );
+  }
+  return response;
+}
+async function findManifestVersion(predicate) {
+  const cachedManifest = cachedManifestData.get(VERSIONS_MANIFEST_URL);
+  const cachedVersion = cachedManifest?.versions.find(predicate);
+  if (cachedVersion !== void 0 || cachedManifest?.complete === true) {
+    return cachedVersion;
+  }
+  const response = await fetchManifestResponse(VERSIONS_MANIFEST_URL);
+  if (response.body === null) {
+    const versions2 = parseManifest(
+      await response.text(),
+      VERSIONS_MANIFEST_URL
+    );
+    cachedManifestData.set(VERSIONS_MANIFEST_URL, {
+      complete: true,
+      versions: versions2
+    });
+    return versions2.find(predicate);
+  }
+  const input = import_node_stream.Readable.fromWeb(response.body);
+  const lines = (0, import_node_readline.createInterface)({ crlfDelay: Number.POSITIVE_INFINITY, input });
+  const versions = [];
+  let complete = false;
+  let lineNumber = 0;
+  let matchedVersion;
+  try {
+    for await (const line of lines) {
+      lineNumber += 1;
+      const record = line.trim();
+      if (record === "") {
+        continue;
+      }
+      if (versions.length === 0) {
+        rejectLegacyManifest(record, VERSIONS_MANIFEST_URL);
+      }
+      const versionData = parseManifestRecord(
+        record,
+        VERSIONS_MANIFEST_URL,
+        lineNumber
+      );
+      versions.push(versionData);
+      if (predicate(versionData)) {
+        matchedVersion = versionData;
+        break;
+      }
+    }
+    complete = matchedVersion === void 0;
+  } finally {
+    lines.close();
+    if (!complete) {
+      input.destroy();
+    }
+  }
+  if (versions.length === 0) {
+    throw new Error(`Manifest at ${VERSIONS_MANIFEST_URL} is empty.`);
+  }
+  cachedManifestData.set(VERSIONS_MANIFEST_URL, { complete, versions });
+  return matchedVersion;
+}
+function parseManifestRecord(record, sourceDescription, lineNumber) {
+  let parsed;
+  try {
+    parsed = JSON.parse(record);
+  } catch (error2) {
+    throw new Error(
+      `Failed to parse manifest data from ${sourceDescription} at line ${lineNumber}: ${error2.message}`
+    );
+  }
+  if (!isManifestVersion(parsed)) {
+    throw new Error(
+      `Invalid manifest record in ${sourceDescription} at line ${lineNumber}.`
+    );
+  }
+  return parsed;
+}
+function rejectLegacyManifest(data, sourceDescription) {
+  if (data.startsWith("[")) {
+    throw new Error(
+      `Legacy JSON array manifests are no longer supported in ${sourceDescription}. Use the astral-sh/versions manifest format instead.`
+    );
+  }
 }
 function isManifestVersion(value) {
   if (!isRecord(value)) {

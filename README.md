@@ -28,7 +28,7 @@ Set up your GitHub Actions workflow with a specific version of [uv](https://docs
 
 ```yaml
 - name: Install the latest version of uv
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
 ```
 
 If you do not specify a version, this action will look for a [required-version](https://docs.astral.sh/uv/reference/settings/#required-version)
@@ -44,18 +44,18 @@ Have a look under [Advanced Configuration](#advanced-configuration) for detailed
 
 ```yaml
 - name: Install uv with all available options
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
-    # The version of uv to install (default: searches for version in config files, then latest)
+    # The version of uv to install, e.g., "0.5.0", "latest", or "latest-known" (default: searches for version in config files, then latest)
     version: ""
 
-    # Path to a file containing the version of uv to install, e.g., uv.toml, pyproject.toml, .tool-versions, requirements.txt or uv.lock (default: searches uv.toml then pyproject.toml)
+    # Path to a file containing the version of uv to install, e.g., uv.toml, pyproject.toml, .tool-versions, requirements.txt or uv.lock. A selected .tool-versions file can also provide the Python version (default: searches uv.toml then pyproject.toml)
     version-file: ""
 
     # Resolution strategy when resolving version ranges: 'highest' or 'lowest'
     resolution-strategy: "highest"
 
-    # The version of Python to set UV_PYTHON to
+    # The version of Python to set UV_PYTHON to (overrides the Python version from .tool-versions)
     python-version: ""
 
     # Use uv venv to activate a venv ready to be used by later steps
@@ -76,7 +76,7 @@ Have a look under [Advanced Configuration](#advanced-configuration) for detailed
     # Used when downloading uv from GitHub releases
     github-token: ${{ github.token }}
 
-    # Enable uploading of the uv cache: true, false, or auto (enabled on GitHub-hosted runners, disabled on self-hosted runners)
+    # Enable the GitHub Actions cache for uv: true, false, or auto (enabled on GitHub-hosted runners except for release, tag push, pull_request_target, and workflow_run events; disabled on self-hosted runners)
     enable-cache: "auto"
 
     # Glob pattern to match files relative to the repository root to control the cache
@@ -146,11 +146,30 @@ Have a look under [Advanced Configuration](#advanced-configuration) for detailed
 
 You can use the input `python-version` to set the environment variable `UV_PYTHON` for the rest of your workflow
 
-This will override any python version specifications in `pyproject.toml` and `.python-version`
+This will override any python version specifications in `pyproject.toml`, `.python-version`, and
+an explicitly selected `.tool-versions` file.
+
+When `version-file` points to `.tool-versions`, its `python` entry is used if neither
+`python-version` nor `UV_PYTHON` is set:
+
+```text
+uv 0.12.3
+python 3.13
+```
+
+```yaml
+- uses: step-security/setup-uv@v9
+  with:
+    version-file: ".tool-versions"
+```
+
+Only a single Python version is supported. Filesystem paths are not supported for uv or Python.
+Multiple Python fallback versions and the asdf `ref:`, `path:`, and `system` forms are ignored with
+a warning.
 
 ```yaml
 - name: Install the latest version of uv and set the python version to 3.13t
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     python-version: 3.13t
 - run: uv pip install --python=3.13t pip
@@ -168,7 +187,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Install the latest version of uv and set the python version
-        uses: step-security/setup-uv@v8
+        uses: step-security/setup-uv@v10
         with:
           python-version: ${{ matrix.python-version }}
       - name: Test with python ${{ matrix.python-version }}
@@ -185,7 +204,7 @@ It also controls where [the venv gets created](#activate-environment), unless `v
 
 ```yaml
 - name: Install uv based on the config files in the working-directory
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     working-directory: my/subproject/dir
 ```
@@ -227,7 +246,7 @@ For example:
 - name: Checkout the repository
   uses: actions/checkout@v6
 - name: Install the latest version of uv
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     enable-cache: true
 - name: Test
@@ -239,7 +258,7 @@ To install a specific version of Python, use
 
 ```yaml
 - name: Install the latest version of uv
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     enable-cache: true
 - name: Install Python 3.12
@@ -258,7 +277,7 @@ output:
   uses: actions/checkout@v6
 - name: Install the default version of uv
   id: setup-uv
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
 - name: Print the installed version
   run: echo "Installed uv version is ${{ steps.setup-uv.outputs.uv-version }}"
 ```

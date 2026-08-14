@@ -6,16 +6,29 @@ This document covers advanced options for configuring which version of uv to ins
 
 ```yaml
 - name: Install the latest version of uv
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     version: "latest"
+```
+
+## Install the latest version with a checksum verified by this action
+
+Use `latest-known` to install the newest uv version whose checksums were bundled with the version of setup-uv used by your workflow. Version resolution is performed locally without fetching the latest release, so updating setup-uv also updates the version selected by `latest-known`.
+
+When `manifest-file` is set, `latest-known` still selects a version from setup-uv's bundled checksum table, but the artifact and checksum come from the custom manifest.
+
+```yaml
+- name: Install the latest version of uv known to setup-uv
+  uses: step-security/setup-uv@v9
+  with:
+    version: "latest-known"
 ```
 
 ## Install a specific version
 
 ```yaml
 - name: Install a specific version of uv
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     version: "0.4.4"
 ```
@@ -28,21 +41,21 @@ to install the latest version that satisfies the range.
 
 ```yaml
 - name: Install a semver range of uv
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     version: ">=0.4.0"
 ```
 
 ```yaml
 - name: Pinning a minor version of uv
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     version: "0.4.x"
 ```
 
 ```yaml
 - name: Install a pep440-specifier-satisfying version of uv
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     version: ">=0.4.25,<0.5"
 ```
@@ -54,7 +67,7 @@ You can change this behavior using the `resolution-strategy` input:
 
 ```yaml
 - name: Install the lowest compatible version of uv
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     version: ">=0.4.0"
     resolution-strategy: "lowest"
@@ -72,11 +85,14 @@ You can use the `version-file` input to specify a file that contains the version
 This can either be a `pyproject.toml` or `uv.toml` file which defines a `required-version` or
 uv defined as a dependency in `pyproject.toml` or `requirements.txt`.
 
-[asdf](https://asdf-vm.com/) `.tool-versions` is also supported, but without the `ref` syntax.
+[asdf](https://asdf-vm.com/) `.tool-versions` is also supported for selecting uv. If neither
+`python-version` nor `UV_PYTHON` is set, the `python` entry from the selected file is also exported
+as `UV_PYTHON`. Only a single Python version is supported; multiple fallback versions and the asdf
+`ref:`, `path:`, and `system` forms are ignored with a warning.
 
 ```yaml
 - name: Install uv based on the version defined in pyproject.toml
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     version-file: "pyproject.toml"
 ```
@@ -87,7 +103,7 @@ silently picking up a newer uv until the lockfile is updated.
 
 ```yaml
 - name: Install uv based on the version locked in uv.lock
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     version-file: "uv.lock"
 ```

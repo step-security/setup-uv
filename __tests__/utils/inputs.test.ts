@@ -12,10 +12,13 @@ import {
 
 let mockInputs: Record<string, string> = {};
 const tempDirs: string[] = [];
+const ORIGINAL_GITHUB_EVENT_NAME = process.env.GITHUB_EVENT_NAME;
+const ORIGINAL_GITHUB_REF = process.env.GITHUB_REF;
 const ORIGINAL_HOME = process.env.HOME;
 const ORIGINAL_RUNNER_ENVIRONMENT = process.env.RUNNER_ENVIRONMENT;
 const ORIGINAL_RUNNER_TEMP = process.env.RUNNER_TEMP;
 const ORIGINAL_UV_CACHE_DIR = process.env.UV_CACHE_DIR;
+const ORIGINAL_UV_PYTHON = process.env.UV_PYTHON;
 const ORIGINAL_UV_PYTHON_INSTALL_DIR = process.env.UV_PYTHON_INSTALL_DIR;
 
 const mockDebug = jest.fn();
@@ -52,10 +55,13 @@ function createTempProject(files: Record<string, string> = {}): string {
 function resetEnvironment(): void {
   jest.clearAllMocks();
   mockInputs = {};
+  delete process.env.GITHUB_EVENT_NAME;
+  delete process.env.GITHUB_REF;
   process.env.HOME = "/home/testuser";
   delete process.env.RUNNER_ENVIRONMENT;
   delete process.env.RUNNER_TEMP;
   delete process.env.UV_CACHE_DIR;
+  delete process.env.UV_PYTHON;
   delete process.env.UV_PYTHON_INSTALL_DIR;
 }
 
@@ -64,10 +70,13 @@ function restoreEnvironment(): void {
     fs.rmSync(dir, { force: true, recursive: true });
   }
 
+  process.env.GITHUB_EVENT_NAME = ORIGINAL_GITHUB_EVENT_NAME;
+  process.env.GITHUB_REF = ORIGINAL_GITHUB_REF;
   process.env.HOME = ORIGINAL_HOME;
   process.env.RUNNER_ENVIRONMENT = ORIGINAL_RUNNER_ENVIRONMENT;
   process.env.RUNNER_TEMP = ORIGINAL_RUNNER_TEMP;
   process.env.UV_CACHE_DIR = ORIGINAL_UV_CACHE_DIR;
+  process.env.UV_PYTHON = ORIGINAL_UV_PYTHON;
   process.env.UV_PYTHON_INSTALL_DIR = ORIGINAL_UV_PYTHON_INSTALL_DIR;
 }
 
@@ -92,6 +101,109 @@ describe("loadInputs", () => {
     expect(inputs.venvPath).toBe("/workspace/.venv");
     expect(inputs.manifestFile).toBeUndefined();
     expect(inputs.resolutionStrategy).toBe("highest");
+  });
+
+  it("uses the Python version from an explicitly selected .tool-versions file", () => {
+    mockInputs["working-directory"] = createTempProject({
+      ".tool-versions": "uv 0.12.3\npython 3.13.1t\n",
+    });
+    mockInputs["version-file"] = ".tool-versions";
+
+    const inputs = loadInputs();
+
+    expect(inputs.pythonVersion).toBe("3.13.1t");
+  });
+
+  it("prefers the python-version input over .tool-versions", () => {
+    mockInputs["working-directory"] = createTempProject({
+      ".tool-versions": "uv 0.12.3\npython 3.13\n",
+    });
+    mockInputs["version-file"] = ".tool-versions";
+    mockInputs["python-version"] = "3.12";
+
+    const inputs = loadInputs();
+
+    expect(inputs.pythonVersion).toBe("3.12");
+  });
+
+  it("preserves UV_PYTHON instead of overriding it from .tool-versions", () => {
+    mockInputs["working-directory"] = createTempProject({
+      ".tool-versions": "uv 0.12.3\npython 3.13\n",
+    });
+    mockInputs["version-file"] = ".tool-versions";
+    process.env.UV_PYTHON = "3.11";
+
+    const inputs = loadInputs();
+
+    expect(inputs.pythonVersion).toBe("");
+    expect(process.env.UV_PYTHON).toBe("3.11");
+  });
+
+  it("does not discover .tool-versions from the working directory", () => {
+    mockInputs["working-directory"] = createTempProject({
+      ".tool-versions": "uv 0.12.3\npython 3.13\n",
+    });
+
+    const inputs = loadInputs();
+
+    expect(inputs.pythonVersion).toBe("");
+  });
+
+  it.each(["pull_request_target", "workflow_run", "release"])(
+    "disables automatic caching for the %s event",
+    (eventName) => {
+      mockInputs["working-directory"] = "/workspace";
+      mockInputs["enable-cache"] = "auto";
+      process.env.RUNNER_ENVIRONMENT = "github-hosted";
+      process.env.RUNNER_TEMP = "/runner-temp";
+      process.env.GITHUB_EVENT_NAME = eventName;
+
+      const inputs = loadInputs();
+
+      expect(inputs.enableCache).toBe(false);
+      expect(mockInfo).toHaveBeenCalledWith(
+        `Caching is disabled for the ${eventName} event`,
+      );
+    },
+  );
+
+  it("disables automatic caching for tag pushes", () => {
+    mockInputs["working-directory"] = "/workspace";
+    mockInputs["enable-cache"] = "auto";
+    process.env.RUNNER_ENVIRONMENT = "github-hosted";
+    process.env.RUNNER_TEMP = "/runner-temp";
+    process.env.GITHUB_EVENT_NAME = "push";
+    process.env.GITHUB_REF = "refs/tags/v1.0.0";
+
+    const inputs = loadInputs();
+
+    expect(inputs.enableCache).toBe(false);
+    expect(mockInfo).toHaveBeenCalledWith("Caching is disabled for tag pushes");
+  });
+
+  it("enables automatic caching for branch pushes", () => {
+    mockInputs["working-directory"] = "/workspace";
+    mockInputs["enable-cache"] = "auto";
+    process.env.RUNNER_ENVIRONMENT = "github-hosted";
+    process.env.RUNNER_TEMP = "/runner-temp";
+    process.env.GITHUB_EVENT_NAME = "push";
+    process.env.GITHUB_REF = "refs/heads/main";
+
+    const inputs = loadInputs();
+
+    expect(inputs.enableCache).toBe(true);
+  });
+
+  it("honors explicitly enabled caching for sensitive events", () => {
+    mockInputs["working-directory"] = "/workspace";
+    mockInputs["enable-cache"] = "true";
+    process.env.RUNNER_ENVIRONMENT = "github-hosted";
+    process.env.RUNNER_TEMP = "/runner-temp";
+    process.env.GITHUB_EVENT_NAME = "release";
+
+    const inputs = loadInputs();
+
+    expect(inputs.enableCache).toBe(true);
   });
 
   it("uses cache-dir from pyproject.toml when present", () => {

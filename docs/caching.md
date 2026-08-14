@@ -23,7 +23,7 @@ The computed cache key is available as the `cache-key` output:
 ```yaml
 - name: Setup uv
   id: setup-uv
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     enable-cache: true
 - name: Print cache key
@@ -38,7 +38,10 @@ The computed cache key is available as the `cache-key` output:
 
 If you enable caching, the [uv cache](https://docs.astral.sh/uv/concepts/cache/) will be uploaded to
 the GitHub Actions cache. This can speed up runs that reuse the cache by several minutes.
-Caching is enabled by default on GitHub-hosted runners.
+With the default `enable-cache: auto`, caching is enabled on GitHub-hosted runners except for
+`release`, tag push, `pull_request_target`, and `workflow_run` events. Caching is disabled for these
+events to prevent insecure or release-sensitive jobs from restoring potentially poisoned caches.
+Set `enable-cache: true` to explicitly enable caching for any event.
 
 > [!TIP]
 >
@@ -50,7 +53,7 @@ You can optionally define a custom cache key suffix.
 ```yaml
 - name: Enable caching and define a custom cache key suffix
   id: setup-uv
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     enable-cache: true
     cache-suffix: "optional-suffix"
@@ -89,7 +92,7 @@ changes. If you use relative paths, they are relative to the working directory.
 
 ```yaml
 - name: Define a cache dependency glob
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     enable-cache: true
     cache-dependency-glob: "**/pyproject.toml"
@@ -97,7 +100,7 @@ changes. If you use relative paths, they are relative to the working directory.
 
 ```yaml
 - name: Define a list of cache dependency globs
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     enable-cache: true
     cache-dependency-glob: |
@@ -107,7 +110,7 @@ changes. If you use relative paths, they are relative to the working directory.
 
 ```yaml
 - name: Define an absolute cache dependency glob
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     enable-cache: true
     cache-dependency-glob: "/tmp/my-folder/requirements*.txt"
@@ -115,7 +118,7 @@ changes. If you use relative paths, they are relative to the working directory.
 
 ```yaml
 - name: Never invalidate the cache
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     enable-cache: true
     cache-dependency-glob: ""
@@ -128,7 +131,7 @@ By default, the cache will be restored.
 
 ```yaml
 - name: Don't restore an existing cache
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     enable-cache: true
     restore-cache: false
@@ -142,7 +145,7 @@ By default, the cache will be saved.
 
 ```yaml
 - name: Don't save the cache after the run
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     enable-cache: true
     save-cache: false
@@ -168,7 +171,7 @@ It defaults to `setup-uv-cache` in the `TMP` dir, `D:\a\_temp\setup-uv-cache` on
 
 ```yaml
 - name: Define a custom uv cache path
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     cache-local-path: "/path/to/cache"
 ```
@@ -185,7 +188,7 @@ If you want to prune the cache before saving it, enable cache pruning with the `
 
 ```yaml
 - name: Prune the cache before saving it
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     enable-cache: true
     prune-cache: true
@@ -204,7 +207,7 @@ To force managed Python installs, set `UV_PYTHON_PREFERENCE=only-managed`.
 
 ```yaml
 - name: Cache Python installs
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     enable-cache: true
     cache-python: true
@@ -222,7 +225,7 @@ If you want to ignore this, set the `ignore-nothing-to-cache` input to `true`.
 
 ```yaml
 - name: Ignore nothing to cache
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     enable-cache: true
     ignore-nothing-to-cache: true

@@ -158,7 +158,7 @@ python 3.13
 ```
 
 ```yaml
-- uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+- uses: step-security/setup-uv@v9
   with:
     version-file: ".tool-versions"
 ```

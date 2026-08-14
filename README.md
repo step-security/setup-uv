@@ -28,7 +28,7 @@ Set up your GitHub Actions workflow with a specific version of [uv](https://docs
 
 ```yaml
 - name: Install the latest version of uv
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
 ```
 
 If you do not specify a version, this action will look for a [required-version](https://docs.astral.sh/uv/reference/settings/#required-version)
@@ -44,7 +44,7 @@ Have a look under [Advanced Configuration](#advanced-configuration) for detailed
 
 ```yaml
 - name: Install uv with all available options
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     # The version of uv to install, e.g., "0.5.0", "latest", or "latest-known" (default: searches for version in config files, then latest)
     version: ""
@@ -169,7 +169,7 @@ a warning.
 
 ```yaml
 - name: Install the latest version of uv and set the python version to 3.13t
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     python-version: 3.13t
 - run: uv pip install --python=3.13t pip
@@ -187,7 +187,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Install the latest version of uv and set the python version
-        uses: step-security/setup-uv@v8
+        uses: step-security/setup-uv@v10
         with:
           python-version: ${{ matrix.python-version }}
       - name: Test with python ${{ matrix.python-version }}
@@ -204,7 +204,7 @@ It also controls where [the venv gets created](#activate-environment), unless `v
 
 ```yaml
 - name: Install uv based on the config files in the working-directory
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     working-directory: my/subproject/dir
 ```
@@ -246,7 +246,7 @@ For example:
 - name: Checkout the repository
   uses: actions/checkout@v6
 - name: Install the latest version of uv
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     enable-cache: true
 - name: Test
@@ -258,7 +258,7 @@ To install a specific version of Python, use
 
 ```yaml
 - name: Install the latest version of uv
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
   with:
     enable-cache: true
 - name: Install Python 3.12
@@ -277,7 +277,7 @@ output:
   uses: actions/checkout@v6
 - name: Install the default version of uv
   id: setup-uv
-  uses: step-security/setup-uv@v8
+  uses: step-security/setup-uv@v10
 - name: Print the installed version
   run: echo "Installed uv version is ${{ steps.setup-uv.outputs.uv-version }}"
 ```

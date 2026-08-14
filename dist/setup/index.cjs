@@ -9270,7 +9270,7 @@ var require_readable = __commonJS({
   "node_modules/@actions/http-client/node_modules/undici/lib/api/readable.js"(exports2, module2) {
     "use strict";
     var assert4 = require("node:assert");
-    var { Readable: Readable6 } = require("node:stream");
+    var { Readable: Readable7 } = require("node:stream");
     var { RequestAbortedError, NotSupportedError, InvalidArgumentError, AbortError: AbortError3 } = require_errors();
     var util10 = require_util();
     var { ReadableStreamFrom } = require_util();
@@ -9282,7 +9282,7 @@ var require_readable = __commonJS({
     var kContentLength = /* @__PURE__ */ Symbol("kContentLength");
     var noop2 = () => {
     };
-    var BodyReadable = class extends Readable6 {
+    var BodyReadable = class extends Readable7 {
       constructor({
         resume,
         abort,
@@ -9624,7 +9624,7 @@ var require_api_request = __commonJS({
   "node_modules/@actions/http-client/node_modules/undici/lib/api/api-request.js"(exports2, module2) {
     "use strict";
     var assert4 = require("node:assert");
-    var { Readable: Readable6 } = require_readable();
+    var { Readable: Readable7 } = require_readable();
     var { InvalidArgumentError, RequestAbortedError } = require_errors();
     var util10 = require_util();
     var { getResolveErrorBodyCallback } = require_util3();
@@ -9719,7 +9719,7 @@ var require_api_request = __commonJS({
         const parsedHeaders = responseHeaders === "raw" ? util10.parseHeaders(rawHeaders) : headers;
         const contentType2 = parsedHeaders["content-type"];
         const contentLength2 = parsedHeaders["content-length"];
-        const res = new Readable6({
+        const res = new Readable7({
           resume,
           abort,
           contentType: contentType2,
@@ -10034,7 +10034,7 @@ var require_api_pipeline = __commonJS({
   "node_modules/@actions/http-client/node_modules/undici/lib/api/api-pipeline.js"(exports2, module2) {
     "use strict";
     var {
-      Readable: Readable6,
+      Readable: Readable7,
       Duplex,
       PassThrough
     } = require("node:stream");
@@ -10048,7 +10048,7 @@ var require_api_pipeline = __commonJS({
     var { addSignal, removeSignal } = require_abort_signal();
     var assert4 = require("node:assert");
     var kResume = /* @__PURE__ */ Symbol("resume");
-    var PipelineRequest = class extends Readable6 {
+    var PipelineRequest = class extends Readable7 {
       constructor() {
         super({ autoDestroy: true });
         this[kResume] = null;
@@ -10065,7 +10065,7 @@ var require_api_pipeline = __commonJS({
         callback(err);
       }
     };
-    var PipelineResponse = class extends Readable6 {
+    var PipelineResponse = class extends Readable7 {
       constructor(resume) {
         super({ autoDestroy: true });
         this[kResume] = resume;
@@ -13390,7 +13390,7 @@ var require_fetch = __commonJS({
       subresourceSet
     } = require_constants3();
     var EE = require("node:events");
-    var { Readable: Readable6, pipeline: pipeline4, finished } = require("node:stream");
+    var { Readable: Readable7, pipeline: pipeline4, finished } = require("node:stream");
     var { addAbortListener, isErrored, isReadable, bufferToLowerCasedHeaderName } = require_util();
     var { dataURLProcessor, serializeAMimeType, minimizeSupportedMimeType } = require_data_url();
     var { getGlobalDispatcher } = require_global2();
@@ -14291,7 +14291,7 @@ var require_fetch = __commonJS({
                 headersList.append(bufferToLowerCasedHeaderName(rawHeaders[i]), rawHeaders[i + 1].toString("latin1"), true);
               }
               location = headersList.get("location", true);
-              this.body = new Readable6({ read: resume });
+              this.body = new Readable7({ read: resume });
               const decoders = [];
               const willFollow = location && request.redirect === "follow" && redirectStatusSet.has(status);
               if (request.method !== "HEAD" && request.method !== "CONNECT" && !nullBodyStatus.includes(status) && !willFollow) {
@@ -21008,7 +21008,7 @@ var require_satisfies = __commonJS({
   "node_modules/@actions/cache/node_modules/semver/functions/satisfies.js"(exports2, module2) {
     "use strict";
     var Range = require_range();
-    var satisfies4 = (version3, range2, options) => {
+    var satisfies5 = (version3, range2, options) => {
       try {
         range2 = new Range(range2, options);
       } catch (er) {
@@ -21016,7 +21016,7 @@ var require_satisfies = __commonJS({
       }
       return range2.test(version3);
     };
-    module2.exports = satisfies4;
+    module2.exports = satisfies5;
   }
 });
 
@@ -21152,14 +21152,14 @@ var require_valid2 = __commonJS({
   "node_modules/@actions/cache/node_modules/semver/ranges/valid.js"(exports2, module2) {
     "use strict";
     var Range = require_range();
-    var validRange2 = (range2, options) => {
+    var validRange3 = (range2, options) => {
       try {
         return new Range(range2, options).range || "*";
       } catch (er) {
         return null;
       }
     };
-    module2.exports = validRange2;
+    module2.exports = validRange3;
   }
 });
 
@@ -21171,7 +21171,7 @@ var require_outside = __commonJS({
     var Comparator = require_comparator();
     var { ANY } = Comparator;
     var Range = require_range();
-    var satisfies4 = require_satisfies();
+    var satisfies5 = require_satisfies();
     var gt3 = require_gt();
     var lt2 = require_lt();
     var lte = require_lte();
@@ -21198,7 +21198,7 @@ var require_outside = __commonJS({
         default:
           throw new TypeError('Must provide a hilo val of "<" or ">"');
       }
-      if (satisfies4(version3, range2, options)) {
+      if (satisfies5(version3, range2, options)) {
         return false;
       }
       for (let i = 0; i < range2.set.length; ++i) {
@@ -21270,7 +21270,7 @@ var require_intersects = __commonJS({
 var require_simplify = __commonJS({
   "node_modules/@actions/cache/node_modules/semver/ranges/simplify.js"(exports2, module2) {
     "use strict";
-    var satisfies4 = require_satisfies();
+    var satisfies5 = require_satisfies();
     var compare2 = require_compare();
     module2.exports = (versions, range2, options) => {
       const set = [];
@@ -21278,7 +21278,7 @@ var require_simplify = __commonJS({
       let prev = null;
       const v = versions.sort((a, b) => compare2(a, b, options));
       for (const version3 of v) {
-        const included = satisfies4(version3, range2, options);
+        const included = satisfies5(version3, range2, options);
         if (included) {
           prev = version3;
           if (!first) {
@@ -21323,7 +21323,7 @@ var require_subset = __commonJS({
     var Range = require_range();
     var Comparator = require_comparator();
     var { ANY } = Comparator;
-    var satisfies4 = require_satisfies();
+    var satisfies5 = require_satisfies();
     var compare2 = require_compare();
     var subset = (sub, dom, options = {}) => {
       if (sub === dom) {
@@ -21392,14 +21392,14 @@ var require_subset = __commonJS({
         }
       }
       for (const eq2 of eqSet) {
-        if (gt3 && !satisfies4(eq2, String(gt3), options)) {
+        if (gt3 && !satisfies5(eq2, String(gt3), options)) {
           return null;
         }
-        if (lt2 && !satisfies4(eq2, String(lt2), options)) {
+        if (lt2 && !satisfies5(eq2, String(lt2), options)) {
           return null;
         }
         for (const c of dom) {
-          if (!satisfies4(eq2, String(c), options)) {
+          if (!satisfies5(eq2, String(c), options)) {
             return false;
           }
         }
@@ -21426,7 +21426,7 @@ var require_subset = __commonJS({
             if (higher === c && higher !== gt3) {
               return false;
             }
-          } else if (gt3.operator === ">=" && !satisfies4(gt3.semver, String(c), options)) {
+          } else if (gt3.operator === ">=" && !satisfies5(gt3.semver, String(c), options)) {
             return false;
           }
         }
@@ -21441,7 +21441,7 @@ var require_subset = __commonJS({
             if (lower === c && lower !== lt2) {
               return false;
             }
-          } else if (lt2.operator === "<=" && !satisfies4(lt2.semver, String(c), options)) {
+          } else if (lt2.operator === "<=" && !satisfies5(lt2.semver, String(c), options)) {
             return false;
           }
         }
@@ -21511,12 +21511,12 @@ var require_semver2 = __commonJS({
     var coerce = require_coerce();
     var Comparator = require_comparator();
     var Range = require_range();
-    var satisfies4 = require_satisfies();
+    var satisfies5 = require_satisfies();
     var toComparators = require_to_comparators();
     var maxSatisfying3 = require_max_satisfying();
     var minSatisfying4 = require_min_satisfying();
     var minVersion = require_min_version();
-    var validRange2 = require_valid2();
+    var validRange3 = require_valid2();
     var outside = require_outside();
     var gtr = require_gtr();
     var ltr = require_ltr();
@@ -21549,12 +21549,12 @@ var require_semver2 = __commonJS({
       coerce,
       Comparator,
       Range,
-      satisfies: satisfies4,
+      satisfies: satisfies5,
       toComparators,
       maxSatisfying: maxSatisfying3,
       minSatisfying: minSatisfying4,
       minVersion,
-      validRange: validRange2,
+      validRange: validRange3,
       outside,
       gtr,
       ltr,
@@ -28618,7 +28618,7 @@ var require_satisfies2 = __commonJS({
   "node_modules/@actions/tool-cache/node_modules/semver/functions/satisfies.js"(exports2, module2) {
     "use strict";
     var Range = require_range2();
-    var satisfies4 = (version3, range2, options) => {
+    var satisfies5 = (version3, range2, options) => {
       try {
         range2 = new Range(range2, options);
       } catch (er) {
@@ -28626,7 +28626,7 @@ var require_satisfies2 = __commonJS({
       }
       return range2.test(version3);
     };
-    module2.exports = satisfies4;
+    module2.exports = satisfies5;
   }
 });
 
@@ -28762,14 +28762,14 @@ var require_valid4 = __commonJS({
   "node_modules/@actions/tool-cache/node_modules/semver/ranges/valid.js"(exports2, module2) {
     "use strict";
     var Range = require_range2();
-    var validRange2 = (range2, options) => {
+    var validRange3 = (range2, options) => {
       try {
         return new Range(range2, options).range || "*";
       } catch (er) {
         return null;
       }
     };
-    module2.exports = validRange2;
+    module2.exports = validRange3;
   }
 });
 
@@ -28781,7 +28781,7 @@ var require_outside2 = __commonJS({
     var Comparator = require_comparator2();
     var { ANY } = Comparator;
     var Range = require_range2();
-    var satisfies4 = require_satisfies2();
+    var satisfies5 = require_satisfies2();
     var gt3 = require_gt2();
     var lt2 = require_lt2();
     var lte = require_lte2();
@@ -28808,7 +28808,7 @@ var require_outside2 = __commonJS({
         default:
           throw new TypeError('Must provide a hilo val of "<" or ">"');
       }
-      if (satisfies4(version3, range2, options)) {
+      if (satisfies5(version3, range2, options)) {
         return false;
       }
       for (let i = 0; i < range2.set.length; ++i) {
@@ -28880,7 +28880,7 @@ var require_intersects2 = __commonJS({
 var require_simplify2 = __commonJS({
   "node_modules/@actions/tool-cache/node_modules/semver/ranges/simplify.js"(exports2, module2) {
     "use strict";
-    var satisfies4 = require_satisfies2();
+    var satisfies5 = require_satisfies2();
     var compare2 = require_compare2();
     module2.exports = (versions, range2, options) => {
       const set = [];
@@ -28888,7 +28888,7 @@ var require_simplify2 = __commonJS({
       let prev = null;
       const v = versions.sort((a, b) => compare2(a, b, options));
       for (const version3 of v) {
-        const included = satisfies4(version3, range2, options);
+        const included = satisfies5(version3, range2, options);
         if (included) {
           prev = version3;
           if (!first) {
@@ -28933,7 +28933,7 @@ var require_subset2 = __commonJS({
     var Range = require_range2();
     var Comparator = require_comparator2();
     var { ANY } = Comparator;
-    var satisfies4 = require_satisfies2();
+    var satisfies5 = require_satisfies2();
     var compare2 = require_compare2();
     var subset = (sub, dom, options = {}) => {
       if (sub === dom) {
@@ -29002,14 +29002,14 @@ var require_subset2 = __commonJS({
         }
       }
       for (const eq2 of eqSet) {
-        if (gt3 && !satisfies4(eq2, String(gt3), options)) {
+        if (gt3 && !satisfies5(eq2, String(gt3), options)) {
           return null;
         }
-        if (lt2 && !satisfies4(eq2, String(lt2), options)) {
+        if (lt2 && !satisfies5(eq2, String(lt2), options)) {
           return null;
         }
         for (const c of dom) {
-          if (!satisfies4(eq2, String(c), options)) {
+          if (!satisfies5(eq2, String(c), options)) {
             return false;
           }
         }
@@ -29036,7 +29036,7 @@ var require_subset2 = __commonJS({
             if (higher === c && higher !== gt3) {
               return false;
             }
-          } else if (gt3.operator === ">=" && !satisfies4(gt3.semver, String(c), options)) {
+          } else if (gt3.operator === ">=" && !satisfies5(gt3.semver, String(c), options)) {
             return false;
           }
         }
@@ -29051,7 +29051,7 @@ var require_subset2 = __commonJS({
             if (lower === c && lower !== lt2) {
               return false;
             }
-          } else if (lt2.operator === "<=" && !satisfies4(lt2.semver, String(c), options)) {
+          } else if (lt2.operator === "<=" && !satisfies5(lt2.semver, String(c), options)) {
             return false;
           }
         }
@@ -29121,12 +29121,12 @@ var require_semver4 = __commonJS({
     var coerce = require_coerce2();
     var Comparator = require_comparator2();
     var Range = require_range2();
-    var satisfies4 = require_satisfies2();
+    var satisfies5 = require_satisfies2();
     var toComparators = require_to_comparators2();
     var maxSatisfying3 = require_max_satisfying2();
     var minSatisfying4 = require_min_satisfying2();
     var minVersion = require_min_version2();
-    var validRange2 = require_valid4();
+    var validRange3 = require_valid4();
     var outside = require_outside2();
     var gtr = require_gtr2();
     var ltr = require_ltr2();
@@ -29159,12 +29159,12 @@ var require_semver4 = __commonJS({
       coerce,
       Comparator,
       Range,
-      satisfies: satisfies4,
+      satisfies: satisfies5,
       toComparators,
       maxSatisfying: maxSatisfying3,
       minSatisfying: minSatisfying4,
       minVersion,
-      validRange: validRange2,
+      validRange: validRange3,
       outside,
       gtr,
       ltr,
@@ -41060,7 +41060,7 @@ var require_readable2 = __commonJS({
     "use strict";
     var assert4 = require("node:assert");
     var { addAbortListener } = require("node:events");
-    var { Readable: Readable6 } = require("node:stream");
+    var { Readable: Readable7 } = require("node:stream");
     var { RequestAbortedError, NotSupportedError, InvalidArgumentError, AbortError: AbortError3 } = require_errors2();
     var util10 = require_util9();
     var { ReadableStreamFrom } = require_util9();
@@ -41075,7 +41075,7 @@ var require_readable2 = __commonJS({
     var kPreservedBuffer = /* @__PURE__ */ Symbol("kPreservedBuffer");
     var noop2 = () => {
     };
-    var BodyReadable = class extends Readable6 {
+    var BodyReadable = class extends Readable7 {
       /**
        * @param {object} opts
        * @param {(this: Readable, size: number) => void} opts.resume
@@ -41488,7 +41488,7 @@ var require_api_request2 = __commonJS({
     "use strict";
     var assert4 = require("node:assert");
     var { AsyncResource } = require("node:async_hooks");
-    var { Readable: Readable6 } = require_readable2();
+    var { Readable: Readable7 } = require_readable2();
     var { InvalidArgumentError, RequestAbortedError } = require_errors2();
     var util10 = require_util9();
     function noop2() {
@@ -41574,7 +41574,7 @@ var require_api_request2 = __commonJS({
         const parsedHeaders = headers;
         const contentType2 = parsedHeaders?.["content-type"];
         const contentLength2 = parsedHeaders?.["content-length"];
-        const res = new Readable6({
+        const res = new Readable7({
           resume: () => controller.resume(),
           abort: (reason) => controller.abort(reason),
           contentType: contentType2,
@@ -41950,7 +41950,7 @@ var require_api_pipeline2 = __commonJS({
   "node_modules/undici/lib/api/api-pipeline.js"(exports2, module2) {
     "use strict";
     var {
-      Readable: Readable6,
+      Readable: Readable7,
       Duplex,
       PassThrough
     } = require("node:stream");
@@ -41967,7 +41967,7 @@ var require_api_pipeline2 = __commonJS({
     function noop2() {
     }
     var kResume = /* @__PURE__ */ Symbol("resume");
-    var PipelineRequest = class extends Readable6 {
+    var PipelineRequest = class extends Readable7 {
       constructor() {
         super({ autoDestroy: true });
         this[kResume] = null;
@@ -41985,7 +41985,7 @@ var require_api_pipeline2 = __commonJS({
         callback(err);
       }
     };
-    var PipelineResponse = class extends Readable6 {
+    var PipelineResponse = class extends Readable7 {
       constructor(resume) {
         super({ autoDestroy: true });
         this[kResume] = resume;
@@ -46634,7 +46634,7 @@ var require_cache3 = __commonJS({
   "node_modules/undici/lib/interceptor/cache.js"(exports2, module2) {
     "use strict";
     var assert4 = require("node:assert");
-    var { Readable: Readable6 } = require("node:stream");
+    var { Readable: Readable7 } = require("node:stream");
     var util10 = require_util9();
     var CacheHandler = require_cache_handler();
     var MemoryCacheStore = require_memory_cache_store();
@@ -46730,7 +46730,7 @@ var require_cache3 = __commonJS({
       return dispatch(opts, new CacheHandler(globalOpts, cacheKey, handler));
     }
     function sendCachedValue(handler, opts, result, age, context3, isStale2) {
-      const stream7 = util10.isStream(result.body) ? result.body : Readable6.from(result.body ?? []);
+      const stream7 = util10.isStream(result.body) ? result.body : Readable7.from(result.body ?? []);
       assert4(!stream7.destroyed, "stream should not be destroyed");
       assert4(!stream7.readableDidRead, "stream should not be readableDidRead");
       const controller = {
@@ -49875,7 +49875,7 @@ var require_fetch2 = __commonJS({
       subresourceSet
     } = require_constants10();
     var EE = require("node:events");
-    var { Readable: Readable6, pipeline: pipeline4, finished, isErrored, isReadable } = require("node:stream");
+    var { Readable: Readable7, pipeline: pipeline4, finished, isErrored, isReadable } = require("node:stream");
     var { addAbortListener, bufferToLowerCasedHeaderName } = require_util9();
     var { dataURLProcessor, serializeAMimeType, minimizeSupportedMimeType } = require_data_url2();
     var { getGlobalDispatcher } = require_global4();
@@ -50851,7 +50851,7 @@ var require_fetch2 = __commonJS({
                 const headersList = new HeadersList();
                 appendHeadersListFromResponseHeaders(headersList, headers, rawHeaders);
                 const location = headersList.get("location", true);
-                this.body = new Readable6({ read: () => controller.resume() });
+                this.body = new Readable7({ read: () => controller.resume() });
                 const willFollow = location && request.redirect === "follow" && redirectStatusSet.has(status);
                 const decoders = [];
                 if (request.method !== "HEAD" && request.method !== "CONNECT" && !nullBodyStatus.includes(status) && !willFollow) {
@@ -55777,13 +55777,13 @@ var require_semver5 = __commonJS({
           return true;
         }
         rangeTmp = new Range(comp26.value, options);
-        return satisfies4(this.value, rangeTmp, options);
+        return satisfies5(this.value, rangeTmp, options);
       } else if (comp26.operator === "") {
         if (comp26.value === "") {
           return true;
         }
         rangeTmp = new Range(this.value, options);
-        return satisfies4(comp26.semver, rangeTmp, options);
+        return satisfies5(comp26.semver, rangeTmp, options);
       }
       var sameDirectionIncreasing = (this.operator === ">=" || this.operator === ">") && (comp26.operator === ">=" || comp26.operator === ">");
       var sameDirectionDecreasing = (this.operator === "<=" || this.operator === "<") && (comp26.operator === "<=" || comp26.operator === "<");
@@ -56110,8 +56110,8 @@ var require_semver5 = __commonJS({
       }
       return true;
     }
-    exports2.satisfies = satisfies4;
-    function satisfies4(version3, range2, options) {
+    exports2.satisfies = satisfies5;
+    function satisfies5(version3, range2, options) {
       try {
         range2 = new Range(range2, options);
       } catch (er) {
@@ -56202,8 +56202,8 @@ var require_semver5 = __commonJS({
       }
       return null;
     }
-    exports2.validRange = validRange2;
-    function validRange2(range2, options) {
+    exports2.validRange = validRange3;
+    function validRange3(range2, options) {
       try {
         return new Range(range2, options).range || "*";
       } catch (er) {
@@ -56241,7 +56241,7 @@ var require_semver5 = __commonJS({
         default:
           throw new TypeError('Must provide a hilo val of "<" or ">"');
       }
-      if (satisfies4(version3, range2, options)) {
+      if (satisfies5(version3, range2, options)) {
         return false;
       }
       for (var i2 = 0; i2 < range2.set.length; ++i2) {
@@ -105497,6 +105497,7 @@ function getOSNameVersion() {
 }
 function getLinuxOSNameVersion() {
   const files = ["/etc/os-release", "/usr/lib/os-release"];
+  let idWithoutVersion;
   for (const file of files) {
     try {
       const content = import_node_fs2.default.readFileSync(file, "utf8");
@@ -105513,8 +105514,14 @@ function getLinuxOSNameVersion() {
       if (id && buildId) {
         return `${id}-${buildId}`;
       }
+      if (id && idWithoutVersion === void 0) {
+        idWithoutVersion = id;
+      }
     } catch {
     }
+  }
+  if (idWithoutVersion) {
+    return idWithoutVersion;
   }
   throw new Error(
     "Failed to determine Linux distribution. Could not read /etc/os-release or /usr/lib/os-release"
@@ -106084,6 +106091,42 @@ var fs10 = __toESM(require("node:fs"), 1);
 
 // src/download/checksum/known-checksums.ts
 var KNOWN_CHECKSUMS = {
+  "aarch64-apple-darwin-0.11.30": "9bed3567d496d8dab84ecf7a1247551ac94ef1baaebb7b65df008dd93e9dc357",
+  "aarch64-pc-windows-msvc-0.11.30": "0edc44e7f23668bce7985facd96b2fe04a4d8ea8edfc7e53294afd8993e960fc",
+  "aarch64-unknown-linux-gnu-0.11.30": "8c11d90f5f66d232930cf8ae3a085c39877690d409e10878234802b028b20e2a",
+  "aarch64-unknown-linux-musl-0.11.30": "7562a40e4e08b1bfd566bd6aeca55a16ee5ac45211554543e8cdb3c395b47416",
+  "arm-unknown-linux-musleabihf-0.11.30": "58967610a6f14f2785e3be3b1b47553b5ff92c3d51bc0f1d9d90d83dc224f0db",
+  "armv7-unknown-linux-gnueabihf-0.11.30": "8e2d2ab63a37af47c1b4126c5871ee191b983a10670af91d8ef0bee198292931",
+  "armv7-unknown-linux-musleabihf-0.11.30": "33b515887e04c79d4d5de5967b8278b9dac1853cc8d657bf77052bab16a6629f",
+  "i686-pc-windows-msvc-0.11.30": "8ceaa74889e30d64adf55d7ad7acce6ed101fb036155bf2d7613715c9d9533c1",
+  "i686-unknown-linux-gnu-0.11.30": "e53221602d83b03c63a5e262bfcbf0f5f6e5972e93847498418bdb42005f04e7",
+  "i686-unknown-linux-musl-0.11.30": "f66898852a6a745a8c0ab0a26e046857ee77c9f24e4a3b64cb078753490b3978",
+  "powerpc64le-unknown-linux-gnu-0.11.30": "81a71fa495239c372b3b0c1bb2509167da00cf307323a2d2a39cbc92f0c6d5d1",
+  "riscv64gc-unknown-linux-gnu-0.11.30": "e2d65822d8f668f6d055679dba4937e386764b9561f9d1269d3bc9e7140f7491",
+  "riscv64gc-unknown-linux-musl-0.11.30": "3d75e26ace5e679e5de26106a71ee775af5c7f7ad872cd04f33b4d53c523a707",
+  "s390x-unknown-linux-gnu-0.11.30": "a30f253aca1291dbcdbb7f76c754235f268ff84d106a595f7d1abf337ab22ac1",
+  "x86_64-apple-darwin-0.11.30": "ce285fbbfbe294b1e1bc6c87c8b59d9622b85383b88b2b132a2df5c73e83d7c1",
+  "x86_64-pc-windows-msvc-0.11.30": "be8d78c992312212e5cc05e9f9de3fa996db73b7c86a186dfb9231eb9f91d33e",
+  "x86_64-unknown-linux-gnu-0.11.30": "04bc7d180d6138bf6dc08387acf507a823f397a98fea55da36b0ccc7fbce3b68",
+  "x86_64-unknown-linux-musl-0.11.30": "023fdd3b59fccfb67b365c69fb34182aaaed1d685d367a57571e3c1468a4c70c",
+  "aarch64-apple-darwin-0.11.29": "61c04acc52a33ef0f331e494bdfbedcdb6c26c6970c022ed3699e5860f8930e3",
+  "aarch64-pc-windows-msvc-0.11.29": "55b597ae81bc29531a7c352a1431a8a73cc2755d7a5b9ec454580cbe02e5154f",
+  "aarch64-unknown-linux-gnu-0.11.29": "94500fb064ae3c971a873cba64d94694c50677e0a4dbf78735c80509e7429919",
+  "aarch64-unknown-linux-musl-0.11.29": "593d79a797ece3f1dfaaf3e0a973263422a135d9262c7dbc6cd75d9c11acc0b4",
+  "arm-unknown-linux-musleabihf-0.11.29": "b160d7eb7dc45af378b3c9dd2cd6b07d64c65b509f2da673434e8e5dc996e5b1",
+  "armv7-unknown-linux-gnueabihf-0.11.29": "7b5717ae304fbb1e94104699fb8c08b32d1537fedc90dd8fcf87768d818951ed",
+  "armv7-unknown-linux-musleabihf-0.11.29": "bfd05286a80b39bd4708bbbb4450fe09f07fea86eea60d31ea2de0b5e816ef54",
+  "i686-pc-windows-msvc-0.11.29": "c173af6f6e125d65214b55d6b75fcf1a32d5e1c3a656938740fe0b2379cd4bcc",
+  "i686-unknown-linux-gnu-0.11.29": "c62af324951ae6f31f9453280e077176c96b6e31897d8133c00411a91a20878f",
+  "i686-unknown-linux-musl-0.11.29": "368dd75d030cae0512631ba0d50604e8471275ec2d9f02836edb91e4c82ad36a",
+  "powerpc64le-unknown-linux-gnu-0.11.29": "641b15637de9fedc7e738b0e4716b2233c792ba6dca722ba0484381749e1a9fd",
+  "riscv64gc-unknown-linux-gnu-0.11.29": "5c1229cc0309ebc6872ee847b8fc75564b3b7688edeb09e19427203e2dbc0ea7",
+  "riscv64gc-unknown-linux-musl-0.11.29": "d4708d913ba88fad9fe1d81da3e13aecadde7a3190cc095a7f2af2fa5c8caa8f",
+  "s390x-unknown-linux-gnu-0.11.29": "fa029183f550a3b00b89c06529fabfa11e0c69c097ccd397a8e7eae46f397348",
+  "x86_64-apple-darwin-0.11.29": "c4c4de482da9ccdd076dc4fb5cfe7b740609029385c72f58606be3153602387d",
+  "x86_64-pc-windows-msvc-0.11.29": "a047d55651bc3e0ca24595b25ec4cfcb10f9dca9fb56514e661269b37d4fae68",
+  "x86_64-unknown-linux-gnu-0.11.29": "04f8b82f5d47f0512dcd32c67a4a6f16a0ea27c81537c338fd0ad6b23cebe829",
+  "x86_64-unknown-linux-musl-0.11.29": "46711858adb2a3acaa9cee00f9060688ad1fd5706aecc005b96a6a7f285a00b7",
   "aarch64-apple-darwin-0.11.28": "33540eb7c883ab857eff79bd5ac2aa31fe27b595abecb4a9c003a2c998447232",
   "aarch64-pc-windows-msvc-0.11.28": "3248109afad3ec59baad299d324ff53de17e2d9a3b3e21580ffd26744b11e036",
   "aarch64-unknown-linux-gnu-0.11.28": "03e9fe0a81b0718d0bc84625de3885df6cc3f89a8b6af6121d6b9f6113fb6533",
@@ -111082,6 +111125,10 @@ async function validateFileCheckSum(filePath, expected) {
   });
 }
 
+// src/download/manifest.ts
+var import_node_readline = require("node:readline");
+var import_node_stream5 = require("node:stream");
+
 // src/utils/fetch.ts
 var import_undici2 = __toESM(require_undici2(), 1);
 function getProxyAgent() {
@@ -111135,21 +111182,15 @@ function formatVariants(entries) {
 // src/download/manifest.ts
 var cachedManifestData = /* @__PURE__ */ new Map();
 async function fetchManifest(manifestUrl = VERSIONS_MANIFEST_URL) {
-  const cachedVersions = cachedManifestData.get(manifestUrl);
-  if (cachedVersions !== void 0) {
+  const cachedManifest = cachedManifestData.get(manifestUrl);
+  if (cachedManifest?.complete === true) {
     debug(`Using cached manifest data from ${manifestUrl}`);
-    return cachedVersions;
+    return cachedManifest.versions;
   }
-  info2(`Fetching manifest data from ${manifestUrl} ...`);
-  const response = await fetch2(manifestUrl, {});
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch manifest data: ${response.status} ${response.statusText}`
-    );
-  }
+  const response = await fetchManifestResponse(manifestUrl);
   const body2 = await response.text();
   const versions = parseManifest(body2, manifestUrl);
-  cachedManifestData.set(manifestUrl, versions);
+  cachedManifestData.set(manifestUrl, { complete: true, versions });
   return versions;
 }
 function parseManifest(data, sourceDescription) {
@@ -111157,31 +111198,14 @@ function parseManifest(data, sourceDescription) {
   if (trimmed === "") {
     throw new Error(`Manifest at ${sourceDescription} is empty.`);
   }
-  if (trimmed.startsWith("[")) {
-    throw new Error(
-      `Legacy JSON array manifests are no longer supported in ${sourceDescription}. Use the astral-sh/versions manifest format instead.`
-    );
-  }
+  rejectLegacyManifest(trimmed, sourceDescription);
   const versions = [];
   for (const [index, line] of data.split("\n").entries()) {
     const record = line.trim();
     if (record === "") {
       continue;
     }
-    let parsed;
-    try {
-      parsed = JSON.parse(record);
-    } catch (error2) {
-      throw new Error(
-        `Failed to parse manifest data from ${sourceDescription} at line ${index + 1}: ${error2.message}`
-      );
-    }
-    if (!isManifestVersion(parsed)) {
-      throw new Error(
-        `Invalid manifest record in ${sourceDescription} at line ${index + 1}.`
-      );
-    }
-    versions.push(parsed);
+    versions.push(parseManifestRecord(record, sourceDescription, index + 1));
   }
   if (versions.length === 0) {
     throw new Error(`No manifest data found in ${sourceDescription}.`);
@@ -111189,12 +111213,15 @@ function parseManifest(data, sourceDescription) {
   return versions;
 }
 async function getLatestVersion(manifestUrl = VERSIONS_MANIFEST_URL) {
-  const latestVersion = (await fetchManifest(manifestUrl))[0]?.version;
+  const latestVersion = manifestUrl === VERSIONS_MANIFEST_URL ? (await findManifestVersion(() => true))?.version : (await fetchManifest(manifestUrl))[0]?.version;
   if (latestVersion === void 0) {
     throw new Error("No versions found in manifest data");
   }
   debug(`Latest version from manifest: ${latestVersion}`);
   return latestVersion;
+}
+async function getFirstMatchingVersion(predicate) {
+  return (await findManifestVersion((versionData) => predicate(versionData.version)))?.version;
 }
 async function getAllVersions(manifestUrl = VERSIONS_MANIFEST_URL) {
   info2(
@@ -111204,8 +111231,7 @@ async function getAllVersions(manifestUrl = VERSIONS_MANIFEST_URL) {
   return versions.map((versionData) => versionData.version);
 }
 async function getArtifact(version3, arch3, platform2, manifestUrl = VERSIONS_MANIFEST_URL) {
-  const versions = await fetchManifest(manifestUrl);
-  const versionData = versions.find(
+  const versionData = manifestUrl === VERSIONS_MANIFEST_URL ? await findManifestVersion((candidate) => candidate.version === version3) : (await fetchManifest(manifestUrl)).find(
     (candidate) => candidate.version === version3
   );
   if (!versionData) {
@@ -111232,11 +111258,102 @@ async function getArtifact(version3, arch3, platform2, manifestUrl = VERSIONS_MA
     downloadUrl: artifact.url
   };
 }
+async function fetchManifestResponse(manifestUrl) {
+  info2(`Fetching manifest data from ${manifestUrl} ...`);
+  const response = await fetch2(manifestUrl, {});
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch manifest data: ${response.status} ${response.statusText}`
+    );
+  }
+  return response;
+}
+async function findManifestVersion(predicate) {
+  const cachedManifest = cachedManifestData.get(VERSIONS_MANIFEST_URL);
+  const cachedVersion = cachedManifest?.versions.find(predicate);
+  if (cachedVersion !== void 0 || cachedManifest?.complete === true) {
+    return cachedVersion;
+  }
+  const response = await fetchManifestResponse(VERSIONS_MANIFEST_URL);
+  if (response.body === null) {
+    const versions2 = parseManifest(
+      await response.text(),
+      VERSIONS_MANIFEST_URL
+    );
+    cachedManifestData.set(VERSIONS_MANIFEST_URL, {
+      complete: true,
+      versions: versions2
+    });
+    return versions2.find(predicate);
+  }
+  const input = import_node_stream5.Readable.fromWeb(response.body);
+  const lines = (0, import_node_readline.createInterface)({ crlfDelay: Number.POSITIVE_INFINITY, input });
+  const versions = [];
+  let complete = false;
+  let lineNumber = 0;
+  let matchedVersion;
+  try {
+    for await (const line of lines) {
+      lineNumber += 1;
+      const record = line.trim();
+      if (record === "") {
+        continue;
+      }
+      if (versions.length === 0) {
+        rejectLegacyManifest(record, VERSIONS_MANIFEST_URL);
+      }
+      const versionData = parseManifestRecord(
+        record,
+        VERSIONS_MANIFEST_URL,
+        lineNumber
+      );
+      versions.push(versionData);
+      if (predicate(versionData)) {
+        matchedVersion = versionData;
+        break;
+      }
+    }
+    complete = matchedVersion === void 0;
+  } finally {
+    lines.close();
+    if (!complete) {
+      input.destroy();
+    }
+  }
+  if (versions.length === 0) {
+    throw new Error(`Manifest at ${VERSIONS_MANIFEST_URL} is empty.`);
+  }
+  cachedManifestData.set(VERSIONS_MANIFEST_URL, { complete, versions });
+  return matchedVersion;
+}
 function manifestSource(manifestUrl) {
   if (manifestUrl === VERSIONS_MANIFEST_URL) {
     return VERSIONS_MANIFEST_URL;
   }
   return `manifest-file ${manifestUrl}`;
+}
+function parseManifestRecord(record, sourceDescription, lineNumber) {
+  let parsed;
+  try {
+    parsed = JSON.parse(record);
+  } catch (error2) {
+    throw new Error(
+      `Failed to parse manifest data from ${sourceDescription} at line ${lineNumber}: ${error2.message}`
+    );
+  }
+  if (!isManifestVersion(parsed)) {
+    throw new Error(
+      `Invalid manifest record in ${sourceDescription} at line ${lineNumber}.`
+    );
+  }
+  return parsed;
+}
+function rejectLegacyManifest(data, sourceDescription) {
+  if (data.startsWith("[")) {
+    throw new Error(
+      `Legacy JSON array manifests are no longer supported in ${sourceDescription}. Use the astral-sh/versions manifest format instead.`
+    );
+  }
 }
 function isManifestVersion(value) {
   if (!isRecord(value)) {
@@ -111711,125 +111828,6 @@ var import_node_fs6 = __toESM(require("node:fs"), 1);
 // src/utils/config-file.ts
 var import_node_fs3 = __toESM(require("node:fs"), 1);
 
-// node_modules/smol-toml/dist/error.js
-function getLineColFromPtr(string, ptr) {
-  let lines = string.slice(0, ptr).split(/\r\n|\n|\r/g);
-  return [lines.length, lines.pop().length + 1];
-}
-function makeCodeBlock(string, line, column) {
-  let lines = string.split(/\r\n|\n|\r/g);
-  let codeblock = "";
-  let numberLen = (Math.log10(line + 1) | 0) + 1;
-  for (let i = line - 1; i <= line + 1; i++) {
-    let l = lines[i - 1];
-    if (!l)
-      continue;
-    codeblock += i.toString().padEnd(numberLen, " ");
-    codeblock += ":  ";
-    codeblock += l;
-    codeblock += "\n";
-    if (i === line) {
-      codeblock += " ".repeat(numberLen + column + 2);
-      codeblock += "^\n";
-    }
-  }
-  return codeblock;
-}
-var TomlError = class extends Error {
-  line;
-  column;
-  codeblock;
-  constructor(message, options) {
-    const [line, column] = getLineColFromPtr(options.toml, options.ptr);
-    const codeblock = makeCodeBlock(options.toml, line, column);
-    super(`Invalid TOML document: ${message}
-
-${codeblock}`, options);
-    this.line = line;
-    this.column = column;
-    this.codeblock = codeblock;
-  }
-};
-
-// node_modules/smol-toml/dist/util.js
-function isEscaped(str, ptr) {
-  let i = 0;
-  while (str[ptr - ++i] === "\\")
-    ;
-  return --i && i % 2;
-}
-function indexOfNewline(str, start = 0, end = str.length) {
-  let idx = str.indexOf("\n", start);
-  if (str[idx - 1] === "\r")
-    idx--;
-  return idx <= end ? idx : -1;
-}
-function skipComment(str, ptr) {
-  for (let i = ptr; i < str.length; i++) {
-    let c = str[i];
-    if (c === "\n")
-      return i;
-    if (c === "\r" && str[i + 1] === "\n")
-      return i + 1;
-    if (c < " " && c !== "	" || c === "\x7F") {
-      throw new TomlError("control characters are not allowed in comments", {
-        toml: str,
-        ptr
-      });
-    }
-  }
-  return str.length;
-}
-function skipVoid(str, ptr, banNewLines, banComments) {
-  let c;
-  while (1) {
-    while ((c = str[ptr]) === " " || c === "	" || !banNewLines && (c === "\n" || c === "\r" && str[ptr + 1] === "\n"))
-      ptr++;
-    if (banComments || c !== "#")
-      break;
-    ptr = skipComment(str, ptr);
-  }
-  return ptr;
-}
-function skipUntil(str, ptr, sep9, end, banNewLines = false) {
-  if (!end) {
-    ptr = indexOfNewline(str, ptr);
-    return ptr < 0 ? str.length : ptr;
-  }
-  for (let i = ptr; i < str.length; i++) {
-    let c = str[i];
-    if (c === "#") {
-      i = indexOfNewline(str, i);
-    } else if (c === sep9) {
-      return i + 1;
-    } else if (c === end || banNewLines && (c === "\n" || c === "\r" && str[i + 1] === "\n")) {
-      return i;
-    }
-  }
-  throw new TomlError("cannot find end of structure", {
-    toml: str,
-    ptr
-  });
-}
-function getStringEnd(str, seek) {
-  let first = str[seek];
-  let target = first === str[seek + 1] && str[seek + 1] === str[seek + 2] ? str.slice(seek, seek + 3) : first;
-  seek += target.length - 1;
-  do
-    seek = str.indexOf(target, ++seek);
-  while (seek > -1 && first !== "'" && isEscaped(str, seek));
-  if (seek > -1) {
-    seek += target.length;
-    if (target.length > 1) {
-      if (str[seek] === first)
-        seek++;
-      if (str[seek] === first)
-        seek++;
-    }
-  }
-  return seek;
-}
-
 // node_modules/smol-toml/dist/date.js
 var DATE_TIME_RE = /^(\d{4}-\d{2}-\d{2})?[T ]?(?:(\d{2}):\d{2}(?::\d{2}(?:\.\d+)?)?)?(Z|[-+]\d{2}:\d{2})?$/i;
 var TomlDate = class _TomlDate extends Date {
@@ -111922,93 +111920,153 @@ var TomlDate = class _TomlDate extends Date {
   }
 };
 
+// node_modules/smol-toml/dist/error.js
+function getLineColFromPtr(string, ptr) {
+  let lines = string.slice(0, ptr).split(/\r\n|\n|\r/g);
+  return [lines.length, lines.pop().length + 1];
+}
+function makeCodeBlock(string, line, column) {
+  let lines = string.split(/\r\n|\n|\r/g);
+  let codeblock = "";
+  let numberLen = (Math.log10(line + 1) | 0) + 1;
+  for (let i = line - 1; i <= line + 1; i++) {
+    let l = lines[i - 1];
+    if (!l)
+      continue;
+    codeblock += i.toString().padEnd(numberLen, " ");
+    codeblock += ":  ";
+    codeblock += l;
+    codeblock += "\n";
+    if (i === line) {
+      codeblock += " ".repeat(numberLen + column + 2);
+      codeblock += "^\n";
+    }
+  }
+  return codeblock;
+}
+var TomlError = class extends Error {
+  line;
+  column;
+  codeblock;
+  constructor(message, options) {
+    const [line, column] = getLineColFromPtr(options.toml, options.ptr);
+    const codeblock = makeCodeBlock(options.toml, line, column);
+    super(`Invalid TOML document: ${message}
+
+${codeblock}`, options);
+    this.line = line;
+    this.column = column;
+    this.codeblock = codeblock;
+  }
+};
+
 // node_modules/smol-toml/dist/primitive.js
 var INT_REGEX = /^((0x[0-9a-fA-F](_?[0-9a-fA-F])*)|(([+-]|0[ob])?\d(_?\d)*))$/;
 var FLOAT_REGEX = /^[+-]?\d(_?\d)*(\.\d(_?\d)*)?([eE][+-]?\d(_?\d)*)?$/;
 var LEADING_ZERO = /^[+-]?0[0-9_]/;
-var ESCAPE_REGEX = /^[0-9a-f]{2,8}$/i;
-var ESC_MAP = {
-  b: "\b",
-  t: "	",
-  n: "\n",
-  f: "\f",
-  r: "\r",
-  e: "\x1B",
-  '"': '"',
-  "\\": "\\"
-};
-function parseString(str, ptr = 0, endPtr = str.length) {
-  let isLiteral = str[ptr] === "'";
-  let isMultiline = str[ptr++] === str[ptr] && str[ptr] === str[ptr + 1];
+function parseString(str, ptr) {
+  let c = str[ptr++];
+  let first = c;
+  let isLiteral = c === "'";
+  let isMultiline = c === str[ptr] && c === str[ptr + 1];
   if (isMultiline) {
-    endPtr -= 2;
-    if (str[ptr += 2] === "\r")
+    if (str[ptr += 2] === "\n")
       ptr++;
-    if (str[ptr] === "\n")
-      ptr++;
+    else if (str[ptr] === "\r" && str[ptr + 1] === "\n")
+      ptr += 2;
   }
-  let tmp = 0;
-  let isEscape;
   let parsed = "";
   let sliceStart = ptr;
-  while (ptr < endPtr - 1) {
-    let c = str[ptr++];
-    if (c === "\n" || c === "\r" && str[ptr] === "\n") {
-      if (!isMultiline) {
-        throw new TomlError("newlines are not allowed in strings", {
-          toml: str,
-          ptr: ptr - 1
-        });
-      }
+  let state3 = 0;
+  for (let i = ptr; i < str.length; i++) {
+    c = str[i];
+    if (isMultiline && (c === "\n" || c === "\r" && str[i + 1] === "\n")) {
+      state3 = state3 && 3;
     } else if (c < " " && c !== "	" || c === "\x7F") {
       throw new TomlError("control characters are not allowed in strings", {
         toml: str,
-        ptr: ptr - 1
+        ptr: i
       });
-    }
-    if (isEscape) {
-      isEscape = false;
+    } else if ((!state3 || state3 === 3) && c === first && (!isMultiline || str[i + 1] === first && str[i + 2] === first)) {
+      if (isMultiline) {
+        if (str[i + 3] === first)
+          i++;
+        if (str[i + 3] === first)
+          i++;
+      }
+      return [
+        // If we're in a newline escape still, then there's nothing to add.
+        // Also try to avoid concat if there's nothing to add to parsed, or nothing has been added to parsed.
+        state3 ? parsed : parsed + str.slice(sliceStart, i),
+        i + (isMultiline ? 3 : 1)
+      ];
+    } else if (!state3) {
+      if (!isLiteral && c === "\\") {
+        parsed += str.slice(sliceStart, sliceStart = i);
+        state3 = 1;
+      }
+    } else if (state3 === 1) {
       if (c === "x" || c === "u" || c === "U") {
-        let code = str.slice(ptr, ptr += c === "x" ? 2 : c === "u" ? 4 : 8);
-        if (!ESCAPE_REGEX.test(code)) {
-          throw new TomlError("invalid unicode escape", {
-            toml: str,
-            ptr: tmp
-          });
+        let value = 0;
+        let len = c === "x" ? 2 : c === "u" ? 4 : 8;
+        for (let j = 0; j < len; j++, i++) {
+          let hex = str.charCodeAt(i + 1);
+          let digit = (
+            /* 0-9 */
+            hex >= 48 && hex <= 57 ? hex - 48 : (
+              /* A-F */
+              hex >= 65 && hex <= 70 ? hex - 65 + 10 : (
+                /* a-f */
+                hex >= 97 && hex <= 102 ? hex - 97 + 10 : -1
+              )
+            )
+          );
+          if (digit < 0)
+            throw new TomlError("invalid non-hex character in unicode escape", { toml: str, ptr: i + 1 });
+          value = value << 4 | digit;
         }
-        try {
-          parsed += String.fromCodePoint(parseInt(code, 16));
-        } catch {
-          throw new TomlError("invalid unicode escape", {
-            toml: str,
-            ptr: tmp
-          });
+        if (value < 0 || value > 1114111 || value >= 55296 && value <= 57343) {
+          throw new TomlError("invalid unicode escape", { toml: str, ptr: i });
         }
-      } else if (isMultiline && (c === "\n" || c === " " || c === "	" || c === "\r")) {
-        ptr = skipVoid(str, ptr - 1, true);
-        if (str[ptr] !== "\n" && str[ptr] !== "\r") {
-          throw new TomlError("invalid escape: only line-ending whitespace may be escaped", {
-            toml: str,
-            ptr: tmp
-          });
-        }
-        ptr = skipVoid(str, ptr);
-      } else if (c in ESC_MAP) {
-        parsed += ESC_MAP[c];
+        parsed += String.fromCodePoint(value);
+        sliceStart = i + 1;
+        state3 = 0;
+      } else if (c === " " || c === "	") {
+        state3 = 2;
       } else {
-        throw new TomlError("unrecognized escape sequence", {
+        if (c === "b")
+          parsed += "\b";
+        else if (c === "t")
+          parsed += "	";
+        else if (c === "n")
+          parsed += "\n";
+        else if (c === "f")
+          parsed += "\f";
+        else if (c === "r")
+          parsed += "\r";
+        else if (c === "e")
+          parsed += "\x1B";
+        else if (c === '"')
+          parsed += '"';
+        else if (c === "\\")
+          parsed += "\\";
+        else
+          throw new TomlError("unrecognized escape sequence", { toml: str, ptr: i });
+        sliceStart = i + 1;
+        state3 = 0;
+      }
+    } else if (c !== " " && c !== "	") {
+      if (state3 === 2) {
+        throw new TomlError("invalid escape: only line-ending whitespace may be escaped", {
           toml: str,
-          ptr: tmp
+          ptr: sliceStart
         });
       }
-      sliceStart = ptr;
-    } else if (!isLiteral && c === "\\") {
-      tmp = ptr - 1;
-      isEscape = true;
-      parsed += str.slice(sliceStart, tmp);
+      state3 = !isLiteral && c === "\\" ? 1 : 0;
+      sliceStart = i;
     }
   }
-  return parsed + str.slice(sliceStart, endPtr - 1);
+  throw new TomlError("unfinished string", { toml: str, ptr });
 }
 function parseValue2(value, toml, ptr, integersAsBigInt) {
   if (value === "true")
@@ -112061,6 +112119,63 @@ function parseValue2(value, toml, ptr, integersAsBigInt) {
   return date;
 }
 
+// node_modules/smol-toml/dist/util.js
+function indexOfNewline(str, start = 0, end = str.length) {
+  let idx = str.indexOf("\n", start);
+  if (str[idx - 1] === "\r")
+    idx--;
+  return idx <= end ? idx : -1;
+}
+function skipComment(str, ptr) {
+  for (let i = ptr; i < str.length; i++) {
+    let c = str[i];
+    if (c === "\n")
+      return i;
+    if (c === "\r" && str[i + 1] === "\n")
+      return i + 1;
+    if (c < " " && c !== "	" || c === "\x7F") {
+      throw new TomlError("control characters are not allowed in comments", {
+        toml: str,
+        ptr
+      });
+    }
+  }
+  return str.length;
+}
+function skipVoid(str, ptr, banNewLines, banComments) {
+  let c;
+  while (1) {
+    while ((c = str[ptr]) === " " || c === "	" || !banNewLines && (c === "\n" || c === "\r" && str[ptr + 1] === "\n"))
+      ptr++;
+    if (banComments || c !== "#")
+      break;
+    ptr = skipComment(str, ptr);
+  }
+  return ptr;
+}
+function skipUntil(str, ptr, sep9, end, banNewLines = false) {
+  if (!end) {
+    ptr = indexOfNewline(str, ptr);
+    return ptr < 0 ? str.length : ptr;
+  }
+  for (let i = ptr; i < str.length; i++) {
+    let c = str[i];
+    if (c === "#") {
+      i = indexOfNewline(str, i);
+      if (i < 0)
+        break;
+    } else if (c === sep9) {
+      return i + 1;
+    } else if (c === end || banNewLines && (c === "\n" || c === "\r" && str[i + 1] === "\n")) {
+      return i;
+    }
+  }
+  throw new TomlError("cannot find end of structure", {
+    toml: str,
+    ptr
+  });
+}
+
 // node_modules/smol-toml/dist/extract.js
 function sliceAndTrimEndOf(str, startPtr, endPtr) {
   let value = str.slice(startPtr, endPtr);
@@ -112094,24 +112209,23 @@ function extractValue(str, ptr, end, depth, integersAsBigInt) {
     }
     return [value, endPtr2];
   }
-  let endPtr;
   if (c === '"' || c === "'") {
-    endPtr = getStringEnd(str, ptr);
-    let parsed = parseString(str, ptr, endPtr);
+    let [parsed, endPtr2] = parseString(str, ptr);
     if (end) {
-      endPtr = skipVoid(str, endPtr);
-      if (str[endPtr] && str[endPtr] !== "," && str[endPtr] !== end && str[endPtr] !== "\n" && str[endPtr] !== "\r") {
+      endPtr2 = skipVoid(str, endPtr2);
+      if (str[endPtr2] && str[endPtr2] !== "," && str[endPtr2] !== end && str[endPtr2] !== "\n" && str[endPtr2] !== "\r") {
         throw new TomlError("unexpected character encountered", {
           toml: str,
-          ptr: endPtr
+          ptr: endPtr2
         });
       }
-      endPtr += +(str[endPtr] === ",");
+      if (str[endPtr2] === ",")
+        endPtr2++;
     }
-    return [parsed, endPtr];
+    return [parsed, endPtr2];
   }
-  endPtr = skipUntil(str, ptr, ",", end);
-  let slice = sliceAndTrimEndOf(str, ptr, endPtr - +(str[endPtr - 1] === ","));
+  let endPtr = skipUntil(str, ptr, ",", end);
+  let slice = sliceAndTrimEndOf(str, ptr, endPtr - (str[endPtr - 1] === "," ? 1 : 0));
   if (!slice[0]) {
     throw new TomlError("incomplete key-value declaration: no value specified", {
       toml: str,
@@ -112120,7 +112234,8 @@ function extractValue(str, ptr, end, depth, integersAsBigInt) {
   }
   if (end && slice[1] > -1) {
     endPtr = skipVoid(str, ptr + slice[1]);
-    endPtr += +(str[endPtr] === ",");
+    if (str[endPtr] === ",")
+      endPtr++;
   }
   return [
     parseValue2(slice[0], str, ptr, integersAsBigInt),
@@ -112150,13 +112265,7 @@ function parseKey(str, ptr, end = "=") {
             ptr
           });
         }
-        let eos = getStringEnd(str, ptr);
-        if (eos < 0) {
-          throw new TomlError("unfinished string encountered", {
-            toml: str,
-            ptr
-          });
-        }
+        let [part, eos] = parseString(str, ptr);
         dot = str.indexOf(".", eos);
         let strEnd = str.slice(eos, dot < 0 || dot > endPtr ? endPtr : dot);
         let newLine = indexOfNewline(strEnd);
@@ -112181,7 +112290,7 @@ function parseKey(str, ptr, end = "=") {
             });
           }
         }
-        parsed.push(parseString(str, ptr, eos));
+        parsed.push(part);
       } else {
         dot = str.indexOf(".", ptr);
         let part = str.slice(ptr, dot < 0 || dot > endPtr ? endPtr : dot);
@@ -112711,9 +112820,19 @@ var RangeVersionResolver = class {
     if (context3.parsedSpecifier.kind !== "range") {
       return void 0;
     }
-    const availableVersions = await getAllVersions(context3.manifestUrl);
-    debug(`Available versions: ${availableVersions}`);
-    const resolvedVersion = context3.resolutionStrategy === "lowest" ? minSatisfying3(availableVersions, context3.parsedSpecifier.normalized) : maxSatisfying2(availableVersions, context3.parsedSpecifier.normalized);
+    let resolvedVersion;
+    if (context3.resolutionStrategy === "highest" && (context3.manifestUrl === void 0 || context3.manifestUrl === VERSIONS_MANIFEST_URL)) {
+      resolvedVersion = await findHighestSatisfyingVersion(
+        context3.parsedSpecifier.normalized
+      );
+    } else {
+      const availableVersions = await getAllVersions(context3.manifestUrl);
+      debug(`Available versions: ${availableVersions}`);
+      resolvedVersion = context3.resolutionStrategy === "lowest" ? minSatisfying3(availableVersions, context3.parsedSpecifier.normalized) : maxSatisfying2(
+        availableVersions,
+        context3.parsedSpecifier.normalized
+      );
+    }
     if (resolvedVersion === void 0) {
       throw new Error(`No version found for ${context3.parsedSpecifier.raw}`);
     }
@@ -112749,6 +112868,29 @@ async function resolveVersion(versionInput, manifestUrl, resolutionStrategy = "h
     }
   }
   throw new Error(`No version found for ${versionInput}`);
+}
+async function findHighestSatisfyingVersion(versionSpecifier) {
+  const semverRange = semver4.validRange(versionSpecifier);
+  if (semverRange !== null) {
+    const semverMatch = await getFirstMatchingVersion(
+      (version3) => semver4.satisfies(version3, semverRange)
+    );
+    if (semverMatch !== void 0) {
+      debug(
+        `Found a version that satisfies the semver range: ${semverMatch}`
+      );
+      return semverMatch;
+    }
+  }
+  const pep440Match = await getFirstMatchingVersion(
+    (version3) => satisfies3(version3, versionSpecifier)
+  );
+  if (pep440Match !== void 0) {
+    debug(
+      `Found a version that satisfies the pep440 specifier: ${pep440Match}`
+    );
+  }
+  return pep440Match;
 }
 function maxSatisfying2(versions, version3) {
   const maxSemver = evaluateVersions(versions, version3);
@@ -114821,7 +114963,7 @@ var import_https_proxy_agent2 = __toESM(require_dist4(), 1);
 var import_http = __toESM(require("http"), 1);
 var import_https = __toESM(require("https"), 1);
 var import_http22 = __toESM(require("http2"), 1);
-var import_util20 = __toESM(require("util"), 1);
+var import_util19 = __toESM(require("util"), 1);
 var import_path = require("path");
 var import_follow_redirects = __toESM(require_follow_redirects(), 1);
 var import_zlib = __toESM(require("zlib"), 1);
@@ -115001,7 +115143,7 @@ var AxiosTransformStream_default = AxiosTransformStream;
 var import_events3 = require("events");
 
 // node_modules/axios/lib/helpers/formDataToStream.js
-var import_util18 = __toESM(require("util"), 1);
+var import_util17 = __toESM(require("util"), 1);
 var import_stream3 = require("stream");
 
 // node_modules/axios/lib/helpers/readBlob.js
@@ -115021,7 +115163,7 @@ var readBlob_default = readBlob;
 
 // node_modules/axios/lib/helpers/formDataToStream.js
 var BOUNDARY_ALPHABET = platform_default.ALPHABET.ALPHA_DIGIT + "-_";
-var textEncoder = typeof TextEncoder === "function" ? new TextEncoder() : new import_util18.default.TextEncoder();
+var textEncoder = typeof TextEncoder === "function" ? new TextEncoder() : new import_util17.default.TextEncoder();
 var CRLF = "\r\n";
 var CRLF_BYTES = textEncoder.encode(CRLF);
 var CRLF_BYTES_COUNT = 2;
@@ -115128,7 +115270,7 @@ var ZlibHeaderTransformStream_default = ZlibHeaderTransformStream;
 
 // node_modules/axios/lib/helpers/Http2Sessions.js
 var import_http2 = __toESM(require("http2"), 1);
-var import_util19 = __toESM(require("util"), 1);
+var import_util18 = __toESM(require("util"), 1);
 var Http2Sessions = class {
   constructor() {
     this.sessions = /* @__PURE__ */ Object.create(null);
@@ -115145,7 +115287,7 @@ var Http2Sessions = class {
       let len = authoritySessions.length;
       for (let i = 0; i < len; i++) {
         const [sessionHandle, sessionOptions] = authoritySessions[i];
-        if (!sessionHandle.destroyed && !sessionHandle.closed && import_util19.default.isDeepStrictEqual(sessionOptions, options)) {
+        if (!sessionHandle.destroyed && !sessionHandle.closed && import_util18.default.isDeepStrictEqual(sessionOptions, options)) {
           return sessionHandle;
         }
       }
@@ -116032,7 +116174,7 @@ var http_default = isHttpAdapterSupported && function httpAdapter(config) {
       setFormDataHeaders(headers, data.getHeaders(), own2("formDataHeaderPolicy"));
       if (!headers.hasContentLength()) {
         try {
-          const knownLength = await import_util20.default.promisify(data.getLength).call(data);
+          const knownLength = await import_util19.default.promisify(data.getLength).call(data);
           Number.isFinite(knownLength) && knownLength >= 0 && headers.setContentLength(knownLength);
         } catch (e) {
         }
@@ -118387,10 +118529,10 @@ mime-types/index.js:
    * MIT Licensed
    *)
 
-smol-toml/dist/error.js:
-smol-toml/dist/util.js:
 smol-toml/dist/date.js:
+smol-toml/dist/error.js:
 smol-toml/dist/primitive.js:
+smol-toml/dist/util.js:
 smol-toml/dist/extract.js:
 smol-toml/dist/struct.js:
 smol-toml/dist/parse.js:

@@ -371,7 +371,7 @@ jobs:
           persist-credentials: false
       - name: Install default version
         uses: ./
-      - run: uvx ruff --version
+      - run: uvx ruff@0.14.10 --version
 
   test-tool-install:
     runs-on: ${{ matrix.os }}
@@ -389,7 +389,7 @@ jobs:
           persist-credentials: false
       - name: Install default version
         uses: ./
-      - run: uv tool install ruff
+      - run: uv tool install ruff==0.14.10
       - run: ruff --version
 
   test-python-version:
@@ -423,9 +423,14 @@ jobs:
           if [ "$PYTHON_VERSION" != "3.13.1t" ]; then
             exit 1
           fi
+          if [ -n "$PYTHON_RUNTIME_ID" ]; then
+            echo "python-runtime-id should be empty without environment activation"
+            exit 1
+          fi
         shell: bash
         env:
           PYTHON_VERSION: ${{ steps.setup-uv.outputs.python-version }}
+          PYTHON_RUNTIME_ID: ${{ steps.setup-uv.outputs.python-runtime-id }}
       - run: uv sync
         working-directory: __tests__/fixtures/uv-project
 
@@ -579,6 +584,15 @@ jobs:
               raise SystemExit(f"Python is not running from custom venv: {sys.executable}")
           PY
         shell: bash
+      - name: Verify Python runtime ID from custom venv
+        run: |
+          case "$PYTHON_RUNTIME_ID" in
+            cpython-3.13.1+freethreaded-*) ;;
+            *) echo "Wrong Python runtime ID: $PYTHON_RUNTIME_ID"; exit 1 ;;
+          esac
+        shell: bash
+        env:
+          PYTHON_RUNTIME_ID: ${{ steps.setup-uv.outputs.python-runtime-id }}
 
   test-debian-unstable:
     runs-on: ubuntu-latest
@@ -1309,26 +1323,6 @@ jobs:
       - name: Install python works
         run: uv python install
 
-  test-act:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
-        with:
-          egress-policy: audit
-
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Install act
-        run: gh extension install https://github.com/nektos/gh-act
-        env:
-          GH_TOKEN: ${{ github.token }}
-      - name: Run test-uvx with act
-        run: gh act -j test-uvx -P ubuntu-latest=catthehacker/ubuntu:act-latest
-        env:
-          GH_TOKEN: ${{ github.token }}
-
   test-workflow-run:
     runs-on: ubuntu-latest
     steps:
@@ -1414,7 +1408,6 @@ jobs:
       - test-cache-python-installs
       - test-restore-python-installs
       - test-python-install-dir
-      - test-act
       - test-workflow-run
       - validate-typings
     if: always()

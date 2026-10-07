@@ -159,7 +159,7 @@ python 3.13
 ```
 
 ```yaml
-- uses: step-security/setup-uv@v9
+- uses: step-security/setup-uv@v10
   with:
     version-file: ".tool-versions"
 ```

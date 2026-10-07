@@ -19,7 +19,7 @@ When `manifest-file` is set, `latest-known` still selects a version from setup-u
 
 ```yaml
 - name: Install the latest version of uv known to setup-uv
-  uses: step-security/setup-uv@v9
+  uses: step-security/setup-uv@v10
   with:
     version: "latest-known"
 ```

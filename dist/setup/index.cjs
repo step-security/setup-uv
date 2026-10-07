@@ -8667,7 +8667,7 @@ var require_proxy_agent = __commonJS({
         return this.#client.destroy(err);
       }
     };
-    var ProxyAgent3 = class extends DispatcherBase {
+    var ProxyAgent2 = class extends DispatcherBase {
       constructor(opts) {
         super();
         if (!opts || typeof opts === "object" && !(opts instanceof URL3) && !opts.uri) {
@@ -8808,7 +8808,7 @@ var require_proxy_agent = __commonJS({
         throw new InvalidArgumentError("Proxy-Authorization should be sent in ProxyAgent constructor");
       }
     }
-    module2.exports = ProxyAgent3;
+    module2.exports = ProxyAgent2;
   }
 });
 
@@ -8818,14 +8818,14 @@ var require_env_http_proxy_agent = __commonJS({
     "use strict";
     var DispatcherBase = require_dispatcher_base();
     var { kClose, kDestroy, kClosed, kDestroyed, kDispatch, kNoProxyAgent, kHttpProxyAgent, kHttpsProxyAgent } = require_symbols();
-    var ProxyAgent3 = require_proxy_agent();
+    var ProxyAgent2 = require_proxy_agent();
     var Agent3 = require_agent();
     var DEFAULT_PORTS3 = {
       "http:": 80,
       "https:": 443
     };
     var experimentalWarned = false;
-    var EnvHttpProxyAgent = class extends DispatcherBase {
+    var EnvHttpProxyAgent2 = class extends DispatcherBase {
       #noProxyValue = null;
       #noProxyEntries = null;
       #opts = null;
@@ -8842,13 +8842,13 @@ var require_env_http_proxy_agent = __commonJS({
         this[kNoProxyAgent] = new Agent3(agentOpts);
         const HTTP_PROXY2 = httpProxy ?? process.env.http_proxy ?? process.env.HTTP_PROXY;
         if (HTTP_PROXY2) {
-          this[kHttpProxyAgent] = new ProxyAgent3({ ...agentOpts, uri: HTTP_PROXY2 });
+          this[kHttpProxyAgent] = new ProxyAgent2({ ...agentOpts, uri: HTTP_PROXY2 });
         } else {
           this[kHttpProxyAgent] = this[kNoProxyAgent];
         }
         const HTTPS_PROXY2 = httpsProxy ?? process.env.https_proxy ?? process.env.HTTPS_PROXY;
         if (HTTPS_PROXY2) {
-          this[kHttpsProxyAgent] = new ProxyAgent3({ ...agentOpts, uri: HTTPS_PROXY2 });
+          this[kHttpsProxyAgent] = new ProxyAgent2({ ...agentOpts, uri: HTTPS_PROXY2 });
         } else {
           this[kHttpsProxyAgent] = this[kHttpProxyAgent];
         }
@@ -8944,7 +8944,7 @@ var require_env_http_proxy_agent = __commonJS({
         return process.env.no_proxy ?? process.env.NO_PROXY ?? "";
       }
     };
-    module2.exports = EnvHttpProxyAgent;
+    module2.exports = EnvHttpProxyAgent2;
   }
 });
 
@@ -10982,7 +10982,7 @@ var require_mock_interceptor = __commonJS({
 var require_mock_client = __commonJS({
   "node_modules/@actions/http-client/node_modules/undici/lib/mock/mock-client.js"(exports2, module2) {
     "use strict";
-    var { promisify: promisify5 } = require("node:util");
+    var { promisify: promisify6 } = require("node:util");
     var Client = require_client();
     var { buildMockDispatch } = require_mock_utils();
     var {
@@ -11022,7 +11022,7 @@ var require_mock_client = __commonJS({
         return new MockInterceptor(opts, this[kDispatches]);
       }
       async [kClose]() {
-        await promisify5(this[kOriginalClose])();
+        await promisify6(this[kOriginalClose])();
         this[kConnected] = 0;
         this[kMockAgent][Symbols.kClients].delete(this[kOrigin]);
       }
@@ -11035,7 +11035,7 @@ var require_mock_client = __commonJS({
 var require_mock_pool = __commonJS({
   "node_modules/@actions/http-client/node_modules/undici/lib/mock/mock-pool.js"(exports2, module2) {
     "use strict";
-    var { promisify: promisify5 } = require("node:util");
+    var { promisify: promisify6 } = require("node:util");
     var Pool = require_pool();
     var { buildMockDispatch } = require_mock_utils();
     var {
@@ -11075,7 +11075,7 @@ var require_mock_pool = __commonJS({
         return new MockInterceptor(opts, this[kDispatches]);
       }
       async [kClose]() {
-        await promisify5(this[kOriginalClose])();
+        await promisify6(this[kOriginalClose])();
         this[kConnected] = 0;
         this[kMockAgent][Symbols.kClients].delete(this[kOrigin]);
       }
@@ -18698,8 +18698,8 @@ var require_undici = __commonJS({
     var Pool = require_pool();
     var BalancedPool = require_balanced_pool();
     var Agent3 = require_agent();
-    var ProxyAgent3 = require_proxy_agent();
-    var EnvHttpProxyAgent = require_env_http_proxy_agent();
+    var ProxyAgent2 = require_proxy_agent();
+    var EnvHttpProxyAgent2 = require_env_http_proxy_agent();
     var RetryAgent = require_retry_agent();
     var errors = require_errors();
     var util10 = require_util();
@@ -18721,8 +18721,8 @@ var require_undici = __commonJS({
     module2.exports.Pool = Pool;
     module2.exports.BalancedPool = BalancedPool;
     module2.exports.Agent = Agent3;
-    module2.exports.ProxyAgent = ProxyAgent3;
-    module2.exports.EnvHttpProxyAgent = EnvHttpProxyAgent;
+    module2.exports.ProxyAgent = ProxyAgent2;
+    module2.exports.EnvHttpProxyAgent = EnvHttpProxyAgent2;
     module2.exports.RetryAgent = RetryAgent;
     module2.exports.RetryHandler = RetryHandler;
     module2.exports.DecoratorHandler = DecoratorHandler;
@@ -40661,7 +40661,7 @@ var require_proxy_agent2 = __commonJS({
         return this.#client.destroy(err);
       }
     };
-    var ProxyAgent3 = class extends DispatcherBase {
+    var ProxyAgent2 = class extends DispatcherBase {
       constructor(opts) {
         if (!opts || typeof opts === "object" && !(opts instanceof URL) && !opts.uri) {
           throw new InvalidArgumentError("Proxy uri is mandatory");
@@ -40860,7 +40860,7 @@ var require_proxy_agent2 = __commonJS({
     function throwProxyAuthError() {
       throw new InvalidArgumentError("Proxy-Authorization should be sent in ProxyAgent constructor");
     }
-    module2.exports = ProxyAgent3;
+    module2.exports = ProxyAgent2;
   }
 });
 
@@ -40870,13 +40870,13 @@ var require_env_http_proxy_agent2 = __commonJS({
     "use strict";
     var DispatcherBase = require_dispatcher_base2();
     var { kClose, kDestroy, kClosed, kDestroyed, kDispatch, kNoProxyAgent, kHttpProxyAgent, kHttpsProxyAgent } = require_symbols6();
-    var ProxyAgent3 = require_proxy_agent2();
+    var ProxyAgent2 = require_proxy_agent2();
     var Agent3 = require_agent2();
     var DEFAULT_PORTS3 = {
       "http:": 80,
       "https:": 443
     };
-    var EnvHttpProxyAgent = class extends DispatcherBase {
+    var EnvHttpProxyAgent2 = class extends DispatcherBase {
       #noProxyValue = null;
       #noProxyEntries = null;
       #opts = null;
@@ -40887,13 +40887,13 @@ var require_env_http_proxy_agent2 = __commonJS({
         this[kNoProxyAgent] = new Agent3(agentOpts);
         const HTTP_PROXY2 = httpProxy ?? process.env.http_proxy ?? process.env.HTTP_PROXY;
         if (HTTP_PROXY2) {
-          this[kHttpProxyAgent] = new ProxyAgent3({ ...agentOpts, uri: HTTP_PROXY2 });
+          this[kHttpProxyAgent] = new ProxyAgent2({ ...agentOpts, uri: HTTP_PROXY2 });
         } else {
           this[kHttpProxyAgent] = this[kNoProxyAgent];
         }
         const HTTPS_PROXY2 = httpsProxy ?? process.env.https_proxy ?? process.env.HTTPS_PROXY;
         if (HTTPS_PROXY2) {
-          this[kHttpsProxyAgent] = new ProxyAgent3({ ...agentOpts, uri: HTTPS_PROXY2 });
+          this[kHttpsProxyAgent] = new ProxyAgent2({ ...agentOpts, uri: HTTPS_PROXY2 });
         } else {
           this[kHttpsProxyAgent] = this[kHttpProxyAgent];
         }
@@ -40994,7 +40994,7 @@ var require_env_http_proxy_agent2 = __commonJS({
         return process.env.no_proxy ?? process.env.NO_PROXY ?? "";
       }
     };
-    module2.exports = EnvHttpProxyAgent;
+    module2.exports = EnvHttpProxyAgent2;
   }
 });
 
@@ -43532,7 +43532,7 @@ var require_mock_interceptor2 = __commonJS({
 var require_mock_client2 = __commonJS({
   "node_modules/undici/lib/mock/mock-client.js"(exports2, module2) {
     "use strict";
-    var { promisify: promisify5 } = require("node:util");
+    var { promisify: promisify6 } = require("node:util");
     var Client = require_client2();
     var { buildMockDispatch } = require_mock_utils2();
     var {
@@ -43580,7 +43580,7 @@ var require_mock_client2 = __commonJS({
         this[kDispatches] = [];
       }
       async [kClose]() {
-        await promisify5(this[kOriginalClose])();
+        await promisify6(this[kOriginalClose])();
         this[kConnected] = 0;
         this[kMockAgent][Symbols.kClients].delete(this[kOrigin]);
       }
@@ -43793,7 +43793,7 @@ var require_mock_call_history = __commonJS({
 var require_mock_pool2 = __commonJS({
   "node_modules/undici/lib/mock/mock-pool.js"(exports2, module2) {
     "use strict";
-    var { promisify: promisify5 } = require("node:util");
+    var { promisify: promisify6 } = require("node:util");
     var Pool = require_pool2();
     var { buildMockDispatch } = require_mock_utils2();
     var {
@@ -43841,7 +43841,7 @@ var require_mock_pool2 = __commonJS({
         this[kDispatches] = [];
       }
       async [kClose]() {
-        await promisify5(this[kOriginalClose])();
+        await promisify6(this[kOriginalClose])();
         this[kConnected] = 0;
         this[kMockAgent][Symbols.kClients].delete(this[kOrigin]);
       }
@@ -56124,9 +56124,9 @@ var require_undici2 = __commonJS({
     var RoundRobinPool = require_round_robin_pool();
     var Agent3 = require_agent2();
     var Dispatcher1Wrapper = require_dispatcher1_wrapper();
-    var ProxyAgent3 = require_proxy_agent2();
+    var ProxyAgent2 = require_proxy_agent2();
     var Socks5ProxyAgent = require_socks5_proxy_agent();
-    var EnvHttpProxyAgent = require_env_http_proxy_agent2();
+    var EnvHttpProxyAgent2 = require_env_http_proxy_agent2();
     var RetryAgent = require_retry_agent2();
     var H2CClient = require_h2c_client();
     var errors = require_errors2();
@@ -56152,9 +56152,9 @@ var require_undici2 = __commonJS({
     module2.exports.RoundRobinPool = RoundRobinPool;
     module2.exports.Agent = Agent3;
     module2.exports.Dispatcher1Wrapper = Dispatcher1Wrapper;
-    module2.exports.ProxyAgent = ProxyAgent3;
+    module2.exports.ProxyAgent = ProxyAgent2;
     module2.exports.Socks5ProxyAgent = Socks5ProxyAgent;
-    module2.exports.EnvHttpProxyAgent = EnvHttpProxyAgent;
+    module2.exports.EnvHttpProxyAgent = EnvHttpProxyAgent2;
     module2.exports.RetryAgent = RetryAgent;
     module2.exports.H2CClient = H2CClient;
     module2.exports.RetryHandler = RetryHandler;
@@ -67743,7 +67743,7 @@ var require_promisify = __commonJS({
   "node_modules/axios/node_modules/agent-base/dist/src/promisify.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
-    function promisify5(fn) {
+    function promisify6(fn) {
       return function(req, opts) {
         return new Promise((resolve3, reject) => {
           fn.call(this, req, opts, (err, rtn) => {
@@ -67756,7 +67756,7 @@ var require_promisify = __commonJS({
         });
       };
     }
-    exports2.default = promisify5;
+    exports2.default = promisify6;
   }
 });
 
@@ -108119,6 +108119,24 @@ var fs10 = __toESM(require("node:fs"), 1);
 
 // src/download/checksum/known-checksums.ts
 var KNOWN_CHECKSUMS = {
+  "aarch64-apple-darwin-0.12.5": "5bb0e5fe008a773c3dbcb97ff79cd89e1241464fe9d2f986d52ad8f1b037bd62",
+  "aarch64-pc-windows-msvc-0.12.5": "724279317fee6e5fa8ad1908e4eba2bbe764ef1ece5b3f4597927b62b1fe562a",
+  "aarch64-unknown-linux-gnu-0.12.5": "9bf43b4d1a07665bf64d4c4e710930b382321a785e0eb10aac07f46471f86a31",
+  "aarch64-unknown-linux-musl-0.12.5": "8767a0e77f2cd45436401b1b42bf7e9ed5a4a91a74a5305d6fe93249d0f6dbc5",
+  "arm-unknown-linux-musleabihf-0.12.5": "970f86ddcd1373120c1e7ee246b533c2e75366294098e1406f07ecf3bb55d260",
+  "armv7-unknown-linux-gnueabihf-0.12.5": "63f86f3cd92de223c2680dee5149ed3f317ad7aeac774fd7e6fe1f86f53e85da",
+  "armv7-unknown-linux-musleabihf-0.12.5": "62f838f29cad6fda061b1566168555978c544a4107697cd1967398b7f8efea84",
+  "i686-pc-windows-msvc-0.12.5": "a5993a7c2e75b418e60d5ed733204222330085b14e85269545b084c273c1629b",
+  "i686-unknown-linux-gnu-0.12.5": "4875a06092c3b0aa8ece5265a42b053dfef649adba26434b5e40eeb58c2a2aa5",
+  "i686-unknown-linux-musl-0.12.5": "b920f32f0910be363f770485117e08494eec0b09abb4f3f9f1f9b9f53a29394c",
+  "powerpc64le-unknown-linux-gnu-0.12.5": "af3f868fc8af2c3a688b1a202cbed507ec5bb32522876141f1b7f4200ed0395f",
+  "riscv64gc-unknown-linux-gnu-0.12.5": "2a6fe4a685225082d82f8afba169d038d669f85bf6cff7f5f733079a7b7282d5",
+  "riscv64gc-unknown-linux-musl-0.12.5": "c7fc653d16f0214eaaf2b3af537ec917af4861e3d00c0f10e0784fe4cbc1dcd6",
+  "s390x-unknown-linux-gnu-0.12.5": "858d51fd178fe99c69923cef568fbac3f297f3767c0e0d985aa172bc1f3e2274",
+  "x86_64-apple-darwin-0.12.5": "b3b2137477cf96c9686ebfb71524614cec780c673fd73e59bce099aef02e70e8",
+  "x86_64-pc-windows-msvc-0.12.5": "4c4d49d8738847d9b71ba319e49a5688c93eac0fe6204b1df24e98528dddf39a",
+  "x86_64-unknown-linux-gnu-0.12.5": "68a509da24b06b4223a1c0175fb5eb5bc79342b76cbeff0cfe51ac3f5b17b6b2",
+  "x86_64-unknown-linux-musl-0.12.5": "a4742988791c9aeae68c78150d6cba762062ad2a47e53738c2779d2b596bfcdb",
   "aarch64-apple-darwin-0.12.4": "99a913b606194867b43086404412c1afe079547fee72ecfb6af7e7b0dd54b0c6",
   "aarch64-pc-windows-msvc-0.12.4": "3290abffee78c30e3113f5113e26684fd057287e89124a588dcdcdd6ceec0fea",
   "aarch64-unknown-linux-gnu-0.12.4": "49d881b3403187e1f1789720881e77e4251ad4259d86c4844862657d2a35d13f",
@@ -113266,15 +113284,20 @@ var KNOWN_CHECKSUMS = {
 };
 
 // src/download/checksum/checksum.ts
-async function validateChecksum(checksum, downloadPath, arch3, platform2, version3) {
+async function validateChecksum(checksum, downloadPath, arch3, platform2, version3, manifestChecksum) {
   const key = `${arch3}-${platform2}-${version3}`;
   const hasProvidedChecksum = checksum !== void 0 && checksum !== "";
-  const checksumToUse = hasProvidedChecksum ? checksum : KNOWN_CHECKSUMS[key];
+  const knownChecksum = KNOWN_CHECKSUMS[key];
+  const hasManifestChecksum = manifestChecksum !== void 0 && manifestChecksum !== "";
+  const checksumToUse = hasProvidedChecksum ? checksum : knownChecksum ?? (hasManifestChecksum ? manifestChecksum : void 0);
   if (checksumToUse === void 0) {
+    if (manifestChecksum !== void 0) {
+      throw new Error(`No checksum found for ${key} in manifest.`);
+    }
     debug(`No checksum found for ${key}.`);
     return;
   }
-  const checksumSource = hasProvidedChecksum ? "provided checksum" : `KNOWN_CHECKSUMS entry for ${key}`;
+  const checksumSource = hasProvidedChecksum ? "provided checksum" : knownChecksum !== void 0 ? `KNOWN_CHECKSUMS entry for ${key}` : "manifest checksum";
   debug(`Validating checksum using ${checksumSource}.`);
   const isValid = await validateFileCheckSum(downloadPath, checksumToUse);
   if (!isValid) {
@@ -113303,23 +113326,12 @@ var import_node_stream5 = require("node:stream");
 
 // src/utils/fetch.ts
 var import_undici2 = __toESM(require_undici2(), 1);
-function getProxyAgent() {
-  const httpProxy = process.env.HTTP_PROXY || process.env.http_proxy;
-  if (httpProxy) {
-    return new import_undici2.ProxyAgent(httpProxy);
-  }
-  const httpsProxy = process.env.HTTPS_PROXY || process.env.https_proxy;
-  if (httpsProxy) {
-    return new import_undici2.ProxyAgent(httpsProxy);
-  }
-  return void 0;
-}
 var fetch2 = async (url3, opts) => {
   const timeoutSignal = AbortSignal.timeout(5e3);
   const existingSignal = opts.signal;
   const mergedSignal = existingSignal ? AbortSignal.any([timeoutSignal, existingSignal]) : timeoutSignal;
   return await (0, import_undici2.fetch)(url3, {
-    dispatcher: getProxyAgent(),
+    dispatcher: new import_undici2.EnvHttpProxyAgent(),
     ...opts,
     signal: mergedSignal
   });
@@ -115192,6 +115204,7 @@ async function downloadVersion(platform2, arch3, version3, checksum, githubToken
     );
   }
   const resolvedChecksum = manifestUrl === void 0 ? checksum : resolveChecksum(checksum, artifact.checksum);
+  const manifestChecksum = artifact.checksum;
   const mirrorUrl = downloadFromAstralMirror ? rewriteToMirror(artifact.downloadUrl) : void 0;
   const downloadUrl = mirrorUrl ?? artifact.downloadUrl;
   try {
@@ -115202,6 +115215,7 @@ async function downloadVersion(platform2, arch3, version3, checksum, githubToken
       arch3,
       version3,
       resolvedChecksum,
+      manifestChecksum,
       githubTokenForUrl(downloadUrl, githubToken)
     );
   } catch (err) {
@@ -115218,6 +115232,7 @@ async function downloadVersion(platform2, arch3, version3, checksum, githubToken
       arch3,
       version3,
       resolvedChecksum,
+      manifestChecksum,
       githubTokenForUrl(artifact.downloadUrl, githubToken)
     );
   }
@@ -115235,14 +115250,21 @@ function githubTokenForUrl(downloadUrl, githubToken) {
     return void 0;
   }
 }
-async function downloadArtifact(downloadUrl, artifactName, platform2, arch3, version3, checksum, githubToken) {
+async function downloadArtifact(downloadUrl, artifactName, platform2, arch3, version3, checksum, manifestChecksum, githubToken) {
   info2(`Downloading uv from "${downloadUrl}" ...`);
   const downloadPath = await downloadTool(
     downloadUrl,
     void 0,
     githubToken
   );
-  await validateChecksum(checksum, downloadPath, arch3, platform2, version3);
+  await validateChecksum(
+    checksum,
+    downloadPath,
+    arch3,
+    platform2,
+    version3,
+    manifestChecksum
+  );
   let uvDir;
   if (platform2 === "pc-windows-msvc") {
     try {
@@ -115567,6 +115589,40 @@ function getResolutionStrategy() {
   throw new Error(
     `Invalid resolution-strategy: ${resolutionStrategyInput}. Must be 'highest' or 'lowest'.`
   );
+}
+
+// src/utils/python-runtime.ts
+var import_node_child_process = require("node:child_process");
+var import_node_util4 = require("node:util");
+var execFileAsync = (0, import_node_util4.promisify)(import_node_child_process.execFile);
+async function getPythonRuntimeId(inputs) {
+  if (!inputs.activateEnvironment) {
+    return "";
+  }
+  try {
+    const { stdout } = await execFileAsync(
+      "uv",
+      [
+        "python",
+        "list",
+        inputs.venvPath,
+        "--only-installed",
+        "--output-format",
+        "json"
+      ],
+      { encoding: "utf8" }
+    );
+    const pythons = JSON.parse(stdout);
+    if (!Array.isArray(pythons) || pythons.length !== 1 || typeof pythons[0]?.key !== "string" || pythons[0].key === "") {
+      throw new Error("Expected one installed Python with a runtime key");
+    }
+    return pythons[0].key;
+  } catch (error2) {
+    throw new Error(
+      `Failed to identify the activated environment's Python runtime: ${error2 instanceof Error ? error2.message : String(error2)}`,
+      { cause: error2 }
+    );
+  }
 }
 
 // src/utils/subscription.ts
@@ -120625,6 +120681,7 @@ async function run() {
     info2(`Successfully installed uv version ${setupResult.version}`);
     const detectedPythonVersion = await getPythonVersion2(inputs);
     setOutput("python-version", detectedPythonVersion);
+    setOutput("python-runtime-id", await getPythonRuntimeId(inputs));
     if (inputs.enableCache) {
       await restoreCache2(inputs, detectedPythonVersion);
     }

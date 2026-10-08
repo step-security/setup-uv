@@ -45803,7 +45803,7 @@ var require_cache2 = __commonJS({
     var MAX_DELTA_SECONDS = 2147483647;
     var RESTRICTIVE_DIRECTIVE_NAMES = ["no-store", "private", "no-cache"];
     var kInvalidCacheControlDirectives = /* @__PURE__ */ Symbol("invalid cache-control directives");
-    function trimOWS(value) {
+    function trimOWS2(value) {
       return value.replace(/^[\t ]+|[\t ]+$/g, "");
     }
     function arrayIncludes(array, value) {
@@ -46055,10 +46055,10 @@ var require_cache2 = __commonJS({
           const rawValue = directive.substring(keyValueDelimiter + 1);
           keyHasTrailingWhitespace = trimOWSEnd(rawKey) !== rawKey;
           valueHasLeadingWhitespace = trimOWSStart(rawValue) !== rawValue;
-          key = trimOWS(rawKey);
+          key = trimOWS2(rawKey);
           value = trimOWSStart(rawValue);
         } else {
-          key = trimOWS(directive);
+          key = trimOWS2(directive);
         }
         const malformedRestrictiveDirectiveName = getMalformedRestrictiveDirectiveName(key);
         if (malformedRestrictiveDirectiveName !== void 0) {
@@ -46123,7 +46123,7 @@ var require_cache2 = __commonJS({
                 } else {
                   const fieldListParts = [value.substring(1)];
                   for (let j = i + 1; j < directives.length; j++) {
-                    const nextPart = trimOWS(directives[j].value);
+                    const nextPart = trimOWS2(directives[j].value);
                     const closingQuote2 = findUnescapedQuote(nextPart, 0);
                     lastQuotedPart = j;
                     if (closingQuote2 !== -1) {
@@ -46143,7 +46143,7 @@ var require_cache2 = __commonJS({
                 const headers = fieldList.split(",");
                 let validFieldNames = true;
                 for (let j = 0; j < headers.length; j++) {
-                  headers[j] = trimOWS(headers[j]);
+                  headers[j] = trimOWS2(headers[j]);
                   if (!isValidHTTPToken(headers[j])) {
                     validFieldNames = false;
                   }
@@ -46158,7 +46158,7 @@ var require_cache2 = __commonJS({
                   }
                 }
               } else {
-                const fieldName = trimOWS(value);
+                const fieldName = trimOWS2(value);
                 if (!isValidHTTPToken(fieldName)) {
                   output[key] = true;
                 } else if (output[key] !== true) {
@@ -46213,7 +46213,7 @@ var require_cache2 = __commonJS({
     function hasVaryStar(varyHeader) {
       const values = splitVaryHeader(varyHeader);
       for (let i = 0; i < values.length; i++) {
-        if (trimOWS(values[i]).indexOf("*") !== -1) {
+        if (trimOWS2(values[i]).indexOf("*") !== -1) {
           return true;
         }
       }
@@ -46229,7 +46229,7 @@ var require_cache2 = __commonJS({
       );
       const varyingHeaders = splitVaryHeader(varyHeader);
       for (const header of varyingHeaders) {
-        const trimmedHeader = trimOWS(header).toLowerCase();
+        const trimmedHeader = trimOWS2(header).toLowerCase();
         if (trimmedHeader.length === 0) {
           continue;
         }
@@ -46845,7 +46845,7 @@ var require_cache_handler = __commonJS({
     ];
     var MAX_RESPONSE_AGE = 2147483647e3;
     var REVALIDATION_ONLY_RETENTION = 864e5;
-    function trimOWS(value) {
+    function trimOWS2(value) {
       return value.replace(/^[\t ]+|[\t ]+$/g, "");
     }
     function arrayIncludes(array, value) {
@@ -46861,7 +46861,7 @@ var require_cache_handler = __commonJS({
       for (let i = 0; i < values.length; i++) {
         const tokens = values[i].split(",");
         for (let j = 0; j < tokens.length; j++) {
-          headersToRemove.push(trimOWS(tokens[j]).toLowerCase());
+          headersToRemove.push(trimOWS2(tokens[j]).toLowerCase());
         }
       }
     }
@@ -47669,7 +47669,7 @@ var require_cache3 = __commonJS({
     }
     var nop = () => {
     };
-    function trimOWS(value) {
+    function trimOWS2(value) {
       return value.replace(/^[\t ]+|[\t ]+$/g, "");
     }
     function arrayIncludes(array, value) {
@@ -47693,7 +47693,7 @@ var require_cache3 = __commonJS({
         }
         const directives = value.split(",");
         for (let j = 0; j < directives.length; j++) {
-          if (trimOWS(directives[j]).toLowerCase() === "no-cache") {
+          if (trimOWS2(directives[j]).toLowerCase() === "no-cache") {
             return true;
           }
         }
@@ -114047,35 +114047,203 @@ var import_node_fs6 = __toESM(require("node:fs"), 1);
 // src/utils/config-file.ts
 var import_node_fs3 = __toESM(require("node:fs"), 1);
 
+// node_modules/smol-toml/dist/error.js
+function getLineColFromPtr(string, ptr) {
+  let lines = string.slice(0, ptr).split(/\r?\n/);
+  return [lines.length, lines.pop().length + 1];
+}
+function makeCodeBlock(string, line, column) {
+  let lines = string.split(/\r?\n/);
+  let codeblock = "";
+  let numberLen = (Math.log10(line + 1) | 0) + 1;
+  for (let i = line - 1; i <= line + 1; i++) {
+    let l = lines[i - 1];
+    if (!l)
+      continue;
+    codeblock += i.toString().padEnd(numberLen, " ");
+    codeblock += ":  ";
+    codeblock += l;
+    codeblock += "\n";
+    if (i === line) {
+      codeblock += " ".repeat(numberLen + column + 2);
+      codeblock += "^\n";
+    }
+  }
+  return codeblock;
+}
+var TomlError = class _TomlError extends Error {
+  line;
+  column;
+  codeblock;
+  constructor(message, options) {
+    const [line, column] = getLineColFromPtr(options.toml, options.ptr);
+    const codeblock = makeCodeBlock(options.toml, line, column);
+    super(`Invalid TOML document: ${message}
+
+${codeblock}`, options);
+    this.line = line;
+    this.column = column;
+    this.codeblock = codeblock;
+  }
+  /** @internal */
+  static x(message, ctx, ptr) {
+    throw new _TomlError(message, { toml: ctx.s, ptr: ptr ?? ctx.p });
+  }
+};
+
+// node_modules/smol-toml/dist/primitive.js
+function parseString(ctx) {
+  let startPtr = ctx.p;
+  let c = ctx.s.charCodeAt(ctx.p++);
+  let first = c;
+  let isLiteral = c === 39;
+  let isMultiline = c === ctx.s.charCodeAt(ctx.p) && c === ctx.s.charCodeAt(ctx.p + 1);
+  if (isMultiline) {
+    if ((c = ctx.s.charCodeAt(ctx.p += 2)) === 10)
+      ctx.p++;
+    else if (c === 13 && ctx.s.charCodeAt(ctx.p + 1) === 10)
+      ctx.p += 2;
+  }
+  let parsed = "";
+  let sliceStart = ctx.p;
+  let state3 = 0;
+  for (; ctx.p < ctx.s.length; ctx.p++) {
+    c = ctx.s.charCodeAt(ctx.p);
+    if (isMultiline && (c === 10 || c === 13 && ctx.s.charCodeAt(ctx.p + 1) === 10)) {
+      state3 = state3 && 3;
+    } else if (c < 32 && c !== 9 || c === 127) {
+      TomlError.x("control characters are not allowed in strings", ctx);
+    } else if ((!state3 || state3 === 3) && c === first && (!isMultiline || ctx.s.charCodeAt(ctx.p + 1) === first && ctx.s.charCodeAt(ctx.p + 2) === first)) {
+      if (isMultiline) {
+        if (ctx.s.charCodeAt(ctx.p + 3) === first)
+          ctx.p++;
+        if (ctx.s.charCodeAt(ctx.p + 3) === first)
+          ctx.p++;
+      }
+      if (!state3) {
+        let s = ctx.s.slice(sliceStart, ctx.p);
+        parsed = parsed ? parsed + s : s;
+      }
+      ctx.p += isMultiline ? 3 : 1;
+      return parsed;
+    } else if (!state3) {
+      if (!isLiteral && c === 92) {
+        parsed += ctx.s.slice(sliceStart, sliceStart = ctx.p);
+        state3 = 1;
+      }
+    } else if (state3 === 1) {
+      if (c === 120 || c === 117 || c === 85) {
+        let errPtr = ctx.p++ - 1;
+        let value = 0;
+        let len = c === 120 ? 2 : c === 117 ? 4 : 8;
+        for (let j = 0; j < len; j++, ctx.p++) {
+          let hex = ctx.s.charCodeAt(ctx.p);
+          let digit = (
+            /* 0-9 */
+            hex >= 48 && hex <= 57 ? hex - 48 : (
+              /* A-F */
+              hex >= 65 && hex <= 70 ? hex - 65 + 10 : (
+                /* a-f */
+                hex >= 97 && hex <= 102 ? hex - 97 + 10 : -1
+              )
+            )
+          );
+          if (digit < 0)
+            TomlError.x("invalid non-hex character in unicode escape", ctx);
+          value = value << 4 | digit;
+        }
+        if (value < 0 || value > 1114111 || value >= 55296 && value <= 57343) {
+          TomlError.x("invalid unicode escape", ctx, errPtr);
+        }
+        parsed += String.fromCodePoint(value);
+        sliceStart = ctx.p--;
+        state3 = 0;
+      } else if (isMultiline && (c === 32 || c === 9)) {
+        state3 = 2;
+      } else {
+        if (c === 98)
+          parsed += "\b";
+        else if (c === 116)
+          parsed += "	";
+        else if (c === 110)
+          parsed += "\n";
+        else if (c === 102)
+          parsed += "\f";
+        else if (c === 114)
+          parsed += "\r";
+        else if (c === 101)
+          parsed += "\x1B";
+        else if (c === 34)
+          parsed += '"';
+        else if (c === 92)
+          parsed += "\\";
+        else
+          TomlError.x("unrecognised escape sequence", ctx);
+        sliceStart = ctx.p + 1;
+        state3 = 0;
+      }
+    } else if (c !== 32 && c !== 9) {
+      if (state3 === 2)
+        TomlError.x("invalid escape: only line-ending whitespace may be escaped", ctx, sliceStart);
+      state3 = !isLiteral && c === 92 ? 1 : 0;
+      sliceStart = ctx.p;
+    }
+  }
+  TomlError.x("unfinished string", ctx, startPtr);
+}
+
 // node_modules/smol-toml/dist/date.js
-var DATE_TIME_RE = /^(\d{4}-\d{2}-\d{2})?[T ]?(?:(\d{2}):\d{2}(?::\d{2}(?:\.\d+)?)?)?(Z|[-+]\d{2}:\d{2})?$/i;
+var DATE_TIME_RE = /^(\d{4}-\d{2}-\d{2})?[Tt ]?(?:(\d{2}):\d{2}(?::\d{2}(?:\.\d+)?)?)?(Z|z|[-+]\d{2}:\d{2})?$/i;
 var TomlDate = class _TomlDate extends Date {
   #hasDate = false;
   #hasTime = false;
   #offset = null;
-  constructor(date) {
+  constructor(date, fasttype, unsafeDelim) {
     let hasDate = true;
     let hasTime = true;
     let offset = "Z";
+    let c;
     if (typeof date === "string") {
-      let match4 = date.match(DATE_TIME_RE);
-      if (match4) {
-        if (!match4[1]) {
-          hasDate = false;
-          date = `0000-01-01T${date}`;
+      if (fasttype)
+        prep: {
+          if (fasttype < 3) {
+            if (+date.slice(11, 13) > 23) {
+              date = "";
+              break prep;
+            }
+            if (fasttype === 2) {
+              offset = null;
+              date += "Z";
+            } else if ((c = date.charCodeAt(date.length - 1)) !== 90 && c !== 122) {
+              offset = date.slice(date.length - 6);
+            }
+            if (unsafeDelim)
+              date = date.slice(0, 10) + "T" + date.slice(11);
+          } else if (fasttype === 4) {
+            date = +date.slice(0, 2) > 23 ? "" : `0000-01-01T${date}Z`;
+          }
+          hasDate = fasttype !== 4;
+          hasTime = fasttype !== 3;
         }
-        hasTime = !!match4[2];
-        hasTime && date[10] === " " && (date = date.replace(" ", "T"));
-        if (match4[2] && +match4[2] > 23) {
-          date = "";
+      else {
+        let match4 = date.match(DATE_TIME_RE);
+        if (match4) {
+          if (!match4[1]) {
+            hasDate = false;
+            date = `0000-01-01T${date}`;
+          }
+          hasTime = !!match4[2];
+          hasTime && date[10] === " " && (date = date.replace(" ", "T"));
+          if (match4[2] && +match4[2] > 23) {
+            date = "";
+          } else {
+            offset = match4[3] || null;
+            if (!offset && hasTime)
+              date += "Z";
+          }
         } else {
-          offset = match4[3] || null;
-          date = date.toUpperCase();
-          if (!offset && hasTime)
-            date += "Z";
+          date = "";
         }
-      } else {
-        date = "";
       }
     }
     super(date);
@@ -114108,7 +114276,7 @@ var TomlDate = class _TomlDate extends Date {
       return iso.slice(11, 23);
     if (this.#offset === null)
       return iso.slice(0, -1);
-    if (this.#offset === "Z")
+    if (this.#offset === "Z" || this.#offset === "z")
       return iso;
     let offset = +this.#offset.slice(1, 3) * 60 + +this.#offset.slice(4, 6);
     offset = this.#offset[0] === "-" ? offset : -offset;
@@ -114139,473 +114307,359 @@ var TomlDate = class _TomlDate extends Date {
   }
 };
 
-// node_modules/smol-toml/dist/error.js
-function getLineColFromPtr(string, ptr) {
-  let lines = string.slice(0, ptr).split(/\r\n|\n|\r/g);
-  return [lines.length, lines.pop().length + 1];
+// node_modules/smol-toml/dist/extract.js
+function isDigit(char, base = 10) {
+  return base === 16 ? char > 47 && char < 58 || char > 64 && char < 71 || char > 96 && char < 103 : char > 47 && char < 48 + base;
 }
-function makeCodeBlock(string, line, column) {
-  let lines = string.split(/\r\n|\n|\r/g);
-  let codeblock = "";
-  let numberLen = (Math.log10(line + 1) | 0) + 1;
-  for (let i = line - 1; i <= line + 1; i++) {
-    let l = lines[i - 1];
-    if (!l)
-      continue;
-    codeblock += i.toString().padEnd(numberLen, " ");
-    codeblock += ":  ";
-    codeblock += l;
-    codeblock += "\n";
-    if (i === line) {
-      codeblock += " ".repeat(numberLen + column + 2);
-      codeblock += "^\n";
-    }
-  }
-  return codeblock;
+function isEndOfValue(char, delim) {
+  return char === 32 || char === 9 || char === 10 || char === 13 || // Structure end or next value delimiter
+  delim && (char === delim || char === 44) || // Comment
+  char === 35;
 }
-var TomlError = class extends Error {
-  line;
-  column;
-  codeblock;
-  constructor(message, options) {
-    const [line, column] = getLineColFromPtr(options.toml, options.ptr);
-    const codeblock = makeCodeBlock(options.toml, line, column);
-    super(`Invalid TOML document: ${message}
-
-${codeblock}`, options);
-    this.line = line;
-    this.column = column;
-    this.codeblock = codeblock;
+function extractValue(ctx, end) {
+  let errPtr = ctx.p;
+  let c = ctx.s.charCodeAt(ctx.p);
+  if (c === 91 || c === 123) {
+    ctx.d-- || TomlError.x("document contains excessively nested structures. aborting.", ctx);
+    let value = c === 91 ? parseArray(ctx) : parseInlineTable(ctx);
+    ctx.d++;
+    return value;
   }
-};
-
-// node_modules/smol-toml/dist/primitive.js
-var INT_REGEX = /^((0x[0-9a-fA-F](_?[0-9a-fA-F])*)|(([+-]|0[ob])?\d(_?\d)*))$/;
-var FLOAT_REGEX = /^[+-]?\d(_?\d)*(\.\d(_?\d)*)?([eE][+-]?\d(_?\d)*)?$/;
-var LEADING_ZERO = /^[+-]?0[0-9_]/;
-function parseString(str, ptr) {
-  let c = str[ptr++];
-  let first = c;
-  let isLiteral = c === "'";
-  let isMultiline = c === str[ptr] && c === str[ptr + 1];
-  if (isMultiline) {
-    if (str[ptr += 2] === "\n")
-      ptr++;
-    else if (str[ptr] === "\r" && str[ptr + 1] === "\n")
-      ptr += 2;
+  if (c === 34 || c === 39) {
+    return parseString(ctx);
   }
-  let parsed = "";
-  let sliceStart = ptr;
+  if (c === 116) {
+    if (ctx.s.charCodeAt(++ctx.p) !== 114 || ctx.s.charCodeAt(++ctx.p) !== 117 || ctx.s.charCodeAt(++ctx.p) !== 101)
+      TomlError.x("invalid value", ctx, errPtr);
+    return ctx.p++, true;
+  }
+  if (c === 102) {
+    if (ctx.s.charCodeAt(++ctx.p) !== 97 || ctx.s.charCodeAt(++ctx.p) !== 108 || ctx.s.charCodeAt(++ctx.p) !== 115 || ctx.s.charCodeAt(++ctx.p) !== 101)
+      TomlError.x("invalid value", ctx, errPtr);
+    return ctx.p++, false;
+  }
+  if (c === 43 || c === 45) {
+    return parseNumber(ctx, ctx.p, ctx.s.charCodeAt(++ctx.p), 44 - c, end);
+  }
+  if (ctx.s.charCodeAt(ctx.p + 4) === 45 && ctx.s.charCodeAt(ctx.p + 7) === 45) {
+    return parseDate(ctx, c, end);
+  }
+  if (ctx.s.charCodeAt(ctx.p + 2) === 58) {
+    return parseTime(ctx, c, end);
+  }
+  return parseNumber(ctx, ctx.p, c, 0, end);
+}
+function parseNumber(ctx, startPtr, startChr, sign, endChr) {
+  let c = startChr;
   let state3 = 0;
-  for (let i = ptr; i < str.length; i++) {
-    c = str[i];
-    if (isMultiline && (c === "\n" || c === "\r" && str[i + 1] === "\n")) {
-      state3 = state3 && 3;
-    } else if (c < " " && c !== "	" || c === "\x7F") {
-      throw new TomlError("control characters are not allowed in strings", {
-        toml: str,
-        ptr: i
-      });
-    } else if ((!state3 || state3 === 3) && c === first && (!isMultiline || str[i + 1] === first && str[i + 2] === first)) {
-      if (isMultiline) {
-        if (str[i + 3] === first)
-          i++;
-        if (str[i + 3] === first)
-          i++;
-      }
-      return [
-        // If we're in a newline escape still, then there's nothing to add.
-        // Also try to avoid concat if there's nothing to add to parsed, or nothing has been added to parsed.
-        state3 ? parsed : parsed + str.slice(sliceStart, i),
-        i + (isMultiline ? 3 : 1)
-      ];
-    } else if (!state3) {
-      if (!isLiteral && c === "\\") {
-        parsed += str.slice(sliceStart, sliceStart = i);
-        state3 = 1;
-      }
-    } else if (state3 === 1) {
-      if (c === "x" || c === "u" || c === "U") {
-        let value = 0;
-        let len = c === "x" ? 2 : c === "u" ? 4 : 8;
-        for (let j = 0; j < len; j++, i++) {
-          let hex = str.charCodeAt(i + 1);
-          let digit = (
-            /* 0-9 */
-            hex >= 48 && hex <= 57 ? hex - 48 : (
-              /* A-F */
-              hex >= 65 && hex <= 70 ? hex - 65 + 10 : (
-                /* a-f */
-                hex >= 97 && hex <= 102 ? hex - 97 + 10 : -1
-              )
-            )
-          );
-          if (digit < 0)
-            throw new TomlError("invalid non-hex character in unicode escape", { toml: str, ptr: i + 1 });
-          value = value << 4 | digit;
-        }
-        if (value < 0 || value > 1114111 || value >= 55296 && value <= 57343) {
-          throw new TomlError("invalid unicode escape", { toml: str, ptr: i });
-        }
-        parsed += String.fromCodePoint(value);
-        sliceStart = i + 1;
-        state3 = 0;
-      } else if (c === " " || c === "	") {
-        state3 = 2;
-      } else {
-        if (c === "b")
-          parsed += "\b";
-        else if (c === "t")
-          parsed += "	";
-        else if (c === "n")
-          parsed += "\n";
-        else if (c === "f")
-          parsed += "\f";
-        else if (c === "r")
-          parsed += "\r";
-        else if (c === "e")
-          parsed += "\x1B";
-        else if (c === '"')
-          parsed += '"';
-        else if (c === "\\")
-          parsed += "\\";
-        else
-          throw new TomlError("unrecognized escape sequence", { toml: str, ptr: i });
-        sliceStart = i + 1;
-        state3 = 0;
-      }
-    } else if (c !== " " && c !== "	") {
-      if (state3 === 2) {
-        throw new TomlError("invalid escape: only line-ending whitespace may be escaped", {
-          toml: str,
-          ptr: sliceStart
-        });
-      }
-      state3 = !isLiteral && c === "\\" ? 1 : 0;
-      sliceStart = i;
-    }
+  let hasUnderscores = false;
+  if (c === 105) {
+    if (ctx.s.charCodeAt(++ctx.p) !== 110 || ctx.s.charCodeAt(++ctx.p) !== 102)
+      TomlError.x("invalid value", ctx, startPtr);
+    return ctx.p++, (sign || 1) / 0;
   }
-  throw new TomlError("unfinished string", { toml: str, ptr });
+  if (c === 110) {
+    if (ctx.s.charCodeAt(++ctx.p) !== 97 || ctx.s.charCodeAt(++ctx.p) !== 110)
+      TomlError.x("invalid value", ctx, startPtr);
+    return ctx.p++, NaN;
+  }
+  if (c === 48) {
+    if (++ctx.p >= ctx.s.length || isEndOfValue(c = ctx.s.charCodeAt(ctx.p), endChr))
+      return ctx.bi === true ? 0n : 0;
+    if (!sign) {
+      if (c === 120)
+        return parseIntegerBaseN(ctx, startPtr, 16, endChr);
+      else if (c === 98)
+        return parseIntegerBaseN(ctx, startPtr, 2, endChr);
+      else if (c === 111)
+        return parseIntegerBaseN(ctx, startPtr, 8, endChr);
+    }
+    if (c === 46)
+      state3 = 2;
+    else if (c === 101 || c === 69)
+      state3 = 4;
+    else
+      TomlError.x("illegal leading zero", ctx, startPtr);
+  } else if (!isDigit(c))
+    TomlError.x("invalid value", ctx, startPtr);
+  while (++ctx.p < ctx.s.length && (c = ctx.s.charCodeAt(ctx.p), !isEndOfValue(c, endChr))) {
+    if (!state3)
+      state3 = 1;
+    if (c === 95) {
+      if (!(state3 & 1))
+        TomlError.x("illegal underscore", ctx);
+      state3 += 11;
+      hasUnderscores = true;
+    } else if (state3 === 1 && c === 46)
+      state3 = 2;
+    else if ((state3 === 1 || state3 === 3) && (c === 101 || c === 69))
+      state3 = 4;
+    else if (state3 === 4 && (c === 43 || c === 45)) {
+    } else if (!isDigit(c))
+      TomlError.x(`illegal character in numeric literal`, ctx);
+    else if (state3 > 9)
+      state3 -= 11;
+    else if (!(state3 & 1))
+      state3++;
+  }
+  if (!state3) {
+    let val = (startChr - 48) * (sign || 1);
+    return ctx.bi === true ? BigInt(val) : val;
+  }
+  if (!(state3 & 1))
+    TomlError.x("unfinished numeric value", ctx, startPtr);
+  let str = ctx.s.slice(startPtr, ctx.p);
+  if (hasUnderscores)
+    str = str.replaceAll("_", "");
+  return state3 > 1 ? parseFloat(str) : parseInteger(ctx, str, 10, startPtr);
 }
-function parseValue2(value, toml, ptr, integersAsBigInt) {
-  if (value === "true")
-    return true;
-  if (value === "false")
-    return false;
-  if (value === "-inf")
-    return -Infinity;
-  if (value === "inf" || value === "+inf")
-    return Infinity;
-  if (value === "nan" || value === "+nan" || value === "-nan")
-    return NaN;
-  if (value === "-0")
-    return integersAsBigInt ? 0n : 0;
-  let isInt = INT_REGEX.test(value);
-  if (isInt || FLOAT_REGEX.test(value)) {
-    if (LEADING_ZERO.test(value)) {
-      throw new TomlError("leading zeroes are not allowed", {
-        toml,
-        ptr
-      });
-    }
-    value = value.replace(/_/g, "");
-    let numeric2 = +value;
-    if (isNaN(numeric2)) {
-      throw new TomlError("invalid number", {
-        toml,
-        ptr
-      });
-    }
-    if (isInt) {
-      if ((isInt = !Number.isSafeInteger(numeric2)) && !integersAsBigInt) {
-        throw new TomlError("integer value cannot be represented losslessly", {
-          toml,
-          ptr
-        });
+function parseIntegerBaseN(ctx, startPtr, base, endChr) {
+  let c, underscore = 1;
+  while (++ctx.p < ctx.s.length && (c = ctx.s.charCodeAt(ctx.p), !isEndOfValue(c, endChr))) {
+    if (c === 95) {
+      if (underscore & 1)
+        TomlError.x("illegal underscore", ctx);
+      underscore = 3;
+    } else if (!isDigit(c, base))
+      TomlError.x(`illegal character in numeric literal`, ctx);
+    else if (underscore & 1)
+      underscore--;
+  }
+  if (underscore & 1)
+    TomlError.x("unfinished numeric value", ctx);
+  let str = ctx.s.slice(startPtr + 2, ctx.p);
+  if (underscore)
+    str = str.replaceAll("_", "");
+  return parseInteger(ctx, str, base, startPtr);
+}
+function parseInteger(ctx, str, base, startPtr) {
+  if (ctx.bi !== true)
+    int: {
+      let val = parseInt(str, base);
+      if (!Number.isSafeInteger(val)) {
+        if (ctx.bi)
+          break int;
+        TomlError.x("integer value cannot be represented losslessly", ctx, startPtr);
       }
-      if (isInt || integersAsBigInt === true)
-        numeric2 = BigInt(value);
+      return val;
     }
-    return numeric2;
+  return base === 10 ? BigInt(str) : BigInt((base === 2 ? "0b" : base === 8 ? "0o" : "0x") + str);
+}
+function parseDate(ctx, c, endChr) {
+  let startPtr = ctx.p++, unsafeSeparator;
+  if (!isDigit(c) || !isDigit(ctx.s.charCodeAt(ctx.p++)) || !isDigit(ctx.s.charCodeAt(ctx.p++)) || !isDigit(ctx.s.charCodeAt(ctx.p++))) {
+    return parseNumber(ctx, ctx.p = startPtr, c, 0, endChr);
   }
-  const date = new TomlDate(value);
-  if (!date.isValid()) {
-    throw new TomlError("invalid value", {
-      toml,
-      ptr
-    });
+  ctx.p += 5;
+  if (!isDigit(ctx.s.charCodeAt(ctx.p++)))
+    TomlError.x("invalid date-time: date part is malformed", ctx, startPtr);
+  if (ctx.p >= ctx.s.length || ((c = ctx.s.charCodeAt(ctx.p)) !== 32 || (unsafeSeparator = true, !isDigit(ctx.s.charCodeAt(ctx.p + 1)))) && c !== 84 && c !== 116) {
+    let t2 = ctx.s.slice(startPtr, ctx.p);
+    return readDate(ctx, t2, 3, false, startPtr);
   }
-  return date;
+  if (ctx.s.charCodeAt(ctx.p += 3) !== 58)
+    TomlError.x("invalid date-time: time part is malformed", ctx, startPtr);
+  if (ctx.s.charCodeAt(ctx.p += 3) === 58)
+    ctx.p += 3;
+  if (ctx.s.charCodeAt(ctx.p) === 46)
+    while (isDigit(ctx.s.charCodeAt(++ctx.p)))
+      ;
+  if (c = ctx.s.charCodeAt(ctx.p)) {
+    if (c === 90 || c === 122) {
+      let t2 = ctx.s.slice(startPtr, ++ctx.p);
+      return readDate(ctx, t2, 1, unsafeSeparator, startPtr, "[+00:00]");
+    }
+    if (c === 43 || c === 45) {
+      let t2 = ctx.s.slice(startPtr, ctx.p += 6);
+      return readDate(ctx, t2, 1, unsafeSeparator, startPtr, !ctx.ld && "[" + ctx.s.slice(ctx.p - 6, ctx.p) + "]");
+    }
+  }
+  let t = ctx.s.slice(startPtr, ctx.p);
+  return readDate(ctx, t, 2, unsafeSeparator, startPtr);
+}
+function parseTime(ctx, c, endChr) {
+  let start = ctx.p;
+  if (!isDigit(c) || !isDigit(ctx.s.charCodeAt(++ctx.p))) {
+    return parseNumber(ctx, --ctx.p, c, 0, endChr);
+  }
+  if (ctx.s.charCodeAt(ctx.p += 4) === 58)
+    ctx.p += 3;
+  if (ctx.s.charCodeAt(ctx.p) === 46)
+    while (isDigit(ctx.s.charCodeAt(++ctx.p)))
+      ;
+  let t = ctx.s.slice(start, ctx.p);
+  return readDate(ctx, t, 4, false, start);
+}
+function readDate(ctx, str, type, unsafeDelim, errPtr, temporalSuffix) {
+  if (ctx.ld) {
+    let date = new TomlDate(str, type, unsafeDelim);
+    if (!date.isValid())
+      TomlError.x("invalid date", ctx, errPtr);
+    return date;
+  }
+  try {
+    if (temporalSuffix)
+      str += temporalSuffix;
+    switch (type) {
+      case 1:
+        return Temporal.ZonedDateTime.from(str);
+      case 2:
+        return Temporal.PlainDateTime.from(str);
+      case 3:
+        return Temporal.PlainDate.from(str);
+      case 4:
+        return Temporal.PlainTime.from(str);
+    }
+  } catch (e) {
+    TomlError.x(e instanceof Error ? e.message : "" + e, ctx, errPtr);
+  }
 }
 
 // node_modules/smol-toml/dist/util.js
-function indexOfNewline(str, start = 0, end = str.length) {
-  let idx = str.indexOf("\n", start);
-  if (str[idx - 1] === "\r")
-    idx--;
-  return idx <= end ? idx : -1;
-}
-function skipComment(str, ptr) {
-  for (let i = ptr; i < str.length; i++) {
-    let c = str[i];
-    if (c === "\n")
-      return i;
-    if (c === "\r" && str[i + 1] === "\n")
-      return i + 1;
-    if (c < " " && c !== "	" || c === "\x7F") {
-      throw new TomlError("control characters are not allowed in comments", {
-        toml: str,
-        ptr
-      });
-    }
-  }
-  return str.length;
-}
-function skipVoid(str, ptr, banNewLines, banComments) {
-  let c;
-  while (1) {
-    while ((c = str[ptr]) === " " || c === "	" || !banNewLines && (c === "\n" || c === "\r" && str[ptr + 1] === "\n"))
-      ptr++;
-    if (banComments || c !== "#")
+function skipComment(ctx) {
+  for (; ctx.p < ctx.s.length; ctx.p++) {
+    let c = ctx.s.charCodeAt(ctx.p);
+    if (c === 10)
       break;
-    ptr = skipComment(str, ptr);
-  }
-  return ptr;
-}
-function skipUntil(str, ptr, sep10, end, banNewLines = false) {
-  if (!end) {
-    ptr = indexOfNewline(str, ptr);
-    return ptr < 0 ? str.length : ptr;
-  }
-  for (let i = ptr; i < str.length; i++) {
-    let c = str[i];
-    if (c === "#") {
-      i = indexOfNewline(str, i);
-      if (i < 0)
-        break;
-    } else if (c === sep10) {
-      return i + 1;
-    } else if (c === end || banNewLines && (c === "\n" || c === "\r" && str[i + 1] === "\n")) {
-      return i;
+    if (c === 13 && ctx.s.charCodeAt(ctx.p + 1) === 10) {
+      ctx.p++;
+      break;
+    }
+    if (c < 32 && c !== 9 || c === 127) {
+      TomlError.x("control characters are not allowed in comments", ctx);
     }
   }
-  throw new TomlError("cannot find end of structure", {
-    toml: str,
-    ptr
-  });
 }
-
-// node_modules/smol-toml/dist/extract.js
-function sliceAndTrimEndOf(str, startPtr, endPtr) {
-  let value = str.slice(startPtr, endPtr);
-  let commentIdx = value.indexOf("#");
-  if (commentIdx > -1) {
-    skipComment(str, commentIdx);
-    value = value.slice(0, commentIdx);
+function skipVoid(ctx, banNewLines, banComments) {
+  let c;
+  while (ctx.p < ctx.s.length) {
+    while (ctx.p < ctx.s.length && ((c = ctx.s.charCodeAt(ctx.p)) === 32 || c === 9 || !banNewLines && (c === 10 || c === 13 && ctx.s.charCodeAt(ctx.p + 1) === 10)))
+      ctx.p++;
+    if (banComments || c !== 35)
+      break;
+    skipComment(ctx);
   }
-  return [value.trimEnd(), commentIdx];
-}
-function extractValue(str, ptr, end, depth, integersAsBigInt) {
-  if (depth === 0) {
-    throw new TomlError("document contains excessively nested structures. aborting.", {
-      toml: str,
-      ptr
-    });
-  }
-  let c = str[ptr];
-  if (c === "[" || c === "{") {
-    let [value, endPtr2] = c === "[" ? parseArray(str, ptr, depth, integersAsBigInt) : parseInlineTable(str, ptr, depth, integersAsBigInt);
-    if (end) {
-      endPtr2 = skipVoid(str, endPtr2);
-      if (str[endPtr2] === ",")
-        endPtr2++;
-      else if (str[endPtr2] !== end) {
-        throw new TomlError("expected comma or end of structure", {
-          toml: str,
-          ptr: endPtr2
-        });
-      }
-    }
-    return [value, endPtr2];
-  }
-  if (c === '"' || c === "'") {
-    let [parsed, endPtr2] = parseString(str, ptr);
-    if (end) {
-      endPtr2 = skipVoid(str, endPtr2);
-      if (str[endPtr2] && str[endPtr2] !== "," && str[endPtr2] !== end && str[endPtr2] !== "\n" && str[endPtr2] !== "\r") {
-        throw new TomlError("unexpected character encountered", {
-          toml: str,
-          ptr: endPtr2
-        });
-      }
-      if (str[endPtr2] === ",")
-        endPtr2++;
-    }
-    return [parsed, endPtr2];
-  }
-  let endPtr = skipUntil(str, ptr, ",", end);
-  let slice = sliceAndTrimEndOf(str, ptr, endPtr - (str[endPtr - 1] === "," ? 1 : 0));
-  if (!slice[0]) {
-    throw new TomlError("incomplete key-value declaration: no value specified", {
-      toml: str,
-      ptr
-    });
-  }
-  if (end && slice[1] > -1) {
-    endPtr = skipVoid(str, ptr + slice[1]);
-    if (str[endPtr] === ",")
-      endPtr++;
-  }
-  return [
-    parseValue2(slice[0], str, ptr, integersAsBigInt),
-    endPtr
-  ];
 }
 
 // node_modules/smol-toml/dist/struct.js
-var KEY_PART_RE = /^[a-zA-Z0-9-_]+[ \t]*$/;
-function parseKey(str, ptr, end = "=") {
-  let dot = ptr - 1;
+function parseKey(ctx, end = 61) {
+  let startPtr;
+  let state3 = 0;
   let parsed = [];
-  let endPtr = str.indexOf(end, ptr);
-  if (endPtr < 0) {
-    throw new TomlError("incomplete key-value: cannot find end of key", {
-      toml: str,
-      ptr
-    });
-  }
+  let sliceStart;
+  let c = ctx.s.charCodeAt(startPtr = ctx.p);
   do {
-    let c = str[ptr = ++dot];
-    if (c !== " " && c !== "	") {
-      if (c === '"' || c === "'") {
-        if (c === str[ptr + 1] && c === str[ptr + 2]) {
-          throw new TomlError("multiline strings are not allowed in keys", {
-            toml: str,
-            ptr
-          });
-        }
-        let [part, eos] = parseString(str, ptr);
-        dot = str.indexOf(".", eos);
-        let strEnd = str.slice(eos, dot < 0 || dot > endPtr ? endPtr : dot);
-        let newLine = indexOfNewline(strEnd);
-        if (newLine > -1) {
-          throw new TomlError("newlines are not allowed in keys", {
-            toml: str,
-            ptr: ptr + dot + newLine
-          });
-        }
-        if (strEnd.trimStart()) {
-          throw new TomlError("found extra tokens after the string part", {
-            toml: str,
-            ptr: eos
-          });
-        }
-        if (endPtr < eos) {
-          endPtr = str.indexOf(end, eos);
-          if (endPtr < 0) {
-            throw new TomlError("incomplete key-value: cannot find end of key", {
-              toml: str,
-              ptr
-            });
-          }
-        }
-        parsed.push(part);
-      } else {
-        dot = str.indexOf(".", ptr);
-        let part = str.slice(ptr, dot < 0 || dot > endPtr ? endPtr : dot);
-        if (!KEY_PART_RE.test(part)) {
-          throw new TomlError("only letter, numbers, dashes and underscores are allowed in keys", {
-            toml: str,
-            ptr
-          });
-        }
-        parsed.push(part.trimEnd());
+    if (c === end) {
+      if (!state3)
+        TomlError.x("unexpected end of key", ctx);
+      if (state3 === 1)
+        parsed.push(ctx.s.slice(sliceStart, ctx.p));
+      return ctx.p++, parsed;
+    } else if (c === 46) {
+      if (!state3)
+        TomlError.x("illegal empty bare key", ctx);
+      if (state3 === 1)
+        parsed.push(ctx.s.slice(sliceStart, ctx.p));
+      state3 = 0;
+    } else if (!state3 && (c === 34 || c === 39)) {
+      if (c === ctx.s.charCodeAt(ctx.p + 1) && c === ctx.s.charCodeAt(ctx.p + 2))
+        TomlError.x("illegal quoted key: multiline strings are not allowed", ctx);
+      parsed.push(parseString(ctx));
+      state3 = 2;
+      ctx.p--;
+    } else if (c === 32 || c === 9) {
+      if (state3 === 1) {
+        parsed.push(ctx.s.slice(sliceStart, ctx.p));
+        state3 = 2;
       }
+    } else if (state3 === 2 || c < 48 && c !== 45 || c > 57 && c < 65 || c > 90 && c < 97 && c !== 95 || c > 122) {
+      TomlError.x("illegal character in key", ctx);
+    } else if (!state3) {
+      state3 = 1;
+      sliceStart = ctx.p;
     }
-  } while (dot + 1 && dot < endPtr);
-  return [parsed, skipVoid(str, endPtr + 1, true, true)];
+  } while (c = ctx.s.charCodeAt(++ctx.p));
+  TomlError.x("incomplete key-value: cannot find end of key", ctx, startPtr);
 }
-function parseInlineTable(str, ptr, depth, integersAsBigInt) {
-  let res = {};
+function parseInlineTable(ctx) {
+  let startPtr = ctx.p++;
+  let res = /* @__PURE__ */ Object.create(null);
   let seen = /* @__PURE__ */ new Set();
   let c;
-  ptr++;
-  while ((c = str[ptr++]) !== "}" && c) {
-    if (c === ",") {
-      throw new TomlError("expected value, found comma", {
-        toml: str,
-        ptr: ptr - 1
-      });
-    } else if (c === "#")
-      ptr = skipComment(str, ptr);
-    else if (c !== " " && c !== "	" && c !== "\n" && c !== "\r") {
-      let k;
-      let t = res;
-      let hasOwn = false;
-      let [key, keyEndPtr] = parseKey(str, ptr - 1);
-      for (let i = 0; i < key.length; i++) {
-        if (i)
-          t = hasOwn ? t[k] : t[k] = {};
-        k = key[i];
-        if ((hasOwn = Object.hasOwn(t, k)) && (typeof t[k] !== "object" || seen.has(t[k]))) {
-          throw new TomlError("trying to redefine an already defined value", {
-            toml: str,
-            ptr
-          });
-        }
-        if (!hasOwn && k === "__proto__") {
-          Object.defineProperty(t, k, { enumerable: true, configurable: true, writable: true });
-        }
-      }
-      if (hasOwn) {
-        throw new TomlError("trying to redefine an already defined value", {
-          toml: str,
-          ptr
-        });
-      }
-      let [value, valueEndPtr] = extractValue(str, keyEndPtr, "}", depth - 1, integersAsBigInt);
-      seen.add(value);
-      t[k] = value;
-      ptr = valueEndPtr;
+  while (ctx.p < ctx.s.length) {
+    skipVoid(ctx);
+    if ((c = ctx.s.charCodeAt(ctx.p)) === 125) {
+      ctx.p++;
+      return res;
     }
+    let k;
+    let t = res;
+    let hasOwn = false;
+    let errPtr = ctx.p;
+    let key = parseKey(ctx);
+    for (let i = 0; i < key.length; i++) {
+      if (i)
+        t = hasOwn ? t[k] : t[k] = /* @__PURE__ */ Object.create(null);
+      k = key[i];
+      if ((hasOwn = Object.hasOwn(t, k)) && (typeof t[k] !== "object" || seen.has(t[k]))) {
+        TomlError.x("trying to redefine an already defined value", ctx, errPtr);
+      }
+      let unsafe = k === "__proto__";
+      if (ctx.uk && (unsafe || k === "constructor")) {
+        t = ctx.uk !== 1 && TomlError.x("document contains an unsafe property", ctx, errPtr);
+        break;
+      }
+      if (!hasOwn && unsafe) {
+        Object.defineProperty(t, k, { enumerable: true, configurable: true, writable: true });
+      }
+    }
+    if (hasOwn) {
+      TomlError.x("trying to redefine an already defined value", ctx, errPtr);
+    }
+    skipVoid(ctx, true, true);
+    let value = extractValue(
+      ctx,
+      125
+      /* } */
+    );
+    if (t && typeof (t[k] = value) === "object")
+      seen.add(value);
+    skipVoid(ctx);
+    if ((c = ctx.s.charCodeAt(ctx.p++)) === 125) {
+      return res;
+    }
+    if (c !== 44)
+      TomlError.x("expected comma or end of structure", ctx, ctx.p - 1);
   }
-  if (!c) {
-    throw new TomlError("unfinished table encountered", {
-      toml: str,
-      ptr
-    });
-  }
-  return [res, ptr];
+  TomlError.x("unfinished table", ctx, startPtr);
 }
-function parseArray(str, ptr, depth, integersAsBigInt) {
+function parseArray(ctx) {
+  let startPtr = ctx.p++;
   let res = [];
   let c;
-  ptr++;
-  while ((c = str[ptr++]) !== "]" && c) {
-    if (c === ",") {
-      throw new TomlError("expected value, found comma", {
-        toml: str,
-        ptr: ptr - 1
-      });
-    } else if (c === "#")
-      ptr = skipComment(str, ptr);
-    else if (c !== " " && c !== "	" && c !== "\n" && c !== "\r") {
-      let e = extractValue(str, ptr - 1, "]", depth - 1, integersAsBigInt);
-      res.push(e[0]);
-      ptr = e[1];
+  while (ctx.p < ctx.s.length) {
+    skipVoid(ctx);
+    if ((c = ctx.s.charCodeAt(ctx.p)) === 93) {
+      ctx.p++;
+      return res;
     }
+    res.push(extractValue(
+      ctx,
+      93
+      /* ] */
+    ));
+    skipVoid(ctx);
+    if ((c = ctx.s.charCodeAt(ctx.p++)) === 93) {
+      return res;
+    }
+    if (c !== 44)
+      TomlError.x("expected comma or end of structure", ctx, ctx.p - 1);
   }
-  if (!c) {
-    throw new TomlError("unfinished array encountered", {
-      toml: str,
-      ptr
-    });
-  }
-  return [res, ptr];
+  TomlError.x("unfinished array", ctx, startPtr);
 }
 
 // node_modules/smol-toml/dist/parse.js
-function peekTable(key, table, meta, type) {
+function peekTable(ctx, key, table, meta, type) {
   let t = table;
   let m = meta;
   let k;
@@ -114613,7 +114667,7 @@ function peekTable(key, table, meta, type) {
   let state3;
   for (let i = 0; i < key.length; i++) {
     if (i) {
-      t = hasOwn ? t[k] : t[k] = {};
+      t = hasOwn ? t[k] : t[k] = /* @__PURE__ */ Object.create(null);
       m = (state3 = m[k]).c;
       if (type === 0 && (state3.t === 1 || state3.t === 2)) {
         return null;
@@ -114629,7 +114683,10 @@ function peekTable(key, table, meta, type) {
       return null;
     }
     if (!hasOwn) {
-      if (k === "__proto__") {
+      let unsafe = k === "__proto__";
+      if (ctx.uk && (unsafe || k === "constructor"))
+        return false;
+      if (unsafe) {
         Object.defineProperty(t, k, { enumerable: true, configurable: true, writable: true });
         Object.defineProperty(m, k, { enumerable: true, configurable: true, writable: true });
       }
@@ -114637,7 +114694,7 @@ function peekTable(key, table, meta, type) {
         t: i < key.length - 1 && type === 2 ? 3 : type,
         d: false,
         i: 0,
-        c: {}
+        c: /* @__PURE__ */ Object.create(null)
       };
     }
   }
@@ -114650,84 +114707,102 @@ function peekTable(key, table, meta, type) {
       state3.d = true;
       t[k] = [];
     }
-    t[k].push(t = {});
-    state3.c[state3.i++] = state3 = { t: 1, d: false, i: 0, c: {} };
+    t[k].push(t = /* @__PURE__ */ Object.create(null));
+    state3.c[state3.i++] = state3 = { t: 1, d: false, i: 0, c: /* @__PURE__ */ Object.create(null) };
   }
   if (state3.d) {
     return null;
   }
   state3.d = true;
   if (type === 1) {
-    t = hasOwn ? t[k] : t[k] = {};
+    t = hasOwn ? t[k] : t[k] = /* @__PURE__ */ Object.create(null);
   } else if (type === 0 && hasOwn) {
     return null;
   }
   return [k, t, state3.c];
 }
-function parse4(toml, { maxDepth = 1e3, integersAsBigInt } = {}) {
-  let res = {};
-  let meta = {};
+function validateTablePeek(ctx, peek, ptr) {
+  if (peek === null || ctx.uk === 2)
+    TomlError.x(peek === null ? "trying to redefine an already defined table or value" : "document contains an unsafe property", ctx, ptr);
+}
+function parse4(toml, options = {}) {
+  let ctx = {
+    s: toml,
+    p: 0,
+    d: options.maxDepth ?? 1e3,
+    bi: options.integersAsBigInt ?? false,
+    ld: options.useLegacyDate ?? true,
+    uk: options.unsafeKeyBehaviour === "throw" ? 2 : options.unsafeKeyBehaviour === "drop" ? 1 : 0
+  };
+  let res = /* @__PURE__ */ Object.create(null);
+  let meta = /* @__PURE__ */ Object.create(null);
+  let tmp;
+  let skipping = false;
   let tbl = res;
   let m = meta;
-  for (let ptr = skipVoid(toml, 0); ptr < toml.length; ) {
-    if (toml[ptr] === "[") {
-      let isTableArray = toml[++ptr] === "[";
-      let k = parseKey(toml, ptr += +isTableArray, "]");
+  if (toml.charCodeAt(0) === 65279)
+    ctx.p++;
+  skipVoid(ctx);
+  while (ctx.p < toml.length) {
+    if (toml.charCodeAt(ctx.p) === 91) {
+      let isTableArray = toml.charCodeAt(++ctx.p) === 91;
+      tmp = ctx.p += +isTableArray;
+      skipping = false;
+      let k = parseKey(
+        ctx,
+        93
+        /* ] */
+      );
       if (isTableArray) {
-        if (toml[k[1] - 1] !== "]") {
-          throw new TomlError("expected end of table declaration", {
-            toml,
-            ptr: k[1] - 1
-          });
+        if (toml.charCodeAt(ctx.p) !== 93) {
+          TomlError.x("expected end of table array declaration", ctx);
         }
-        k[1]++;
+        ctx.p++;
       }
       let p = peekTable(
-        k[0],
+        ctx,
+        k,
         res,
         meta,
         isTableArray ? 2 : 1
         /* Type.EXPLICIT */
       );
       if (!p) {
-        throw new TomlError("trying to redefine an already defined table or value", {
-          toml,
-          ptr
-        });
+        validateTablePeek(ctx, p, tmp);
+        skipping = true;
+      } else {
+        m = p[2];
+        tbl = p[1];
       }
-      m = p[2];
-      tbl = p[1];
-      ptr = k[1];
     } else {
-      let k = parseKey(toml, ptr);
+      tmp = ctx.p;
+      let k = parseKey(ctx);
       let p = peekTable(
-        k[0],
+        ctx,
+        k,
         tbl,
         m,
         0
         /* Type.DOTTED */
       );
-      if (!p) {
-        throw new TomlError("trying to redefine an already defined table or value", {
-          toml,
-          ptr
-        });
-      }
-      let v = extractValue(toml, k[1], void 0, maxDepth, integersAsBigInt);
-      p[1][p[0]] = v[0];
-      ptr = v[1];
+      if (!p && !skipping)
+        validateTablePeek(ctx, p, tmp);
+      skipVoid(ctx, true, true);
+      let v = extractValue(ctx, void 0);
+      if (p && !skipping)
+        p[1][p[0]] = v;
     }
-    ptr = skipVoid(toml, ptr, true);
-    if (toml[ptr] && toml[ptr] !== "\n" && toml[ptr] !== "\r") {
-      throw new TomlError("each key-value declaration must be followed by an end-of-line", {
-        toml,
-        ptr
-      });
+    skipVoid(ctx, true);
+    if (ctx.p < toml.length && (tmp = toml.charCodeAt(ctx.p)) !== 10 && (tmp !== 13 || toml.charCodeAt(ctx.p + 1) !== 10)) {
+      TomlError.x("each key-value declaration must be followed by an end-of-line", ctx);
     }
-    ptr = skipVoid(toml, ptr);
+    skipVoid(ctx);
   }
   return res;
 }
+
+// node_modules/smol-toml/dist/stringify.js
+var HAS_WELLFORMED = !!"".isWellFormed;
 
 // src/utils/config-file.ts
 function getConfigValueFromTomlFile(filePath, key) {
@@ -115317,7 +115392,7 @@ function loadInputs() {
   const checksum = getInput("checksum");
   const enableCache = getEnableCache();
   const restoreCache3 = getInput("restore-cache") === "true";
-  const saveCache2 = getInput("save-cache") === "true";
+  const saveCache2 = getSaveCache();
   const cacheSuffix = getInput("cache-suffix") || "";
   const cacheLocalPath = getCacheLocalPath(
     workingDirectory,
@@ -115426,6 +115501,17 @@ function getEnableCache() {
     return true;
   }
   return enableCacheInput === "true";
+}
+function getSaveCache() {
+  const saveCacheInput = getInput("save-cache");
+  if (saveCacheInput === "auto") {
+    if (process.env.GITHUB_EVENT_NAME === "merge_group") {
+      info2("Cache saving is disabled for the merge_group event");
+      return false;
+    }
+    return true;
+  }
+  return saveCacheInput === "true";
 }
 function getToolBinDir(workingDirectory) {
   const toolBinDirInput = getInput("tool-bin-dir");
@@ -115640,22 +115726,82 @@ var { toString: toString3 } = Object.prototype;
 var { getPrototypeOf } = Object;
 var { iterator, toStringTag } = Symbol;
 var hasOwnProperty = (({ hasOwnProperty: hasOwnProperty2 }) => (obj, prop) => hasOwnProperty2.call(obj, prop))(Object.prototype);
+var isUnsafeObjectKey = (prop) => typeof prop === "string" && (prop === "__proto__" || prop === "constructor" || prop === "prototype");
+var isPrototypeBoundary = (obj, prototype2, source) => obj === Object.prototype || !source && prototype2 === null;
+var isSafeAndFullyMutable = (obj) => {
+  if (!Object.isExtensible(obj)) {
+    return false;
+  }
+  const props = Object.getOwnPropertyNames(obj);
+  if (Object.getOwnPropertySymbols) {
+    props.push(...Object.getOwnPropertySymbols(obj));
+  }
+  return props.every((prop) => {
+    if (isUnsafeObjectKey(prop)) {
+      return false;
+    }
+    const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
+    return !!descriptor && descriptor.configurable && descriptor.writable === true;
+  });
+};
 var hasOwnInPrototypeChain = (thing, prop) => {
   let obj = thing;
   const seen = [];
-  while (obj != null && obj !== Object.prototype) {
+  while (obj != null) {
     if (seen.indexOf(obj) !== -1) {
       return false;
     }
     seen.push(obj);
+    const prototype2 = getPrototypeOf(obj);
+    if (isPrototypeBoundary(obj, prototype2, obj === thing)) {
+      return false;
+    }
     if (hasOwnProperty(obj, prop)) {
       return true;
     }
-    obj = getPrototypeOf(obj);
+    obj = prototype2;
   }
   return false;
 };
 var getSafeProp = (obj, prop) => obj != null && hasOwnInPrototypeChain(obj, prop) ? obj[prop] : void 0;
+var toSafeFlatObject = (thing) => {
+  if (thing == null || typeof thing !== "object" && typeof thing !== "function") {
+    return thing;
+  }
+  const sourcePrototype = getPrototypeOf(thing);
+  if (sourcePrototype === null && isSafeAndFullyMutable(thing)) {
+    return thing;
+  }
+  const result = /* @__PURE__ */ Object.create(null);
+  const merged = /* @__PURE__ */ Object.create(null);
+  const seen = [];
+  let current = thing;
+  while (current != null) {
+    if (seen.indexOf(current) !== -1) {
+      break;
+    }
+    seen.push(current);
+    const prototype2 = current === thing ? sourcePrototype : getPrototypeOf(current);
+    if (isPrototypeBoundary(current, prototype2, current === thing)) {
+      break;
+    }
+    const props = Object.getOwnPropertyNames(current);
+    if (Object.getOwnPropertySymbols) {
+      props.push(...Object.getOwnPropertySymbols(current));
+    }
+    for (const prop of props) {
+      if (isUnsafeObjectKey(prop)) {
+        continue;
+      }
+      if (!hasOwnProperty(merged, prop)) {
+        result[prop] = thing[prop];
+        merged[prop] = true;
+      }
+    }
+    current = prototype2;
+  }
+  return result;
+};
 var kindOf = /* @__PURE__ */ ((cache) => (thing) => {
   const str = toString3.call(thing);
   return cache[str] || (cache[str] = str.slice(8, -1).toLowerCase());
@@ -115690,9 +115836,9 @@ var isPlainObject = (val) => {
     return false;
   }
   const prototype2 = getPrototypeOf(val);
-  return (prototype2 === null || prototype2 === Object.prototype || getPrototypeOf(prototype2) === null) && // Treat any genuine (non-Object.prototype-polluted) Symbol.toStringTag or
-  // Symbol.iterator as evidence the value is a tagged/iterable type rather
-  // than a plain object, while ignoring keys injected onto Object.prototype.
+  return (prototype2 === null || prototype2 === Object.prototype || getPrototypeOf(prototype2) === null) && // Treat safe own/inherited Symbol.toStringTag or Symbol.iterator members as
+  // evidence the value is tagged/iterable, while ignoring members reachable
+  // only through shared or terminal prototype boundaries.
   !hasOwnInPrototypeChain(val, toStringTag) && !hasOwnInPrototypeChain(val, iterator);
 };
 var isEmptyObject = (val) => {
@@ -115713,6 +115859,7 @@ var isReactNativeBlob = (value) => {
 var isReactNative2 = (formData) => formData && typeof formData.getParts !== "undefined";
 var isBlob2 = kindOfTest("Blob");
 var isFileList = kindOfTest("FileList");
+var isSet = kindOfTest("Set");
 var isStream = (val) => isObject2(val) && isFunction(val.pipe);
 function getGlobal() {
   if (typeof globalThis !== "undefined") return globalThis;
@@ -116008,11 +116155,20 @@ var toJSONObject = (obj) => {
       }
       if (!("toJSON" in source)) {
         visited.add(source);
-        const target = isArray(source) ? [] : {};
-        forEach(source, (value, key) => {
-          const reducedValue = visit(value);
-          !isUndefined(reducedValue) && (target[key] = reducedValue);
-        });
+        let target;
+        if (isSet(source)) {
+          target = [];
+          for (const value of source) {
+            const reducedValue = visit(value);
+            !isUndefined(reducedValue) && target.push(reducedValue);
+          }
+        } else {
+          target = isArray(source) ? [] : {};
+          forEach(source, (value, key) => {
+            const reducedValue = visit(value);
+            !isUndefined(reducedValue) && (target[key] = reducedValue);
+          });
+        }
         visited.delete(source);
         return target;
       }
@@ -116093,6 +116249,7 @@ var utils_default = {
   // an alias to avoid ESLint no-prototype-builtins detection
   hasOwnInPrototypeChain,
   getSafeProp,
+  toSafeFlatObject,
   reduceDescriptors,
   freezeMethods,
   toObjectSet,
@@ -116141,17 +116298,18 @@ var parseHeaders_default = (rawHeaders) => {
     i = line.indexOf(":");
     key = line.substring(0, i).trim().toLowerCase();
     val = line.substring(i + 1).trim();
-    if (!key || parsed[key] && ignoreDuplicateOf[key]) {
+    const hasKey = utils_default.hasOwnProp(parsed, key);
+    if (!key || hasKey && utils_default.hasOwnProp(ignoreDuplicateOf, key)) {
       return;
     }
     if (key === "set-cookie") {
-      if (parsed[key]) {
+      if (hasKey) {
         parsed[key].push(val);
       } else {
         parsed[key] = [val];
       }
     } else {
-      parsed[key] = parsed[key] ? parsed[key] + ", " + val : val;
+      parsed[key] = hasKey ? parsed[key] + ", " + val : val;
     }
   });
   return parsed;
@@ -116214,6 +116372,90 @@ function parseTokens(str) {
     tokens[match4[1]] = match4[2];
   }
   return tokens;
+}
+var parameterNameRE = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/;
+function trimOWS(value) {
+  let start = 0;
+  let end = value.length;
+  while (start < end) {
+    const code = value.charCodeAt(start);
+    if (code !== 9 && code !== 32) {
+      break;
+    }
+    start += 1;
+  }
+  while (end > start) {
+    const code = value.charCodeAt(end - 1);
+    if (code !== 9 && code !== 32) {
+      break;
+    }
+    end -= 1;
+  }
+  return start === 0 && end === value.length ? value : value.slice(start, end);
+}
+function decodeQuotedString(value) {
+  const last = value.length - 1;
+  if (last < 1 || value.charCodeAt(0) !== 34 || value.charCodeAt(last) !== 34) {
+    return value;
+  }
+  let decoded = "";
+  for (let i = 1; i < last; i++) {
+    const code = value.charCodeAt(i);
+    if (code === 34) {
+      return value;
+    }
+    if (code === 92) {
+      i += 1;
+      if (i >= last) {
+        return value;
+      }
+    }
+    decoded += value[i];
+  }
+  return decoded;
+}
+function parseParameters(value) {
+  const parameters = /* @__PURE__ */ Object.create(null);
+  const str = String(value);
+  let start = 0;
+  let quoted = false;
+  let escaped = false;
+  function parseParameter(end) {
+    const part = trimOWS(str.slice(start, end));
+    const equals = part.indexOf("=");
+    if (equals < 1) {
+      return;
+    }
+    const name = trimOWS(part.slice(0, equals));
+    if (!parameterNameRE.test(name)) {
+      return;
+    }
+    const normalizedName = name.toLowerCase();
+    if (normalizedName === "__proto__" || normalizedName === "constructor" || normalizedName === "prototype") {
+      return;
+    }
+    const parameterValue = trimOWS(part.slice(equals + 1));
+    parameters[normalizedName] = decodeQuotedString(parameterValue);
+  }
+  for (let i = 0; i < str.length; i++) {
+    const code = str.charCodeAt(i);
+    if (quoted) {
+      if (escaped) {
+        escaped = false;
+      } else if (code === 92) {
+        escaped = true;
+      } else if (code === 34) {
+        quoted = false;
+      }
+    } else if (code === 34) {
+      quoted = true;
+    } else if (code === 44 || code === 59) {
+      parseParameter(i);
+      start = i + 1;
+    }
+  }
+  parseParameter(str.length);
+  return parameters;
 }
 var isValidHeaderName = (str) => /^[-_a-zA-Z0-9^`|~,!#$%&'*+.]+$/.test(str.trim());
 function matchHeaderValue(context3, value, header, filter4, isHeaderNameFilter) {
@@ -116390,13 +116632,17 @@ var AxiosHeaders = class {
     return Object.entries(this.toJSON()).map(([header, value]) => header + ": " + value).join("\n");
   }
   getSetCookie() {
-    return this.get("set-cookie") || [];
+    const value = this.get("set-cookie");
+    return utils_default.isArray(value) ? value : value == null || value === false ? [] : [value];
   }
   get [Symbol.toStringTag]() {
     return "AxiosHeaders";
   }
   static from(thing) {
     return thing instanceof this ? thing : new this(thing);
+  }
+  static parseParameters(value) {
+    return parseParameters(value);
   }
   static concat(first, ...targets) {
     const computed = new this(first);
@@ -116493,9 +116739,30 @@ function redactConfig(config, redactKeys) {
   };
   return visit(config);
 }
+function stringifySafely(value) {
+  try {
+    return String(value);
+  } catch (err) {
+    return "";
+  }
+}
+function aggregateErrorMessage(error2) {
+  const message = error2.errors.map((entry) => {
+    try {
+      return entry && entry.message ? stringifySafely(entry.message) : stringifySafely(entry);
+    } catch (err) {
+      return "";
+    }
+  }).filter(Boolean).join("; ");
+  return message || error2.name || "AggregateError";
+}
 var AxiosError = class _AxiosError extends Error {
   static from(error2, code, config, request, response, customProps) {
-    const axiosError = new _AxiosError(error2.message, code || error2.code, config, request, response);
+    let message = error2.message;
+    if (!message && utils_default.isArray(error2.errors) && error2.errors.length) {
+      message = aggregateErrorMessage(error2);
+    }
+    const axiosError = new _AxiosError(message, code || error2.code, config, request, response);
     Object.defineProperty(axiosError, "cause", {
       __proto__: null,
       value: error2,
@@ -116585,6 +116852,16 @@ var AxiosError_default = AxiosError;
 var import_form_data = __toESM(require_form_data(), 1);
 var FormData_default = import_form_data.default;
 
+// node_modules/axios/lib/platform/node/classes/Buffer.js
+var Buffer_default = {
+  isBufferAvailable() {
+    return typeof Buffer !== "undefined";
+  },
+  from(value) {
+    return Buffer.from(value);
+  }
+};
+
 // node_modules/axios/lib/helpers/toFormData.js
 var DEFAULT_FORM_DATA_MAX_DEPTH = 100;
 function isVisitable(thing) {
@@ -116611,24 +116888,16 @@ function toFormData(obj, formData, options) {
     throw new TypeError("target must be an object");
   }
   formData = formData || new (FormData_default || FormData)();
-  options = utils_default.toFlatObject(
-    options,
-    {
-      metaTokens: true,
-      dots: false,
-      indexes: false
-    },
-    false,
-    function defined(option, source) {
-      return !utils_default.isUndefined(source[option]);
-    }
-  );
-  const metaTokens = options.metaTokens;
-  const visitor = options.visitor || defaultVisitor;
-  const dots = options.dots;
-  const indexes = options.indexes;
-  const _Blob = options.Blob || typeof Blob !== "undefined" && Blob;
-  const maxDepth = options.maxDepth === void 0 ? DEFAULT_FORM_DATA_MAX_DEPTH : options.maxDepth;
+  const option = (name, fallback) => {
+    const value = utils_default.getSafeProp(options, name);
+    return utils_default.isUndefined(value) ? fallback : value;
+  };
+  const metaTokens = option("metaTokens", true);
+  const visitor = option("visitor") || defaultVisitor;
+  const dots = option("dots", false);
+  const indexes = option("indexes", false);
+  const _Blob = option("Blob") || typeof Blob !== "undefined" && Blob;
+  const maxDepth = option("maxDepth", DEFAULT_FORM_DATA_MAX_DEPTH);
   const useBlob = _Blob && utils_default.isSpecCompliantForm(formData);
   const stack = [];
   if (!utils_default.isFunction(visitor)) {
@@ -116649,10 +116918,13 @@ function toFormData(obj, formData, options) {
       if (useBlob && typeof _Blob === "function") {
         return new _Blob([value]);
       }
-      if (typeof Buffer !== "undefined") {
-        return Buffer.from(value);
+      if (Buffer_default && Buffer_default.isBufferAvailable()) {
+        return Buffer_default.from(value);
       }
-      throw new AxiosError_default("Blob is not supported. Use a Buffer instead.", AxiosError_default.ERR_NOT_SUPPORT);
+      throw new AxiosError_default(
+        "Blob is not supported. Use a Buffer instead.",
+        AxiosError_default.ERR_NOT_SUPPORT
+      );
     }
     return value;
   }
@@ -116798,9 +117070,47 @@ function buildURL(url3, params, options) {
 }
 
 // node_modules/axios/lib/core/InterceptorManager.js
+var $internals2 = /* @__PURE__ */ Symbol("internals");
+function countHandlers(handlers) {
+  return handlers ? handlers.length : 0;
+}
+function trimHandlers(handlers) {
+  if (!handlers) {
+    return;
+  }
+  while (handlers.length && handlers[handlers.length - 1] === null) {
+    handlers.pop();
+  }
+}
+function syncHandlerEntries(manager, internals) {
+  const handlers = manager.handlers;
+  const length = countHandlers(handlers);
+  if (handlers !== internals.handlersRef) {
+    internals.handlersRef = handlers;
+    internals.handlerEntries.clear();
+  } else if (length !== internals.handlersLength) {
+    if (!length) {
+      internals.handlerEntries.clear();
+    } else {
+      internals.handlerEntries.forEach(function removeStaleEntry(entry, id) {
+        if (handlers[entry.index] !== entry.handler) {
+          internals.handlerEntries.delete(id);
+        }
+      });
+    }
+  }
+  internals.handlersLength = length;
+}
 var InterceptorManager = class {
   constructor() {
     this.handlers = [];
+    this[$internals2] = {
+      handlersRef: this.handlers,
+      handlersLength: this.handlers.length,
+      handlerEntries: /* @__PURE__ */ new Map(),
+      iterationDepth: 0,
+      nextId: 0
+    };
   }
   /**
    * Add a new interceptor to the stack
@@ -116812,13 +117122,25 @@ var InterceptorManager = class {
    * @return {Number} An ID used to remove interceptor later
    */
   use(fulfilled, rejected, options) {
-    this.handlers.push({
+    const handler = {
       fulfilled,
       rejected,
       synchronous: options ? options.synchronous : false,
       runWhen: options ? options.runWhen : null
+    };
+    const internals = this[$internals2];
+    if (this.handlers == null) {
+      this.handlers = [];
+    }
+    syncHandlerEntries(this, internals);
+    const id = internals.nextId++;
+    this.handlers.push(handler);
+    internals.handlerEntries.set(id, {
+      handler,
+      index: this.handlers.length - 1
     });
-    return this.handlers.length - 1;
+    internals.handlersLength = this.handlers.length;
+    return id;
   }
   /**
    * Remove an interceptor from the stack
@@ -116828,8 +117150,19 @@ var InterceptorManager = class {
    * @returns {void}
    */
   eject(id) {
-    if (this.handlers[id]) {
-      this.handlers[id] = null;
+    const internals = this[$internals2];
+    syncHandlerEntries(this, internals);
+    const entry = internals.handlerEntries.get(id);
+    if (entry) {
+      internals.handlerEntries.delete(id);
+      if (this.handlers[entry.index] !== entry.handler) {
+        return;
+      }
+      this.handlers[entry.index] = null;
+      if (!internals.iterationDepth) {
+        trimHandlers(this.handlers);
+        internals.handlersLength = this.handlers.length;
+      }
     }
   }
   /**
@@ -116840,6 +117173,7 @@ var InterceptorManager = class {
   clear() {
     if (this.handlers) {
       this.handlers = [];
+      syncHandlerEntries(this, this[$internals2]);
     }
   }
   /**
@@ -116853,11 +117187,22 @@ var InterceptorManager = class {
    * @returns {void}
    */
   forEach(fn) {
-    utils_default.forEach(this.handlers, function forEachHandler(h) {
-      if (h !== null) {
-        fn(h);
+    const internals = this[$internals2];
+    syncHandlerEntries(this, internals);
+    internals.iterationDepth++;
+    try {
+      utils_default.forEach(this.handlers, function forEachHandler(h) {
+        if (h !== null) {
+          fn(h);
+        }
+      });
+    } finally {
+      if (!--internals.iterationDepth) {
+        syncHandlerEntries(this, internals);
+        trimHandlers(this.handlers);
+        internals.handlersLength = countHandlers(this.handlers);
       }
-    });
+    }
   }
 };
 var InterceptorManager_default = InterceptorManager;
@@ -116959,7 +117304,7 @@ function throwIfDepthExceeded(index) {
 }
 function parsePropPath(name) {
   const path18 = [];
-  const pattern = /\w+|\[(\w*)]/g;
+  const pattern = /[^.[\]]+|\[([^.[\]]*)]/g;
   let match4;
   while ((match4 = pattern.exec(name)) !== null) {
     throwIfDepthExceeded(path18.length);
@@ -117015,9 +117360,25 @@ function formDataToJSON(formData) {
 }
 var formDataToJSON_default = formDataToJSON;
 
+// node_modules/axios/lib/core/methodList.js
+var methodList = Object.freeze([
+  "get",
+  "delete",
+  "head",
+  "options",
+  "post",
+  "put",
+  "patch",
+  "purge",
+  "link",
+  "unlink",
+  "query"
+]);
+var methodList_default = methodList;
+
 // node_modules/axios/lib/defaults/index.js
 var own = (obj, key) => obj != null && utils_default.hasOwnProp(obj, key) ? obj[key] : void 0;
-function stringifySafely(rawValue, parser, encoder) {
+function stringifySafely2(rawValue, parser, encoder) {
   if (utils_default.isString(rawValue)) {
     try {
       (parser || JSON.parse)(rawValue);
@@ -117073,7 +117434,7 @@ var defaults2 = {
       }
       if (isObjectPayload || hasJSONContentType) {
         headers.setContentType("application/json", false);
-        return stringifySafely(data);
+        return stringifySafely2(data);
       }
       return data;
     }
@@ -117127,7 +117488,7 @@ var defaults2 = {
     }
   }
 };
-utils_default.forEach(["delete", "get", "head", "post", "put", "patch", "query"], (method) => {
+utils_default.forEach(methodList_default, (method) => {
   defaults2.headers[method] = {};
 });
 var defaults_default = defaults2;
@@ -117195,29 +117556,62 @@ function isAbsoluteURL(url3) {
 
 // node_modules/axios/lib/helpers/combineURLs.js
 function combineURLs(baseURL, relativeURL) {
-  return relativeURL ? baseURL.replace(/\/?\/$/, "") + "/" + relativeURL.replace(/^\/+/, "") : baseURL;
+  if (!relativeURL) {
+    return baseURL;
+  }
+  let end = baseURL.length;
+  while (end > 0 && baseURL.charCodeAt(end - 1) === 47) {
+    end--;
+  }
+  return baseURL.slice(0, end) + "/" + relativeURL.replace(/^\/+/, "");
+}
+
+// node_modules/axios/lib/helpers/normalizeURLForProtocolCheck.js
+var urlParserControlCharacters = /[\t\n\r]/g;
+function normalizeURLForProtocolCheck(url3) {
+  if (typeof url3 !== "string") {
+    return url3;
+  }
+  let start = 0;
+  while (start < url3.length && url3.charCodeAt(start) <= 32) {
+    start++;
+  }
+  return url3.slice(start).replace(urlParserControlCharacters, "");
 }
 
 // node_modules/axios/lib/core/buildFullPath.js
 var malformedHttpProtocol = /^https?:(?!\/\/)/i;
-var httpProtocolControlCharacters = /[\t\n\r]/g;
-function stripLeadingC0ControlOrSpace(url3) {
-  let i = 0;
-  while (i < url3.length && url3.charCodeAt(i) <= 32) {
-    i++;
+function redactFragment(fragment) {
+  if (!fragment) {
+    return fragment;
   }
-  return url3.slice(i);
+  return fragment.replace(/(^|&)([^=&]*=)?[^&]+/g, (match4, separator, parameterName = "") => {
+    return `${separator}${parameterName}${REDACTED}`;
+  });
 }
-function normalizeURLForProtocolCheck(url3) {
-  return stripLeadingC0ControlOrSpace(url3).replace(httpProtocolControlCharacters, "");
+function redactSensitiveURLParts(url3) {
+  const redactedURL = url3.replace(/^(https?:\/{0,2})[^/?#]*@/i, `$1${REDACTED}@`);
+  const fragmentIndex = redactedURL.indexOf("#");
+  const urlWithoutFragment = fragmentIndex === -1 ? redactedURL : redactedURL.slice(0, fragmentIndex);
+  const redactedURLWithoutFragment = urlWithoutFragment.replace(
+    /([?&][^=&#]*=)[^&#]*/g,
+    `$1${REDACTED}`
+  );
+  if (fragmentIndex === -1) {
+    return redactedURLWithoutFragment;
+  }
+  return `${redactedURLWithoutFragment}#${redactFragment(redactedURL.slice(fragmentIndex + 1))}`;
 }
 function assertValidHttpProtocolURL(url3, config) {
-  if (typeof url3 === "string" && malformedHttpProtocol.test(normalizeURLForProtocolCheck(url3))) {
-    throw new AxiosError_default(
-      'Invalid URL: missing "//" after protocol',
-      AxiosError_default.ERR_INVALID_URL,
-      config
-    );
+  if (typeof url3 === "string") {
+    const normalizedURL = normalizeURLForProtocolCheck(url3);
+    if (malformedHttpProtocol.test(normalizedURL)) {
+      throw new AxiosError_default(
+        `Invalid URL ${JSON.stringify(redactSensitiveURLParts(normalizedURL))}: missing "//" after protocol`,
+        AxiosError_default.ERR_INVALID_URL,
+        config
+      );
+    }
   }
 }
 function buildFullPath(baseURL, requestedURL, allowAbsoluteUrls, config) {
@@ -117302,13 +117696,13 @@ var import_https_proxy_agent2 = __toESM(require_dist4(), 1);
 var import_http = __toESM(require("http"), 1);
 var import_https = __toESM(require("https"), 1);
 var import_http22 = __toESM(require("http2"), 1);
-var import_util19 = __toESM(require("util"), 1);
+var import_util18 = __toESM(require("util"), 1);
 var import_path = require("path");
 var import_follow_redirects = __toESM(require_follow_redirects(), 1);
 var import_zlib = __toESM(require("zlib"), 1);
 
 // node_modules/axios/lib/env/data.js
-var VERSION = "1.18.1";
+var VERSION = "1.20.0";
 
 // node_modules/axios/lib/helpers/parseProtocol.js
 function parseProtocol(url3) {
@@ -117317,7 +117711,7 @@ function parseProtocol(url3) {
 }
 
 // node_modules/axios/lib/helpers/fromDataURI.js
-var DATA_URL_PATTERN = /^([^,;]+\/[^,;]+)?((?:;[^,;=]+=[^,;]+)*)(;base64)?,([\s\S]*)$/;
+var DATA_URL_PATTERN = /^([^,;/]+\/[^,;/]+)?((?:;[^,;=]+=[^,;]+)*)(;base64)?,([\s\S]*)$/;
 function fromDataURI(uri, asBlob, options) {
   const _Blob = options && options.Blob || platform_default.classes.Blob;
   const protocol = parseProtocol(uri);
@@ -117354,6 +117748,20 @@ function fromDataURI(uri, asBlob, options) {
 
 // node_modules/axios/lib/adapters/http.js
 var import_stream5 = __toESM(require("stream"), 1);
+
+// node_modules/axios/lib/core/setFormDataHeaders.js
+var FORM_DATA_CONTENT_HEADERS = ["content-type", "content-length"];
+function setFormDataHeaders(headers, formHeaders, policy) {
+  if (policy !== "content-only") {
+    headers.set(formHeaders);
+    return;
+  }
+  Object.entries(formHeaders || {}).forEach(([key, val]) => {
+    if (FORM_DATA_CONTENT_HEADERS.includes(key.toLowerCase())) {
+      headers.set(key, val);
+    }
+  });
+}
 
 // node_modules/axios/lib/helpers/AxiosTransformStream.js
 var import_stream2 = __toESM(require("stream"), 1);
@@ -117482,7 +117890,7 @@ var AxiosTransformStream_default = AxiosTransformStream;
 var import_events3 = require("events");
 
 // node_modules/axios/lib/helpers/formDataToStream.js
-var import_util17 = __toESM(require("util"), 1);
+var import_util16 = __toESM(require("util"), 1);
 var import_stream3 = require("stream");
 
 // node_modules/axios/lib/helpers/readBlob.js
@@ -117502,7 +117910,7 @@ var readBlob_default = readBlob;
 
 // node_modules/axios/lib/helpers/formDataToStream.js
 var BOUNDARY_ALPHABET = platform_default.ALPHABET.ALPHA_DIGIT + "-_";
-var textEncoder = typeof TextEncoder === "function" ? new TextEncoder() : new import_util17.default.TextEncoder();
+var textEncoder = typeof TextEncoder === "function" ? new TextEncoder() : new import_util16.default.TextEncoder();
 var CRLF = "\r\n";
 var CRLF_BYTES = textEncoder.encode(CRLF);
 var CRLF_BYTES_COUNT = 2;
@@ -117609,13 +118017,14 @@ var ZlibHeaderTransformStream_default = ZlibHeaderTransformStream;
 
 // node_modules/axios/lib/helpers/Http2Sessions.js
 var import_http2 = __toESM(require("http2"), 1);
-var import_util18 = __toESM(require("util"), 1);
+var import_util17 = __toESM(require("util"), 1);
 var Http2Sessions = class {
   constructor() {
     this.sessions = /* @__PURE__ */ Object.create(null);
   }
   getSession(authority, options) {
     options = Object.assign(
+      /* @__PURE__ */ Object.create(null),
       {
         sessionTimeout: 1e3
       },
@@ -117626,7 +118035,7 @@ var Http2Sessions = class {
       let len = authoritySessions.length;
       for (let i = 0; i < len; i++) {
         const [sessionHandle, sessionOptions] = authoritySessions[i];
-        if (!sessionHandle.destroyed && !sessionHandle.closed && import_util18.default.isDeepStrictEqual(sessionOptions, options)) {
+        if (!sessionHandle.destroyed && !sessionHandle.closed && import_util17.default.isDeepStrictEqual(sessionOptions, options)) {
           return sessionHandle;
         }
       }
@@ -117681,6 +118090,7 @@ var Http2Sessions = class {
       };
     }
     session.once("close", removeSession);
+    session.once("error", removeSession);
     let entry = [session, options];
     authoritySessions ? authoritySessions.push(entry) : authoritySessions = this.sessions[authority] = [entry];
     return session;
@@ -117705,11 +118115,72 @@ var callbackify_default = callbackify;
 
 // node_modules/axios/lib/helpers/shouldBypassProxy.js
 var LOOPBACK_HOSTNAMES = /* @__PURE__ */ new Set(["localhost", "0.0.0.0"]);
+var trimTrailingDots = (value) => {
+  let end = value.length;
+  while (end && value.charCodeAt(end - 1) === 46) {
+    end--;
+  }
+  return end === value.length ? value : value.slice(0, end);
+};
 var isIPv4Loopback = (host) => {
   const parts = host.split(".");
   if (parts.length !== 4) return false;
   if (parts[0] !== "127") return false;
   return parts.every((p) => /^\d+$/.test(p) && Number(p) >= 0 && Number(p) <= 255);
+};
+var parseIPv4Octet = (text) => {
+  if (/^0[xX][0-9a-fA-F]+$/.test(text)) {
+    const n = parseInt(text.slice(2), 16);
+    return Number.isFinite(n) ? n : null;
+  }
+  if (text.length > 1 && /^0[0-7]+$/.test(text)) {
+    const n = parseInt(text, 8);
+    return Number.isFinite(n) ? n : null;
+  }
+  if (text.length > 1 && /^0[0-9]+$/.test(text)) {
+    return null;
+  }
+  if (/^[0-9]+$/.test(text)) {
+    const n = parseInt(text, 10);
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
+};
+var normalizeIPAddress = (host) => {
+  if (typeof host !== "string" || !host || host.indexOf(":") !== -1) {
+    return host;
+  }
+  let h = host;
+  if (h.charAt(0) === "[" && h.charAt(h.length - 1) === "]") {
+    h = h.slice(1, -1);
+  }
+  h = trimTrailingDots(h);
+  if (!/^[0-9.xXa-fA-F]+$/.test(h)) return host;
+  const parts = h.split(".");
+  if (parts.some((p) => p === "")) return host;
+  if (parts.length === 4) {
+    const octets = parts.map(parseIPv4Octet);
+    if (octets.some((n) => n === null || n < 0 || n > 255)) return host;
+    return octets.join(".");
+  }
+  if (parts.length > 4) {
+    return host;
+  }
+  if (parts.length === 1) return host;
+  const literalOctets = parts.slice(0, -1);
+  const tail = parts[parts.length - 1];
+  const tailSlots = 4 - literalOctets.length;
+  const tailValue = parseIPv4Octet(tail);
+  if (tailValue === null) return host;
+  const maxTail = (1 << 8 * tailSlots) - 1;
+  if (tailValue < 0 || tailValue > maxTail) return host;
+  const tailOctets = new Array(tailSlots).fill(0);
+  for (let i = tailSlots - 1, v = tailValue; i >= 0; i--, v >>= 8) {
+    tailOctets[i] = v & 255;
+  }
+  const literal = literalOctets.map(parseIPv4Octet);
+  if (literal.some((n) => n === null || n < 0 || n > 255)) return host;
+  return [...literal, ...tailOctets].join(".");
 };
 var isIPv6ZeroGroup = (group) => /^0{1,4}$/.test(group);
 var isIPv6Unspecified = (host) => {
@@ -117795,6 +118266,40 @@ var unmapIPv4MappedIPv6 = (host) => {
   }
   return host;
 };
+var IPV4_OCTET_RE = /^(?:0|[1-9]\d{0,2})$/;
+var ipv4ToBytes = (host) => {
+  const parts = host.split(".");
+  return parts.length === 4 && parts.every((part) => IPV4_OCTET_RE.test(part) && Number(part) <= 255) ? parts.map(Number) : null;
+};
+var IPV6_GROUP_RE = /^[0-9a-f]{1,4}$/i;
+var ipv6ToBytes = (host) => {
+  const halves = host.split("::");
+  if (halves.length > 2) {
+    return null;
+  }
+  const groups = halves[0] ? halves[0].split(":") : [];
+  if (halves.length === 2) {
+    const rear = halves[1] ? halves[1].split(":") : [];
+    const missing = 8 - groups.length - rear.length;
+    if (missing < 1) {
+      return null;
+    }
+    groups.push(...new Array(missing).fill("0"), ...rear);
+  }
+  if (groups.length !== 8 || groups.some((group) => !IPV6_GROUP_RE.test(group))) {
+    return null;
+  }
+  return groups.flatMap((group) => {
+    const value = Number.parseInt(group, 16);
+    return [value >> 8 & 255, value & 255];
+  });
+};
+var ipToBytes = (host) => {
+  if (typeof host !== "string" || !host) {
+    return null;
+  }
+  return host.indexOf(":") !== -1 ? ipv6ToBytes(host) : ipv4ToBytes(host);
+};
 var normalizeNoProxyHost = (hostname) => {
   if (!hostname) {
     return hostname;
@@ -117802,7 +118307,89 @@ var normalizeNoProxyHost = (hostname) => {
   if (hostname.charAt(0) === "[" && hostname.charAt(hostname.length - 1) === "]") {
     hostname = hostname.slice(1, -1);
   }
-  return unmapIPv4MappedIPv6(hostname.replace(/\.+$/, ""));
+  const trimmed = trimTrailingDots(hostname);
+  const ipv4 = normalizeIPAddress(trimmed);
+  if (ipv4 !== trimmed) {
+    return ipv4;
+  }
+  return unmapIPv4MappedIPv6(trimmed);
+};
+var normalizeCidrBase = (input) => {
+  let base = input;
+  const startsBracket = base.charAt(0) === "[";
+  const endsBracket = base.charAt(base.length - 1) === "]";
+  const hasBracket = base.includes("[") || base.includes("]");
+  if (startsBracket || endsBracket) {
+    if (!startsBracket || !endsBracket) {
+      return null;
+    }
+    base = base.slice(1, -1);
+    if (base.indexOf(":") === -1 || base.includes("[") || base.includes("]")) {
+      return null;
+    }
+  } else if (hasBracket) {
+    return null;
+  }
+  if (!base || base.charAt(base.length - 1) === ".") {
+    return null;
+  }
+  const wasIPv6 = base.indexOf(":") !== -1;
+  if (wasIPv6) {
+    try {
+      base = new URL(`http://[${base}]/`).hostname.slice(1, -1);
+    } catch (_err) {
+      return null;
+    }
+  } else {
+    base = normalizeIPAddress(base);
+    if (!ipv4ToBytes(base)) {
+      return null;
+    }
+  }
+  return { normalized: unmapIPv4MappedIPv6(base), wasIPv6 };
+};
+var CIDR_ENTRY_RE = /^(.+)\/(0|[1-9]\d{0,2})$/;
+var parseCidrEntry = (entry) => {
+  if (entry.indexOf("/") === -1) {
+    return void 0;
+  }
+  const match4 = CIDR_ENTRY_RE.exec(entry);
+  if (!match4) {
+    return null;
+  }
+  let prefix2 = Number(match4[2]);
+  const parsedBase = normalizeCidrBase(match4[1]);
+  if (!parsedBase) {
+    return null;
+  }
+  const { normalized, wasIPv6 } = parsedBase;
+  if (wasIPv6 && normalized.indexOf(":") === -1) {
+    if (prefix2 < 96) {
+      return null;
+    }
+    prefix2 -= 96;
+  }
+  const bytes = ipToBytes(normalized);
+  if (!bytes || prefix2 > bytes.length * 8) {
+    return null;
+  }
+  return { bytes, prefix: prefix2 };
+};
+var isInSubnet = (addressBytes, networkBytes, prefix2) => {
+  const fullBytes = prefix2 >> 3;
+  for (let i = 0; i < fullBytes; i++) {
+    if (addressBytes[i] !== networkBytes[i]) {
+      return false;
+    }
+  }
+  const remainingBits = prefix2 & 7;
+  if (remainingBits) {
+    const mask = 255 << 8 - remainingBits & 255;
+    if ((addressBytes[fullBytes] & mask) !== (networkBytes[fullBytes] & mask)) {
+      return false;
+    }
+  }
+  return true;
 };
 function shouldBypassProxy(location) {
   let parsed;
@@ -117820,9 +118407,17 @@ function shouldBypassProxy(location) {
   }
   const port = Number.parseInt(parsed.port, 10) || DEFAULT_PORTS2[parsed.protocol.split(":", 1)[0]] || 0;
   const hostname = normalizeNoProxyHost(parsed.hostname.toLowerCase());
+  const hostnameBytes = ipToBytes(hostname);
   return noProxy.split(/[\s,]+/).some((entry) => {
     if (!entry) {
       return false;
+    }
+    if (entry === "*") {
+      return true;
+    }
+    const cidr = parseCidrEntry(entry);
+    if (cidr !== void 0) {
+      return cidr !== null && !!hostnameBytes && hostnameBytes.length === cidr.bytes.length && isInSubnet(hostnameBytes, cidr.bytes, cidr.prefix);
     }
     let [entryHost, entryPort] = parseNoProxyEntry(entry);
     entryHost = normalizeNoProxyHost(entryHost);
@@ -117909,7 +118504,8 @@ function throttle(fn, freq) {
     }
   };
   const flush = () => lastArgs && invoke(lastArgs);
-  return [throttled, flush];
+  const flushWith = (...args) => invoke(args);
+  return [throttled, flush, flushWith];
 }
 var throttle_default = throttle;
 
@@ -117918,12 +118514,12 @@ var progressEventReducer = (listener, isDownloadStream, freq = 3) => {
   let bytesNotified = 0;
   const _speedometer = speedometer_default(50, 250);
   return throttle_default((e) => {
-    if (!e || typeof e.loaded !== "number") {
+    if (!e || !utils_default.isNumber(e.loaded)) {
       return;
     }
     const rawLoaded = e.loaded;
     const total = e.lengthComputable ? e.total : void 0;
-    const loaded = total != null ? Math.min(rawLoaded, total) : rawLoaded;
+    const loaded = Math.max(0, total != null ? Math.min(rawLoaded, total) : rawLoaded);
     const progressBytes = Math.max(0, loaded - bytesNotified);
     const rate = _speedometer(progressBytes);
     bytesNotified = Math.max(bytesNotified, loaded);
@@ -117952,12 +118548,66 @@ var progressEventDecorator = (total, throttled) => {
     throttled[1]
   ];
 };
-var asyncDecorator = (fn) => (...args) => utils_default.asap(() => fn(...args));
+var asyncDecorator = (fn, scheduler = utils_default.asap) => (...args) => scheduler(() => fn(...args));
 
 // node_modules/axios/lib/helpers/estimateDataURLDecodedBytes.js
 var isHexDigit = (charCode) => charCode >= 48 && charCode <= 57 || charCode >= 65 && charCode <= 70 || charCode >= 97 && charCode <= 102;
 var isPercentEncodedByte = (str, i, len) => i + 2 < len && isHexDigit(str.charCodeAt(i + 1)) && isHexDigit(str.charCodeAt(i + 2));
-function estimateDataURLDecodedBytes(url3) {
+var hexValue = (charCode) => charCode <= 57 ? charCode - 48 : (charCode & 223) - 55;
+var isBase64Char = (charCode) => charCode >= 65 && charCode <= 90 || // A-Z
+charCode >= 97 && charCode <= 122 || // a-z
+charCode >= 48 && charCode <= 57 || // 0-9
+charCode === 43 || // +
+charCode === 47 || // /
+charCode === 45 || // - (base64url)
+charCode === 95;
+var isBase64Whitespace = (charCode) => charCode === 9 || charCode === 10 || charCode === 12 || charCode === 13 || charCode === 32;
+var base64Bytes = (significant) => {
+  const groups = Math.floor(significant / 4);
+  const remainder = significant % 4;
+  return groups * 3 + (remainder === 2 ? 1 : remainder === 3 ? 2 : 0);
+};
+var estimateBase64BufferAllocation = (body2) => {
+  const len = body2.length;
+  let padding = 0;
+  if (len > 0 && body2.charCodeAt(len - 1) === 61) {
+    padding++;
+    if (len > 1 && body2.charCodeAt(len - 2) === 61) {
+      padding++;
+    }
+  }
+  return Math.floor((len - padding) * 3 / 4);
+};
+var estimatePercentDecodedBase64Bytes = (body2) => {
+  const len = body2.length;
+  let significant = 0;
+  let padding = 0;
+  let invalid = false;
+  for (let i = 0; i < len; i++) {
+    let code = body2.charCodeAt(i);
+    if (code === 37 && isPercentEncodedByte(body2, i, len)) {
+      code = hexValue(body2.charCodeAt(i + 1)) * 16 + hexValue(body2.charCodeAt(i + 2));
+      i += 2;
+    }
+    if (isBase64Whitespace(code)) {
+      continue;
+    }
+    if (code === 61) {
+      padding++;
+      continue;
+    }
+    if (!isBase64Char(code) || padding > 0) {
+      invalid = true;
+      continue;
+    }
+    significant++;
+  }
+  if (invalid || padding > 2 || padding > 0 && (significant + padding) % 4 !== 0 || significant % 4 === 1) {
+    return estimateBase64BufferAllocation(body2);
+  }
+  return base64Bytes(significant);
+};
+var estimateDataURLBytes = (url3, estimateBase64) => {
   if (!url3 || typeof url3 !== "string") return 0;
   if (!url3.startsWith("data:")) return 0;
   const comma = url3.indexOf(",");
@@ -117966,43 +118616,7 @@ function estimateDataURLDecodedBytes(url3) {
   const body2 = url3.slice(comma + 1);
   const isBase64 = /;base64/i.test(meta);
   if (isBase64) {
-    let effectiveLen = body2.length;
-    const len = body2.length;
-    for (let i = 0; i < len; i++) {
-      if (body2.charCodeAt(i) === 37 && i + 2 < len) {
-        const a = body2.charCodeAt(i + 1);
-        const b = body2.charCodeAt(i + 2);
-        const isHex = isHexDigit(a) && isHexDigit(b);
-        if (isHex) {
-          effectiveLen -= 2;
-          i += 2;
-        }
-      }
-    }
-    let pad = 0;
-    let idx = len - 1;
-    const tailIsPct3D = (j) => j >= 2 && body2.charCodeAt(j - 2) === 37 && // '%'
-    body2.charCodeAt(j - 1) === 51 && // '3'
-    (body2.charCodeAt(j) === 68 || body2.charCodeAt(j) === 100);
-    if (idx >= 0) {
-      if (body2.charCodeAt(idx) === 61) {
-        pad++;
-        idx--;
-      } else if (tailIsPct3D(idx)) {
-        pad++;
-        idx -= 3;
-      }
-    }
-    if (pad === 1 && idx >= 0) {
-      if (body2.charCodeAt(idx) === 61) {
-        pad++;
-      } else if (tailIsPct3D(idx)) {
-        pad++;
-      }
-    }
-    const groups = Math.floor(effectiveLen / 4);
-    const bytes2 = groups * 3 - (pad || 0);
-    return bytes2 > 0 ? bytes2 : 0;
+    return estimateBase64(body2);
   }
   let bytes = 0;
   for (let i = 0, len = body2.length; i < len; i++) {
@@ -118027,6 +118641,16 @@ function estimateDataURLDecodedBytes(url3) {
     }
   }
   return bytes;
+};
+function estimateDataURLDecodedBytes(url3) {
+  const fragmentIndex = typeof url3 === "string" ? url3.indexOf("#") : -1;
+  return estimateDataURLBytes(
+    fragmentIndex === -1 ? url3 : url3.slice(0, fragmentIndex),
+    estimatePercentDecodedBase64Bytes
+  );
+}
+function estimateDataURLBufferAllocation(url3) {
+  return estimateDataURLBytes(url3, estimateBase64BufferAllocation);
 }
 
 // node_modules/axios/lib/adapters/http.js
@@ -118046,22 +118670,17 @@ var isBrotliSupported = utils_default.isFunction(import_zlib.default.createBrotl
 var isZstdSupported = utils_default.isFunction(import_zlib.default.createZstdDecompress);
 var ACCEPT_ENCODING = "gzip, compress, deflate" + (isBrotliSupported ? ", br" : "");
 var ACCEPT_ENCODING_WITH_ZSTD = ACCEPT_ENCODING + (isZstdSupported ? ", zstd" : "");
+var scheduleProgress = typeof process !== "undefined" && process.nextTick ? process.nextTick.bind(process) : utils_default.asap;
 var { http: httpFollow, https: httpsFollow } = import_follow_redirects.default;
 var isHttps = /https:?/;
-var FORM_DATA_CONTENT_HEADERS = ["content-type", "content-length"];
-function setFormDataHeaders(headers, formHeaders, policy) {
-  if (policy !== "content-only") {
-    headers.set(formHeaders);
-    return;
-  }
-  Object.entries(formHeaders).forEach(([key, val]) => {
-    if (FORM_DATA_CONTENT_HEADERS.includes(key.toLowerCase())) {
-      headers.set(key, val);
-    }
-  });
-}
 var kAxiosSocketListener = /* @__PURE__ */ Symbol("axios.http.socketListener");
 var kAxiosCurrentReq = /* @__PURE__ */ Symbol("axios.http.currentReq");
+function handleSocketError(err) {
+  const current = this[kAxiosCurrentReq];
+  if (current && !current.destroyed) {
+    current.destroy(err);
+  }
+}
 var kAxiosInstalledTunnel = /* @__PURE__ */ Symbol("axios.http.installedTunnel");
 var tunnelingAgentCache = /* @__PURE__ */ new Map();
 var tunnelingAgentCacheUser = /* @__PURE__ */ new WeakMap();
@@ -118164,10 +118783,10 @@ function isSameOriginRedirect(redirectOptions, requestDetails) {
     return false;
   }
 }
-function setProxy(options, configProxy, location, isRedirect, configHttpsAgent, configHttpAgent) {
+function setProxy(options, configProxy, location, isRedirect, configHttpsAgent, configHttpAgent, allowEnvProxy = true) {
   let proxy = configProxy;
   const proxyEnvAgent = getProxyEnvAgent(options, configHttpAgent, configHttpsAgent);
-  if (!proxy && proxy !== false && !isNodeEnvProxyEnabled(proxyEnvAgent)) {
+  if (!proxy && proxy !== false && allowEnvProxy && !isNodeEnvProxyEnabled(proxyEnvAgent)) {
     const proxyUrl = getProxyForUrl(location);
     if (proxyUrl) {
       if (!shouldBypassProxy(location)) {
@@ -118264,9 +118883,13 @@ function setProxy(options, configProxy, location, isRedirect, configHttpsAgent, 
       redirectOptions.href,
       true,
       configHttpsAgent,
-      configHttpAgent
+      configHttpAgent,
+      allowEnvProxy
     );
   };
+  return Boolean(
+    proxy || configProxy !== false && allowEnvProxy && isNodeEnvProxyEnabled(proxyEnvAgent)
+  );
 }
 var isHttpAdapterSupported = typeof process !== "undefined" && utils_default.kindOf(process) === "process";
 var wrapAsync = (asyncExecutor) => {
@@ -118291,7 +118914,7 @@ var wrapAsync = (asyncExecutor) => {
 };
 var resolveFamily = ({ address, family }) => {
   if (!utils_default.isString(address)) {
-    throw TypeError("address must be a string");
+    throw new AxiosError_default("address must be a string", AxiosError_default.ERR_BAD_OPTION_VALUE);
   }
   return {
     address,
@@ -118299,6 +118922,30 @@ var resolveFamily = ({ address, family }) => {
   };
 };
 var buildAddressEntry = (address, family) => resolveFamily(utils_default.isObject(address) ? address : { address, family });
+var normalizedLookupCache = /* @__PURE__ */ new WeakMap();
+var normalizeLookup = (lookup) => {
+  let normalized = normalizedLookupCache.get(lookup);
+  if (normalized) {
+    return normalized;
+  }
+  const callbackLookup = callbackify_default(lookup, (value) => utils_default.isArray(value) ? value : [value]);
+  normalized = (hostname, opt, cb) => {
+    callbackLookup(hostname, opt, (err, arg0, arg1) => {
+      if (err) {
+        return cb(err);
+      }
+      let addresses;
+      try {
+        addresses = utils_default.isArray(arg0) ? arg0.map((addr) => buildAddressEntry(addr)) : [buildAddressEntry(arg0, arg1)];
+      } catch (error2) {
+        return cb(error2);
+      }
+      opt.all ? cb(err, addresses) : cb(err, addresses[0].address, addresses[0].family);
+    });
+  };
+  normalizedLookupCache.set(lookup, normalized);
+  return normalized;
+};
 var http2Transport = {
   request(options, cb) {
     const authority = options.protocol + "//" + options.hostname + ":" + (options.port || (options.protocol === "https:" ? 443 : 80));
@@ -118335,6 +118982,7 @@ var http_default = isHttpAdapterSupported && function httpAdapter(config) {
     let family = own2("family");
     let httpVersion = own2("httpVersion");
     if (httpVersion === void 0) httpVersion = 1;
+    const rawHttpVersion = httpVersion;
     let http2Options = own2("http2Options");
     const httpAgent = own2("httpAgent");
     const httpsAgent = own2("httpsAgent");
@@ -118351,25 +118999,32 @@ var http_default = isHttpAdapterSupported && function httpAdapter(config) {
     let rejected = false;
     let req;
     let connectPhaseTimer;
-    httpVersion = +httpVersion;
+    try {
+      httpVersion = +httpVersion;
+    } catch (err) {
+      throw new AxiosError_default(
+        "Invalid protocol version: value is not a number",
+        AxiosError_default.ERR_BAD_OPTION_VALUE,
+        config
+      );
+    }
     if (Number.isNaN(httpVersion)) {
-      throw TypeError(`Invalid protocol version: '${config.httpVersion}' is not a number`);
+      throw new AxiosError_default(
+        `Invalid protocol version: '${rawHttpVersion}' is not a number`,
+        AxiosError_default.ERR_BAD_OPTION_VALUE,
+        config
+      );
     }
     if (httpVersion !== 1 && httpVersion !== 2) {
-      throw TypeError(`Unsupported protocol version '${httpVersion}'`);
+      throw new AxiosError_default(
+        `Unsupported protocol version '${httpVersion}'`,
+        AxiosError_default.ERR_BAD_OPTION_VALUE,
+        config
+      );
     }
     const isHttp2 = httpVersion === 2;
     if (lookup) {
-      const _lookup = callbackify_default(lookup, (value) => utils_default.isArray(value) ? value : [value]);
-      lookup = (hostname, opt, cb) => {
-        _lookup(hostname, opt, (err, arg0, arg1) => {
-          if (err) {
-            return cb(err);
-          }
-          const addresses = utils_default.isArray(arg0) ? arg0.map((addr) => buildAddressEntry(addr)) : [buildAddressEntry(arg0, arg1)];
-          opt.all ? cb(err, addresses) : cb(err, addresses[0].address, addresses[0].family);
-        });
-      };
+      lookup = normalizeLookup(lookup);
     }
     const abortEmitter = new import_events3.EventEmitter();
     function abort(reason) {
@@ -118443,7 +119098,7 @@ var http_default = isHttpAdapterSupported && function httpAdapter(config) {
     if (protocol === "data:") {
       if (maxContentLength > -1) {
         const dataUrl = String(own2("url") || fullPath || "");
-        const estimated = estimateDataURLDecodedBytes(dataUrl);
+        const estimated = estimateDataURLBufferAllocation(dataUrl);
         if (estimated > maxContentLength) {
           return reject(
             new AxiosError_default(
@@ -118513,7 +119168,7 @@ var http_default = isHttpAdapterSupported && function httpAdapter(config) {
       setFormDataHeaders(headers, data.getHeaders(), own2("formDataHeaderPolicy"));
       if (!headers.hasContentLength()) {
         try {
-          const knownLength = await import_util19.default.promisify(data.getLength).call(data);
+          const knownLength = await import_util18.default.promisify(data.getLength).call(data);
           Number.isFinite(knownLength) && knownLength >= 0 && headers.setContentLength(knownLength);
         } catch (e) {
         }
@@ -118574,7 +119229,7 @@ var http_default = isHttpAdapterSupported && function httpAdapter(config) {
           data,
           progressEventDecorator(
             contentLength2,
-            progressEventReducer(asyncDecorator(onUploadProgress), false, 3)
+            progressEventReducer(asyncDecorator(onUploadProgress, scheduleProgress), false, 3)
           )
         )
       );
@@ -118612,6 +119267,9 @@ var http_default = isHttpAdapterSupported && function httpAdapter(config) {
       utils_default.hasOwnProp(transitional2, "advertiseZstdAcceptEncoding") && transitional2.advertiseZstdAcceptEncoding === true ? ACCEPT_ENCODING_WITH_ZSTD : ACCEPT_ENCODING,
       false
     );
+    if (isHttp2 && lookup) {
+      http2Options = Object.assign(/* @__PURE__ */ Object.create(null), http2Options, { lookup });
+    }
     const options = Object.assign(/* @__PURE__ */ Object.create(null), {
       path: path18,
       method,
@@ -118622,9 +119280,11 @@ var http_default = isHttpAdapterSupported && function httpAdapter(config) {
       family,
       beforeRedirect: dispatchBeforeRedirect,
       beforeRedirects: /* @__PURE__ */ Object.create(null),
-      http2Options
+      http2Options,
+      createConnection: void 0
     });
     !utils_default.isUndefined(lookup) && (options.lookup = lookup);
+    let proxyApplied = false;
     if (socketPath) {
       if (typeof socketPath !== "string") {
         return reject(
@@ -118652,13 +119312,17 @@ var http_default = isHttpAdapterSupported && function httpAdapter(config) {
     } else {
       options.hostname = parsed.hostname.startsWith("[") ? parsed.hostname.slice(1, -1) : parsed.hostname;
       options.port = parsed.port;
-      setProxy(
+      proxyApplied = setProxy(
         options,
         configProxy,
         protocol + "//" + parsed.hostname + (parsed.port ? ":" + parsed.port : "") + options.path,
         false,
         httpsAgent,
-        httpAgent
+        httpAgent,
+        // The HTTP/2 transport connects independently of HTTP/1 agents, so it
+        // cannot apply either axios-resolved or agent-local environment proxies.
+        // Explicit proxy config is still processed and rejected below.
+        !isHttp2
       );
     }
     let transport;
@@ -118669,6 +119333,15 @@ var http_default = isHttpAdapterSupported && function httpAdapter(config) {
       options.agent = isHttpsRequest ? httpsAgent : httpAgent;
     }
     if (isHttp2) {
+      if (proxyApplied) {
+        return reject(
+          new AxiosError_default(
+            "HTTP/2 requests with a proxy are not supported",
+            AxiosError_default.ERR_NOT_SUPPORT,
+            config
+          )
+        );
+      }
       transport = http2Transport;
     } else {
       const configTransport = own2("transport");
@@ -118756,7 +119429,11 @@ var http_default = isHttpAdapterSupported && function httpAdapter(config) {
             transformStream,
             progressEventDecorator(
               responseLength,
-              progressEventReducer(asyncDecorator(onDownloadProgress), true, 3)
+              progressEventReducer(
+                asyncDecorator(onDownloadProgress, scheduleProgress),
+                true,
+                3
+              )
             )
           )
         );
@@ -118905,12 +119582,7 @@ var http_default = isHttpAdapterSupported && function httpAdapter(config) {
         socket.setKeepAlive(true, 1e3 * 60);
       }
       if (!socket[kAxiosSocketListener]) {
-        socket.on("error", function handleSocketError(err) {
-          const current = socket[kAxiosCurrentReq];
-          if (current && !current.destroyed) {
-            current.destroy(err);
-          }
-        });
+        socket.on("error", handleSocketError);
         socket[kAxiosSocketListener] = true;
       }
       socket[kAxiosCurrentReq] = req;
@@ -119070,6 +119742,16 @@ var cookies_default = platform_default.hasStandardBrowserEnv ? (
 
 // node_modules/axios/lib/core/mergeConfig.js
 var headersToObject = (thing) => thing instanceof AxiosHeaders_default ? { ...thing } : thing;
+var ownEnumerableKeys = (thing) => {
+  if (Object.getOwnPropertySymbols && Object.getOwnPropertyDescriptor) {
+    return Object.keys(thing).concat(
+      Object.getOwnPropertySymbols(thing).filter(
+        (symbol) => Object.getOwnPropertyDescriptor(thing, symbol).enumerable
+      )
+    );
+  }
+  return Object.keys(thing);
+};
 function mergeConfig(config1, config2) {
   config1 = config1 || {};
   config2 = config2 || {};
@@ -119145,7 +119827,7 @@ function mergeConfig(config1, config2) {
     transformResponse: defaultToConfig2,
     paramsSerializer: defaultToConfig2,
     timeout: defaultToConfig2,
-    timeoutMessage: defaultToConfig2,
+    timeoutErrorMessage: defaultToConfig2,
     withCredentials: defaultToConfig2,
     withXSRFToken: defaultToConfig2,
     adapter: defaultToConfig2,
@@ -119168,7 +119850,7 @@ function mergeConfig(config1, config2) {
     validateStatus: mergeDirectKeys,
     headers: (a, b, prop) => mergeDeepProperties(headersToObject(a), headersToObject(b), prop, true)
   };
-  utils_default.forEach(Object.keys({ ...config1, ...config2 }), function computeConfigValue(prop) {
+  utils_default.forEach(ownEnumerableKeys({ ...config1, ...config2 }), function computeConfigValue(prop) {
     if (prop === "__proto__" || prop === "constructor" || prop === "prototype") return;
     const merge2 = utils_default.hasOwnProp(mergeMap, prop) ? mergeMap[prop] : mergeDeepProperties;
     const a = utils_default.hasOwnProp(config1, prop) ? config1[prop] : void 0;
@@ -119187,18 +119869,6 @@ function mergeConfig(config1, config2) {
 }
 
 // node_modules/axios/lib/helpers/resolveConfig.js
-var FORM_DATA_CONTENT_HEADERS2 = ["content-type", "content-length"];
-function setFormDataHeaders2(headers, formHeaders, policy) {
-  if (policy !== "content-only") {
-    headers.set(formHeaders);
-    return;
-  }
-  Object.entries(formHeaders || {}).forEach(([key, val]) => {
-    if (FORM_DATA_CONTENT_HEADERS2.includes(key.toLowerCase())) {
-      headers.set(key, val);
-    }
-  });
-}
 var encodeUTF8 = (str) => encodeURIComponent(str).replace(
   /%([0-9A-F]{2})/gi,
   (_, hex) => String.fromCharCode(parseInt(hex, 16))
@@ -119234,10 +119904,11 @@ function resolveConfig(config) {
     }
   }
   if (utils_default.isFormData(data)) {
+    const getHeaders = utils_default.getSafeProp(data, "getHeaders");
     if (platform_default.hasStandardBrowserEnv || platform_default.hasStandardBrowserWebWorkerEnv || utils_default.isReactNative(data)) {
       headers.setContentType(void 0);
-    } else if (utils_default.isFunction(data.getHeaders)) {
-      setFormDataHeaders2(headers, data.getHeaders(), own2("formDataHeaderPolicy"));
+    } else if (utils_default.isFunction(getHeaders)) {
+      setFormDataHeaders(headers, getHeaders.call(data), own2("formDataHeaderPolicy"));
     }
   }
   if (platform_default.hasStandardBrowserEnv) {
@@ -119266,7 +119937,7 @@ var xhr_default = isXHRAdapterSupported && function(config) {
     let { responseType, onUploadProgress, onDownloadProgress } = _config;
     let onCanceled;
     let uploadThrottled, downloadThrottled;
-    let flushUpload, flushDownload;
+    let flushUpload, flushDownload, flushDownloadWithEvent;
     function done() {
       flushUpload && flushUpload();
       flushDownload && flushDownload();
@@ -119276,7 +119947,27 @@ var xhr_default = isXHRAdapterSupported && function(config) {
     let request = new XMLHttpRequest();
     request.open(_config.method.toUpperCase(), _config.url, true);
     request.timeout = _config.timeout;
-    function onloadend() {
+    function onloadend(event) {
+      if (!request) {
+        return;
+      }
+      if (request.status === 0 && (parseProtocol(normalizeURLForProtocolCheck(_config.url)) || parseProtocol(platform_default.origin)) !== "file" && !(request.responseURL && request.responseURL.startsWith("file:"))) {
+        reject(new AxiosError_default("Request aborted", AxiosError_default.ECONNABORTED, config, request));
+        done();
+        request = null;
+        return;
+      }
+      try {
+        if (event) {
+          flushDownloadWithEvent && flushDownloadWithEvent(event);
+        } else {
+          flushDownload && flushDownload();
+        }
+      } catch (err) {
+        setTimeout(() => {
+          throw err;
+        });
+      }
       if (!request) {
         return;
       }
@@ -119364,7 +120055,10 @@ var xhr_default = isXHRAdapterSupported && function(config) {
       request.responseType = _config.responseType;
     }
     if (onDownloadProgress) {
-      [downloadThrottled, flushDownload] = progressEventReducer(onDownloadProgress, true);
+      [downloadThrottled, flushDownload, flushDownloadWithEvent] = progressEventReducer(
+        onDownloadProgress,
+        true
+      );
       request.addEventListener("progress", downloadThrottled);
     }
     if (onUploadProgress && request.upload) {
@@ -119436,7 +120130,16 @@ var composeSignals = (signals, timeout) => {
     });
     signals = null;
   };
-  signals.forEach((signal2) => signal2.addEventListener("abort", onabort, { once: true }));
+  signals.forEach((signal2) => {
+    if (aborted) {
+      return;
+    }
+    if (signal2.aborted) {
+      onabort.call(signal2);
+      return;
+    }
+    signal2.addEventListener("abort", onabort, { once: true });
+  });
   const { signal } = controller;
   signal.unsubscribe = () => utils_default.asap(unsubscribe);
   return signal;
@@ -119525,6 +120228,17 @@ var trackStream = (stream7, chunkSize, onProgress, onFinish) => {
 
 // node_modules/axios/lib/adapters/fetch.js
 var DEFAULT_CHUNK_SIZE = 64 * 1024;
+var DEFAULT_REQUEST_OPTIONS = {
+  cache: "default",
+  redirect: "follow",
+  referrer: "about:client",
+  referrerPolicy: "",
+  mode: "cors",
+  integrity: "",
+  keepalive: false,
+  priority: "auto",
+  window: null
+};
 var { isFunction: isFunction2 } = utils_default;
 var encodeUTF82 = (str) => encodeURIComponent(str).replace(
   /%([0-9A-F]{2})/gi,
@@ -119655,7 +120369,8 @@ var factory = (env) => {
       withCredentials = "same-origin",
       fetchOptions,
       maxContentLength,
-      maxBodyLength
+      maxBodyLength,
+      maxRedirects
     } = resolveConfig_default(config);
     const hasMaxContentLength = utils_default.isNumber(maxContentLength) && maxContentLength > -1;
     const hasMaxBodyLength = utils_default.isNumber(maxBodyLength) && maxBodyLength > -1;
@@ -119785,17 +120500,44 @@ var factory = (env) => {
         }
       }
       headers.set("User-Agent", "axios/" + VERSION, false);
-      const resolvedOptions = {
-        ...fetchOptions,
+      const safeFetchOptions = fetchOptions == null ? fetchOptions : Object.assign(/* @__PURE__ */ Object.create(null), fetchOptions);
+      if (safeFetchOptions) {
+        delete safeFetchOptions.body;
+        delete safeFetchOptions.headers;
+        delete safeFetchOptions.method;
+        delete safeFetchOptions.signal;
+        delete safeFetchOptions.duplex;
+        delete safeFetchOptions.credentials;
+      }
+      const resolvedOptions = Object.assign(/* @__PURE__ */ Object.create(null), safeFetchOptions, {
         signal: composedSignal,
         method: method.toUpperCase(),
         headers: toByteStringHeaderObject(headers.normalize()),
         body: data,
         duplex: "half",
         credentials: isCredentialsSupported ? withCredentials : void 0
-      };
+      });
+      if (isRequestSupported) {
+        utils_default.forEach(DEFAULT_REQUEST_OPTIONS, (value, key) => {
+          if (resolvedOptions[key] === void 0) {
+            resolvedOptions[key] = value;
+          }
+        });
+        if (resolvedOptions.signal === void 0) {
+          resolvedOptions.signal = null;
+        }
+        if (resolvedOptions.body === void 0) {
+          resolvedOptions.body = null;
+        }
+      }
+      if (maxRedirects === 0) {
+        resolvedOptions.redirect = "manual";
+        if (safeFetchOptions) {
+          safeFetchOptions.redirect = "manual";
+        }
+      }
       request = isRequestSupported && new Request(url3, resolvedOptions);
-      let response = await (isRequestSupported ? _fetch(request, fetchOptions) : _fetch(url3, resolvedOptions));
+      let response = await (isRequestSupported ? _fetch(request, safeFetchOptions) : _fetch(url3, resolvedOptions));
       const responseHeaders = AxiosHeaders_default.from(response.headers);
       if (hasMaxContentLength) {
         const declaredLength = utils_default.toFiniteNumber(responseHeaders.getContentLength());
@@ -120014,9 +120756,10 @@ function throwIfCancellationRequested(config) {
     throw new CanceledError_default(null, config);
   }
 }
-function dispatchRequest(config) {
+function dispatchRequest(_config) {
+  const config = utils_default.toSafeFlatObject(_config);
   throwIfCancellationRequested(config);
-  config.headers = AxiosHeaders_default.from(config.headers);
+  config.headers = AxiosHeaders_default.from(utils_default.getSafeProp(config, "headers"));
   config.data = transformData.call(config, config.transformRequest);
   if (["post", "put", "patch"].indexOf(config.method) !== -1) {
     config.headers.setContentType("application/x-www-form-urlencoded", false);
@@ -120146,16 +120889,15 @@ var Axios = class {
       return await this._request(configOrUrl, config);
     } catch (err) {
       if (err instanceof Error) {
-        let dummy = {};
-        Error.captureStackTrace ? Error.captureStackTrace(dummy) : dummy = new Error();
-        const stack = (() => {
-          if (!dummy.stack) {
-            return "";
-          }
-          const firstNewlineIndex = dummy.stack.indexOf("\n");
-          return firstNewlineIndex === -1 ? "" : dummy.stack.slice(firstNewlineIndex + 1);
-        })();
         try {
+          let dummy = {};
+          Error.captureStackTrace ? Error.captureStackTrace(dummy) : dummy = new Error();
+          const dummyStack = dummy.stack;
+          let stack = "";
+          if (typeof dummyStack === "string") {
+            const firstNewlineIndex = dummyStack.indexOf("\n");
+            stack = firstNewlineIndex === -1 ? "" : dummyStack.slice(firstNewlineIndex + 1);
+          }
           if (!err.stack) {
             err.stack = stack;
           } else if (stack) {
@@ -120225,9 +120967,9 @@ var Axios = class {
       },
       true
     );
-    config.method = (config.method || this.defaults.method || "get").toLowerCase();
+    config.method = (utils_default.getSafeProp(config, "method") || utils_default.getSafeProp(this.defaults, "method") || "get").toLowerCase();
     let contextHeaders = headers && utils_default.merge(headers.common, headers[config.method]);
-    headers && utils_default.forEach(["delete", "get", "head", "post", "put", "patch", "query", "common"], (method) => {
+    headers && utils_default.forEach(methodList_default.concat("common"), (method) => {
       delete headers[method];
     });
     config.headers = AxiosHeaders_default.concat(contextHeaders, headers);
@@ -120270,16 +121012,31 @@ var Axios = class {
       const onFulfilled = requestInterceptorChain[i++];
       const onRejected = requestInterceptorChain[i++];
       try {
-        newConfig = onFulfilled(newConfig);
+        newConfig = onFulfilled ? onFulfilled(newConfig) : newConfig;
       } catch (error2) {
-        onRejected.call(this, error2);
+        if (!onRejected) {
+          promise = Promise.reject(error2);
+          break;
+        }
+        try {
+          const rejectedResult = onRejected.call(this, error2);
+          if (utils_default.isThenable(rejectedResult)) {
+            promise = Promise.resolve(rejectedResult).then(
+              () => dispatchRequest.call(this, newConfig)
+            );
+          }
+        } catch (rejectedError) {
+          promise = Promise.reject(rejectedError);
+        }
         break;
       }
     }
-    try {
-      promise = dispatchRequest.call(this, newConfig);
-    } catch (error2) {
-      return Promise.reject(error2);
+    if (!promise) {
+      try {
+        promise = dispatchRequest.call(this, newConfig);
+      } catch (error2) {
+        promise = Promise.reject(error2);
+      }
     }
     i = 0;
     len = responseInterceptorChain.length;
@@ -120475,14 +121232,22 @@ var HttpStatusCode = {
   Gone: 410,
   LengthRequired: 411,
   PreconditionFailed: 412,
+  /**
+   * @deprecated Use `ContentTooLarge` instead.
+   */
   PayloadTooLarge: 413,
+  ContentTooLarge: 413,
   UriTooLong: 414,
   UnsupportedMediaType: 415,
   RangeNotSatisfiable: 416,
   ExpectationFailed: 417,
   ImATeapot: 418,
   MisdirectedRequest: 421,
+  /**
+   * @deprecated Use `UnprocessableContent` instead.
+   */
   UnprocessableEntity: 422,
+  UnprocessableContent: 422,
   Locked: 423,
   FailedDependency: 424,
   TooEarly: 425,
@@ -120502,6 +121267,7 @@ var HttpStatusCode = {
   LoopDetected: 508,
   NotExtended: 510,
   NetworkAuthenticationRequired: 511,
+  WebServerReturnsAnUnknownError: 520,
   WebServerIsDown: 521,
   ConnectionTimedOut: 522,
   OriginIsUnreachable: 523,
@@ -120510,7 +121276,9 @@ var HttpStatusCode = {
   InvalidSslCertificate: 526
 };
 Object.entries(HttpStatusCode).forEach(([key, value]) => {
-  HttpStatusCode[value] = key;
+  if (HttpStatusCode[value] === void 0) {
+    HttpStatusCode[value] = key;
+  }
 });
 var HttpStatusCode_default = HttpStatusCode;
 
@@ -120869,11 +121637,11 @@ mime-types/index.js:
    * MIT Licensed
    *)
 
-smol-toml/dist/date.js:
 smol-toml/dist/error.js:
 smol-toml/dist/primitive.js:
-smol-toml/dist/util.js:
+smol-toml/dist/date.js:
 smol-toml/dist/extract.js:
+smol-toml/dist/util.js:
 smol-toml/dist/struct.js:
 smol-toml/dist/parse.js:
 smol-toml/dist/stringify.js:

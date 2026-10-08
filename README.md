@@ -92,8 +92,8 @@ Have a look under [Advanced Configuration](#advanced-configuration) for detailed
     # Whether to restore the cache if found
     restore-cache: "true"
 
-    # Whether to save the cache after the run
-    save-cache: "true"
+    # Whether to save the cache after the run: true, false, or auto (disabled for merge_group events)
+    save-cache: "auto"
 
     # Suffix for the cache key
     cache-suffix: ""
@@ -159,7 +159,7 @@ python 3.13
 ```
 
 ```yaml
-- uses: step-security/setup-uv@v9
+- uses: step-security/setup-uv@v10
   with:
     version-file: ".tool-versions"
 ```

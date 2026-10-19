@@ -647,8 +647,6 @@ jobs:
             expected-os: "ubuntu-22.04"
           - os: ubuntu-24.04
             expected-os: "ubuntu-24.04"
-          - os: macos-14
-            expected-os: "macos-14"
           - os: macos-15
             expected-os: "macos-15"
           - os: windows-2022

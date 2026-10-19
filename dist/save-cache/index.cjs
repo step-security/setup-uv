@@ -78439,6 +78439,9 @@ function loadInputs() {
   const version3 = getInput("version");
   const versionFile = getVersionFile(workingDirectory);
   const pythonVersion = getPythonVersion(versionFile);
+  const pythonArchInput = getInput("python-arch");
+  const pythonArch = pythonArchInput || process.env.UV_PYTHON_ARCH || "";
+  const exportPythonArch = pythonArchInput !== "";
   const activateEnvironment = getBooleanInput("activate-environment");
   const noProject = getBooleanInput("no-project");
   const venvPath = getVenvPath(workingDirectory, activateEnvironment);
@@ -78476,12 +78479,14 @@ function loadInputs() {
     checksum,
     downloadFromAstralMirror,
     enableCache,
+    exportPythonArch,
     githubToken,
     ignoreEmptyWorkdir,
     ignoreNothingToCache,
     manifestFile,
     noProject,
     pruneCache: pruneCache2,
+    pythonArch,
     pythonDir,
     pythonVersion,
     quiet: quiet2,

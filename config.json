@@ -1,0 +1,17 @@
+{
+  "$comment": "Managed automatically when syncing with upstream. Do not edit by hand.",
+  "action_type": "node",
+  "build": {
+    "node_version": "24",
+    "package_manager": "npm@11.12.1",
+    "script": "all"
+  },
+  "onboarding_type": "copied",
+  "schema_version": 1,
+  "upstream": {
+    "archived": false,
+    "repository": "astral-sh/setup-uv",
+    "synced_commit": "1c37ad07a6a961277cf70c0d37d6f313000f5884",
+    "synced_tag": "v10.3.0"
+  }
+}

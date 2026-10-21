@@ -1,12 +1,13 @@
 {
-  "name": "setup-uv",
+  "name": "@step-security/setup-uv",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "Set up your GitHub Actions workflow with a specific version of uv",
   "main": "dist/setup/index.cjs",
   "engines": {
-    "npm": ">=11.10.0"
+    "npm": ">=11",
+    "node": ">=24"
   },
   "devEngines": {
     "packageManager": {
@@ -36,6 +37,7 @@
     "uv"
   ],
   "author": "step-security",
+  "publisher": "step-security",
   "license": "MIT",
   "dependencies": {
     "@actions/cache": "^6.2.0",
@@ -60,5 +62,9 @@
     "js-yaml": "^5.3.0",
     "ts-jest": "^29.4.11",
     "typescript": "^6.0.3"
+  },
+  "homepage": "https://github.com/step-security/setup-uv#readme",
+  "bugs": {
+    "url": "https://github.com/step-security/setup-uv/issues"
   }
 }

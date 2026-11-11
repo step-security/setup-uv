@@ -11,7 +11,7 @@
   "upstream": {
     "archived": false,
     "repository": "astral-sh/setup-uv",
-    "synced_commit": "1c37ad07a6a961277cf70c0d37d6f313000f5884",
-    "synced_tag": "v10.3.0"
+    "synced_commit": "68559e99cc807c1eb7e9238fd43a15bba460eec2",
+    "synced_tag": "v10.3.3"
   }
 }

@@ -37,6 +37,10 @@ jest.unstable_mockModule("../../src/utils/logging", () => ({
   warning: jest.fn(),
 }));
 
+jest.unstable_mockModule("../../src/utils/subscription", () => ({
+  validateSubscription: jest.fn().mockResolvedValue(undefined),
+}));
+
 jest.spyOn(process, "exit").mockImplementation((() => undefined) as never);
 
 const { run } = await import("../../src/save-cache");

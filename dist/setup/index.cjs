@@ -112592,7 +112592,8 @@ function _getGlobal(key, defaultValue) {
 var TOOL_CACHE_NAME = "uv";
 var STATE_UV_PATH = "uv-path";
 var STATE_UV_VERSION = "uv-version";
-var VERSIONS_MANIFEST_URL = "https://raw.githubusercontent.com/astral-sh/versions/main/v1/uv.ndjson";
+var VERSIONS_MANIFEST_URL = "https://releases.astral.sh/github/versions/main/v1/uv.ndjson";
+var GITHUB_VERSIONS_MANIFEST_URL = "https://raw.githubusercontent.com/astral-sh/versions/main/v1/uv.ndjson";
 var GITHUB_RELEASES_PREFIX = "https://github.com/astral-sh/uv/releases/download/";
 var ASTRAL_MIRROR_PREFIX = "https://releases.astral.sh/github/uv/releases/download/";
 
@@ -117927,6 +117928,19 @@ async function getArtifact(version3, arch3, platform2, manifestUrl = VERSIONS_MA
   };
 }
 async function fetchManifestResponse(manifestUrl) {
+  try {
+    return await fetchManifestResponseFromUrl(manifestUrl);
+  } catch (error2) {
+    if (manifestUrl !== VERSIONS_MANIFEST_URL) {
+      throw error2;
+    }
+    info2(
+      `Failed to fetch manifest from Astral mirror, falling back to GitHub: ${error2.message}`
+    );
+    return await fetchManifestResponseFromUrl(GITHUB_VERSIONS_MANIFEST_URL);
+  }
+}
+async function fetchManifestResponseFromUrl(manifestUrl) {
   let response;
   for (let attempt = 1; attempt <= MANIFEST_FETCH_ATTEMPTS; attempt++) {
     info2(`Fetching manifest data from ${manifestUrl} ...`);
@@ -119331,7 +119345,7 @@ function getUvVersionFromAllDependencies(allDependencies) {
 }
 function getUvVersionFromDependency(dependency) {
   const dependencyWithoutMarker = dependency.split(";", 1)[0]?.trim();
-  return dependencyWithoutMarker?.match(/^uv([=<>~!]+\S*)/)?.[1].trim();
+  return dependencyWithoutMarker?.match(/^uv\s*((?:[=<>~!]+\s*[^\s,]+\s*,?\s*)+)/)?.[1].replace(/\s/g, "");
 }
 
 // src/version/tool-versions-file.ts
@@ -119689,7 +119703,7 @@ async function resolveVersion(versionInput, manifestUrl, resolutionStrategy = "h
   throw new Error(`No version found for ${versionInput}`);
 }
 async function findHighestSatisfyingVersion(versionSpecifier) {
-  const semverRange = semver5.validRange(versionSpecifier);
+  const semverRange = isCompatibleReleaseSpecifier(versionSpecifier) ? null : semver5.validRange(versionSpecifier);
   if (semverRange !== null) {
     const semverMatch = await getFirstMatchingVersion(
       (version3) => semver5.satisfies(version3, semverRange)
@@ -119711,8 +119725,11 @@ async function findHighestSatisfyingVersion(versionSpecifier) {
   }
   return pep440Match;
 }
+function isCompatibleReleaseSpecifier(versionSpecifier) {
+  return versionSpecifier.includes("~=");
+}
 function maxSatisfying2(versions, version3) {
-  const maxSemver = evaluateVersions(versions, version3);
+  const maxSemver = isCompatibleReleaseSpecifier(version3) ? "" : evaluateVersions(versions, version3);
   if (maxSemver !== "") {
     debug(`Found a version that satisfies the semver range: ${maxSemver}`);
     return maxSemver;
@@ -119727,7 +119744,7 @@ function maxSatisfying2(versions, version3) {
   return void 0;
 }
 function minSatisfying3(versions, version3) {
-  const minSemver = semver5.minSatisfying(versions, version3);
+  const minSemver = isCompatibleReleaseSpecifier(version3) ? null : semver5.minSatisfying(versions, version3);
   if (minSemver !== null) {
     debug(`Found a version that satisfies the semver range: ${minSemver}`);
     return minSemver;

@@ -1,0 +1,15 @@
+# Dev-only dependencies (jest/ts-jest toolchain), not bundled in dist
+
+[[IgnoredVulns]]
+id = "GHSA-gcqx-w48m-w2h4"
+reason = "deepmerge is a jest dev dependency, not bundled in dist"
+
+[[IgnoredVulns]]
+id = "GHSA-3g3m-2fjr-6pw4"
+reason = "glob is a jest/ts-jest dev dependency, not bundled in dist"
+
+# Bundled in dist via @actions/glob but not exploitable in this action's threat model
+
+[[IgnoredVulns]]
+id = "GHSA-g3hv-75wg-m249"
+reason = "ReDoS requires attacker-controlled glob pattern. The only pattern source is cache-dependency-glob, which is set by the workflow author (trusted party) in their own YAML — no external attacker can inject it"
